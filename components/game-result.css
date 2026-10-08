@@ -1,0 +1,1196 @@
+/* =========================================================
+   KỲ VIỆN — GIAO DIỆN KẾT QUẢ
+   Hỗ trợ GameResult cũ và phiên bản kv-premium.
+   ========================================================= */
+
+/* ---------- Khung hộp thoại ---------- */
+
+.kv-result {
+  --kv-accent: #e6bd68;
+  --kv-bright: #fff1c6;
+  --kv-muted: #ac976a;
+  --kv-glow: rgba(226, 184, 96, 0.2);
+  --kv-bg: #171e19;
+  --kv-button-text: #302411;
+
+  /* Đồng bộ với các biến của bản TSX premium. */
+  --premium-accent: var(--kv-accent);
+  --premium-bright: var(--kv-bright);
+  --premium-muted: var(--kv-muted);
+  --premium-glow: var(--kv-glow);
+  --premium-bg: var(--kv-bg);
+  --premium-button-text: var(--kv-button-text);
+
+  display: block !important;
+  width: min(94vw, 470px) !important;
+  max-width: 470px !important;
+  max-height: calc(100vh - 28px);
+  max-height: calc(100dvh - 28px);
+
+  padding: 0 !important;
+  gap: 0 !important;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  border: 1px solid #947a46 !important;
+  border-radius: 22px !important;
+
+  background:
+    radial-gradient(ellipse at 50% 0%, var(--kv-glow), transparent 62%),
+    var(--kv-bg) !important;
+
+  color: #f4e8ce !important;
+
+  box-shadow:
+    0 32px 100px rgba(0, 0, 0, 0.65),
+    0 0 65px var(--kv-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+
+  isolation: isolate;
+  scrollbar-width: thin;
+  scrollbar-color: var(--kv-muted) var(--kv-bg);
+}
+
+.kv-result,
+.kv-result * {
+  box-sizing: border-box;
+}
+
+.kv-result::-webkit-scrollbar {
+  width: 5px;
+}
+
+.kv-result::-webkit-scrollbar-track {
+  background: var(--kv-bg);
+}
+
+.kv-result::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: var(--kv-muted);
+}
+
+/* ---------- Màu theo kết quả ---------- */
+
+.kv-result--win {
+  --kv-accent: #e9c779;
+  --kv-bright: #fff2c9;
+  --kv-muted: #ac976a;
+  --kv-glow: rgba(222, 177, 77, 0.2);
+  --kv-bg: #171e19;
+  --kv-button-text: #302411;
+}
+
+.kv-result--loss {
+  --kv-accent: #adc4d0;
+  --kv-bright: #e6f2f7;
+  --kv-muted: #7e96a3;
+  --kv-glow: rgba(115, 157, 180, 0.18);
+  --kv-bg: #192329;
+  --kv-button-text: #17252d;
+
+  border-color: #617985 !important;
+}
+
+.kv-result--draw {
+  --kv-accent: #b8d5b1;
+  --kv-bright: #edf6df;
+  --kv-muted: #849f7c;
+  --kv-glow: rgba(148, 191, 139, 0.18);
+  --kv-bg: #1a251f;
+  --kv-button-text: #23331f;
+
+  border-color: #718d6e !important;
+}
+
+/* ---------- Nội dung ---------- */
+
+.kv-result-content {
+  position: relative;
+  z-index: 2;
+  padding: 28px 28px 20px;
+  text-align: center;
+}
+
+.kv-result-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 9px;
+
+  margin: 0 18px 18px;
+
+  color: var(--kv-accent);
+  font-family: Arial, sans-serif;
+  font-size: 9px;
+  line-height: 1.5;
+  letter-spacing: 1.8px;
+}
+
+/* Dấu phân cách của bản cũ; không ảnh hưởng span chứa chữ. */
+.kv-result-eyebrow > span:empty {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  flex: 0 0 4px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+
+.kv-premium-brand {
+  font-weight: 700;
+  letter-spacing: 2.5px;
+}
+
+.kv-premium-diamond {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+
+.kv-result-heading {
+  display: block !important;
+  text-align: center !important;
+}
+
+.kv-result-title {
+  margin: 0 !important;
+
+  color: var(--kv-bright) !important;
+  font-family: Georgia, "Times New Roman", serif !important;
+  font-size: clamp(25px, 5.8vw, 34px) !important;
+  font-weight: 700 !important;
+  line-height: 1.25 !important;
+  letter-spacing: 1px;
+
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+
+  text-shadow: 0 2px 22px var(--kv-glow);
+  animation: kv-rise 700ms 100ms both;
+}
+
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .kv-result-title {
+    background: linear-gradient(
+      110deg,
+      var(--kv-accent) 10%,
+      var(--kv-bright) 38%,
+      #ffffff 50%,
+      var(--kv-bright) 62%,
+      var(--kv-accent) 90%
+    );
+    background-size: 220% 100%;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    animation:
+      kv-rise 700ms 100ms both,
+      kv-title-shimmer 5s 900ms ease-in-out 2;
+  }
+}
+
+.kv-result-subtitle {
+  max-width: 330px;
+  margin: 10px auto 0 !important;
+
+  color: #bac3bb !important;
+  font-size: 13px !important;
+  font-weight: 400;
+  line-height: 1.7 !important;
+  text-wrap: balance;
+
+  animation: kv-rise 700ms 180ms both;
+}
+
+.kv-result--loss .kv-result-subtitle {
+  color: #bac7ce !important;
+}
+
+.kv-result-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+
+  margin: 15px 0 10px;
+
+  color: var(--kv-accent);
+  font:
+    20px Georgia,
+    serif;
+  opacity: 0.8;
+}
+
+.kv-result-divider span {
+  width: 62px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--kv-accent));
+}
+
+.kv-result-divider span:last-child {
+  transform: rotate(180deg);
+}
+
+.kv-result-reason {
+  max-width: 350px;
+  margin: 0 auto 16px;
+
+  color: #dedfd3;
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Huy chương của component cũ ---------- */
+
+.kv-result-medal {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  width: 104px;
+  height: 104px;
+  margin: 5px auto 23px;
+
+  border: 1px solid var(--kv-accent);
+  border-radius: 50%;
+
+  color: var(--kv-bright);
+  background:
+    radial-gradient(circle at 35% 25%, var(--kv-glow), transparent 70%),
+    var(--kv-bg);
+
+  box-shadow:
+    inset 0 0 0 6px rgba(255, 255, 255, 0.035),
+    inset 0 0 24px var(--kv-glow),
+    0 0 38px var(--kv-glow);
+
+  animation: kv-medal-in 850ms cubic-bezier(0.18, 0.7, 0.25, 1) both;
+}
+
+.kv-result-medal > div {
+  position: absolute;
+  inset: -10px;
+
+  border: 1px dashed var(--kv-accent);
+  border-radius: 50%;
+
+  opacity: 0.4;
+  animation: kv-orbit 24s linear 1;
+}
+
+.kv-result-medal > svg {
+  filter: drop-shadow(0 2px 8px var(--kv-glow));
+}
+
+/* ---------- Phông nền động của bản premium ---------- */
+
+.kv-premium-scene {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.kv-premium-aura {
+  position: absolute;
+  top: -70px;
+  left: calc(50% - 180px);
+
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+
+  background: radial-gradient(circle, var(--kv-glow), transparent 68%);
+
+  animation: kv-aura 4s ease-in-out 3;
+}
+
+.kv-premium-mist {
+  position: absolute;
+  width: 340px;
+  height: 120px;
+
+  border-radius: 50%;
+  background: var(--kv-glow);
+  filter: blur(38px);
+  opacity: 0.45;
+
+  animation: kv-mist 8s ease-in-out 2 alternate;
+}
+
+.kv-premium-mist--left {
+  top: 150px;
+  left: -170px;
+}
+
+.kv-premium-mist--right {
+  top: 310px;
+  right: -180px;
+  animation-delay: -4s;
+}
+
+.kv-premium-grid {
+  position: absolute;
+  inset: 0;
+
+  background-image:
+    linear-gradient(var(--kv-accent) 1px, transparent 1px),
+    linear-gradient(90deg, var(--kv-accent) 1px, transparent 1px);
+  background-size: 38px 38px;
+
+  opacity: 0.045;
+  -webkit-mask-image: linear-gradient(#000, transparent 70%);
+  mask-image: linear-gradient(#000, transparent 70%);
+}
+
+.kv-premium-sweep {
+  position: absolute;
+  inset: -50%;
+
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 60%
+  );
+
+  animation: kv-shine 2.8s 200ms ease-out both;
+}
+
+/* ---------- Góc trang trí ---------- */
+
+.kv-premium-corner {
+  position: absolute;
+  width: 23px;
+  height: 23px;
+
+  border: 0 solid var(--kv-accent);
+  opacity: 0.55;
+}
+
+/* Hỗ trợ cả tên lớp và thứ tự của bốn span. */
+.kv-premium-corner--tl,
+.kv-premium-corner:nth-last-child(4) {
+  top: 12px;
+  left: 12px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+  border-top-left-radius: 8px;
+}
+
+.kv-premium-corner--tr,
+.kv-premium-corner:nth-last-child(3) {
+  top: 12px;
+  right: 12px;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-top-right-radius: 8px;
+}
+
+.kv-premium-corner--bl,
+.kv-premium-corner:nth-last-child(2) {
+  bottom: 12px;
+  left: 12px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-bottom-left-radius: 8px;
+}
+
+.kv-premium-corner--br,
+.kv-premium-corner:last-child {
+  bottom: 12px;
+  right: 12px;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+  border-bottom-right-radius: 8px;
+}
+
+/* ---------- Huy chương premium và SVG ---------- */
+
+.kv-premium .kv-result-eyebrow {
+  margin-bottom: 8px;
+}
+
+.kv-premium-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  width: 168px;
+  height: 168px;
+  margin: 0 auto;
+
+  color: var(--kv-accent);
+
+  animation: kv-medal-in 850ms cubic-bezier(0.18, 0.7, 0.25, 1) both;
+}
+
+.kv-premium-halo {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+
+  background: radial-gradient(circle, var(--kv-glow), transparent 72%);
+
+  box-shadow: 0 0 45px var(--kv-glow);
+  animation: kv-aura 3.5s ease-in-out 3;
+}
+
+.kv-premium-orbit,
+.kv-premium-laurel {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--kv-accent);
+  pointer-events: none;
+}
+
+.kv-premium-orbit {
+  transform-origin: 50% 50%;
+  animation: kv-orbit 24s linear 1;
+}
+
+.kv-premium-laurel {
+  opacity: 0.8;
+}
+
+.kv-result--loss .kv-premium-laurel {
+  opacity: 0.4;
+}
+
+.kv-premium-medallion {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+
+  border: 1px solid var(--kv-bright);
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    var(--kv-bright),
+    var(--kv-accent) 28%,
+    var(--kv-muted) 65%,
+    var(--kv-accent)
+  );
+
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.35),
+    0 0 35px var(--kv-glow),
+    inset 0 1px 2px rgba(255, 255, 255, 0.65);
+
+  animation: kv-float 4s 800ms ease-in-out 3;
+}
+
+.kv-premium-medallion-inner {
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  width: 84px;
+  height: 84px;
+
+  border: 1px solid var(--kv-muted);
+  border-radius: 50%;
+
+  background:
+    radial-gradient(circle at 35% 20%, var(--kv-glow), transparent 72%),
+    var(--kv-bg);
+
+  box-shadow:
+    inset 0 2px 12px rgba(0, 0, 0, 0.4),
+    0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.kv-premium-medallion svg {
+  position: relative;
+  z-index: 1;
+  color: var(--kv-bright);
+  filter: drop-shadow(0 2px 6px var(--kv-glow));
+}
+
+.kv-premium-medallion-shine {
+  position: absolute;
+  z-index: 2;
+  inset: -35%;
+  pointer-events: none;
+
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 65%
+  );
+
+  animation: kv-shine 2.8s 700ms ease-in-out 2 both;
+}
+
+.kv-premium-star {
+  position: absolute;
+  z-index: 2;
+
+  color: var(--kv-bright);
+  font-size: 19px;
+  line-height: 1;
+  text-shadow: 0 0 12px var(--kv-glow);
+
+  animation: kv-twinkle 2.5s ease-in-out 4;
+}
+
+.kv-premium-star--one {
+  top: 30px;
+  right: 24px;
+}
+
+.kv-premium-star--two {
+  bottom: 35px;
+  left: 24px;
+  font-size: 14px;
+  animation-delay: 700ms;
+}
+
+.kv-premium-seal {
+  display: table;
+  max-width: 100%;
+  margin: 2px auto 13px;
+  padding: 6px 12px;
+
+  border: 1px solid var(--kv-muted);
+  border-radius: 999px;
+
+  color: var(--kv-accent);
+  background: rgba(0, 0, 0, 0.12);
+
+  font-size: 8px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 2px;
+}
+
+/* ---------- Thông tin ván cờ ---------- */
+
+.kv-result-stats {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+
+  margin-bottom: 16px;
+  padding: 13px 8px;
+
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.035),
+    rgba(0, 0, 0, 0.14)
+  );
+
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.kv-result-stats > div {
+  min-width: 0;
+  padding: 0 8px;
+}
+
+.kv-result-stats > div + div {
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.kv-result-stats strong {
+  display: block;
+  color: var(--kv-bright);
+  font:
+    20px Georgia,
+    "Times New Roman",
+    serif;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.kv-result-stats span {
+  display: block;
+  margin-top: 6px;
+
+  color: #aeb8aa;
+  font-size: 8px;
+  line-height: 1.5;
+  letter-spacing: 1.6px;
+}
+
+/* ---------- Nút thao tác ---------- */
+
+.kv-result-primary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  width: 100%;
+  min-height: 47px;
+  padding: 11px 16px;
+  overflow: hidden;
+
+  border: 1px solid var(--kv-bright);
+  border-radius: 10px;
+
+  color: var(--kv-button-text);
+  background: linear-gradient(
+    115deg,
+    var(--kv-bright),
+    var(--kv-accent) 48%,
+    var(--kv-muted)
+  );
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+
+  box-shadow:
+    0 6px 22px var(--kv-glow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.kv-result-primary > span {
+  flex: 1;
+}
+
+.kv-result-primary > svg {
+  flex-shrink: 0;
+}
+
+.kv-result-primary > svg:first-child {
+  margin-right: auto;
+}
+
+.kv-result-primary > svg:last-child {
+  margin-left: auto;
+}
+
+.kv-result-primary:active {
+  transform: translateY(1px);
+}
+
+.kv-result-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+
+  margin-top: 9px;
+}
+
+.kv-result-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  min-height: 40px;
+  padding: 5px 4px;
+
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+
+  color: #cbd0c3;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.kv-result-footnote {
+  margin: 11px 0 0;
+
+  color: #939e8f;
+  font-size: 8px;
+  line-height: 1.8;
+  letter-spacing: 1.2px;
+  text-wrap: balance;
+}
+
+.kv-result-reopen {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  max-width: 100%;
+  margin: 14px 0;
+  padding: 11px 15px;
+
+  border: 1px solid #80744f;
+  border-radius: 9px;
+
+  background: linear-gradient(135deg, #34392a, #252c24);
+  color: #ebd6a5;
+
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.kv-result-reopen svg {
+  flex-shrink: 0;
+}
+
+.kv-result button:focus-visible,
+.kv-result-reopen:focus-visible {
+  outline: 2px solid #fff0c0;
+  outline-offset: 4px;
+}
+
+.kv-result > [data-slot="dialog-close"] {
+  z-index: 5;
+  top: 14px;
+  right: 14px;
+
+  color: var(--kv-accent);
+  opacity: 0.8;
+}
+
+@media (hover: hover) {
+  .kv-result-primary:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.08);
+    box-shadow: 0 10px 28px var(--kv-glow);
+  }
+
+  .kv-result-actions button:hover {
+    color: var(--kv-bright);
+  }
+
+  .kv-result-reopen:hover {
+    border-color: #c9ad69;
+    box-shadow: 0 0 20px rgba(226, 184, 96, 0.1);
+  }
+
+  .kv-result > [data-slot="dialog-close"]:hover {
+    opacity: 1;
+  }
+}
+
+/* ---------- Ánh sáng và confetti của bản cũ ---------- */
+
+.kv-result-light {
+  position: absolute;
+  z-index: 0;
+  inset: -100px 0 0;
+  pointer-events: none;
+
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.055) 50%,
+    transparent 65%
+  );
+
+  animation: kv-shine 2.5s ease-out both;
+}
+
+.kv-confetti {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.kv-confetti i {
+  position: absolute;
+  top: -20px;
+  left: var(--x);
+
+  width: 5px;
+  height: 11px;
+
+  border-radius: 1px;
+  background: var(--hue, #edca77);
+  opacity: 0;
+
+  animation: kv-confetti-fall var(--duration, 3s) var(--delay, 0s) ease-in both;
+}
+
+/* ---------- Hạt chuyển động của bản premium ---------- */
+
+.kv-premium-particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.kv-premium-particles > i {
+  position: absolute;
+  top: -15px;
+  left: var(--particle-x, 50%);
+
+  display: block;
+  width: var(--particle-size, 4px);
+  height: calc(var(--particle-size, 4px) * 1.8);
+
+  border-radius: 1px;
+  background: var(--kv-accent);
+  opacity: 0;
+
+  animation: kv-premium-fall var(--particle-duration, 4s)
+    var(--particle-delay, 0s) ease-in 2 both;
+}
+
+.kv-premium-particles--gold > i,
+.kv-premium-particle--gold {
+  background: linear-gradient(135deg, #fff4cf, #e5b853, #a47832);
+}
+
+/* Hỗ trợ modifier đặt trên vùng chứa hoặc từng hạt. */
+.kv-premium-particles--soft > i,
+.kv-premium-particles > i.kv-premium-particle--soft,
+.kv-result--loss .kv-premium-particles > i,
+.kv-result--draw .kv-premium-particles > i {
+  top: 0;
+  height: var(--particle-size, 4px);
+  border-radius: 50%;
+
+  background: var(--kv-accent);
+  box-shadow: 0 0 8px var(--kv-glow);
+
+  animation-name: kv-premium-drift;
+  animation-timing-function: ease-in-out;
+}
+
+/* ---------- Chuyển động ---------- */
+
+@keyframes kv-medal-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.76);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes kv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes kv-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes kv-shine {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+@keyframes kv-aura {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.07);
+  }
+}
+
+@keyframes kv-mist {
+  from {
+    transform: translateX(-25px) scale(0.9);
+  }
+  to {
+    transform: translateX(45px) scale(1.12);
+  }
+}
+
+@keyframes kv-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes kv-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes kv-title-shimmer {
+  0%,
+  100% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes kv-confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translate(0, -15px) rotate(0deg);
+  }
+  10% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.65;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift, 20px), 700px) rotate(640deg);
+  }
+}
+
+@keyframes kv-premium-fall {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -15px, 0) rotate(0deg);
+  }
+  12% {
+    opacity: 0.85;
+  }
+  75% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--particle-drift, 20px), 680px, 0) rotate(430deg);
+  }
+}
+
+@keyframes kv-premium-drift {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 520px, 0) scale(0.7);
+  }
+  25% {
+    opacity: 0.5;
+  }
+  75% {
+    opacity: 0.35;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--particle-drift, 20px), 40px, 0) scale(1.1);
+  }
+}
+
+/* ---------- Điện thoại ---------- */
+
+@media (max-width: 480px) {
+  .kv-result {
+    width: min(94vw, 470px) !important;
+    border-radius: 18px !important;
+  }
+
+  .kv-result-content {
+    padding: 26px 20px 17px;
+  }
+
+  .kv-result-eyebrow {
+    font-size: 8px;
+    letter-spacing: 1.3px;
+  }
+
+  .kv-result-medal {
+    width: 92px;
+    height: 92px;
+    margin-bottom: 21px;
+  }
+
+  .kv-premium-emblem {
+    width: 145px;
+    height: 145px;
+  }
+
+  .kv-premium-medallion {
+    width: 88px;
+    height: 88px;
+  }
+
+  .kv-premium-medallion-inner {
+    width: 74px;
+    height: 74px;
+  }
+
+  .kv-premium-medallion svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .kv-result-actions {
+    gap: 4px 12px;
+  }
+
+  .kv-result-footnote {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+}
+
+/* ---------- Màn hình thấp: giảm chiều cao hộp thoại ---------- */
+
+@media (max-height: 740px) {
+  .kv-result-content {
+    padding-top: 22px;
+    padding-bottom: 14px;
+  }
+
+  .kv-result-eyebrow {
+    margin-bottom: 8px;
+  }
+
+  .kv-result-medal {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 18px;
+  }
+
+  .kv-result-medal > svg {
+    width: 39px;
+    height: 39px;
+  }
+
+  .kv-premium-emblem {
+    width: 125px;
+    height: 125px;
+  }
+
+  .kv-premium-medallion {
+    width: 82px;
+    height: 82px;
+  }
+
+  .kv-premium-medallion-inner {
+    width: 69px;
+    height: 69px;
+  }
+
+  .kv-premium-medallion svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .kv-premium-seal {
+    margin-bottom: 10px;
+    padding: 4px 10px;
+  }
+
+  .kv-result-title {
+    font-size: clamp(23px, 5.8vw, 27px) !important;
+  }
+
+  .kv-result-subtitle {
+    margin-top: 7px !important;
+    font-size: 12px !important;
+  }
+
+  .kv-result-divider {
+    margin: 10px 0 7px;
+  }
+
+  .kv-result-reason {
+    margin-bottom: 11px;
+  }
+
+  .kv-result-stats {
+    margin-bottom: 12px;
+    padding: 10px 8px;
+  }
+
+  .kv-result-footnote {
+    margin-top: 7px;
+  }
+}
+
+/* ---------- Tôn trọng tùy chọn giảm chuyển động ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .kv-result,
+  .kv-result *,
+  .kv-result *::before,
+  .kv-result *::after,
+  .kv-result-reopen {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .kv-confetti,
+  .kv-result-light,
+  .kv-premium-particles,
+  .kv-premium-sweep,
+  .kv-premium-medallion-shine {
+    display: none !important;
+  }
+}
