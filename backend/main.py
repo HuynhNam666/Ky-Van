@@ -1465,3 +1465,85 @@ from . import spectating
 # KYVIEN_JOURNEY_V1
 from .journey import install_journey
 install_journey(globals())
+
+
+# KYVIEN_DIAGNOSTICS_V1: observe stalls without changing game rules or API responses.
+import threading as _diag_threading
+import faulthandler as _diag_faulthandler
+try:
+    import resource as _diag_resource
+except ImportError:
+    _diag_resource = None
+from sqlalchemy import event as _diag_event
+
+_diag_stop = _diag_threading.Event()
+_diag_tick = time.monotonic()
+_diag_task = None
+_diag_thread = None
+_diag_log = logging.getLogger('kyvien.diagnostics')
+
+@_diag_event.listens_for(engine, 'before_cursor_execute')
+def _diag_query_start(conn, cursor, statement, parameters, context, executemany):
+    context._kyvien_started = time.monotonic()
+
+@_diag_event.listens_for(engine, 'after_cursor_execute')
+def _diag_query_end(conn, cursor, statement, parameters, context, executemany):
+    elapsed = time.monotonic() - getattr(context, '_kyvien_started', time.monotonic())
+    if elapsed >= 1:
+        # Never log SQL text, query parameters, connection URLs, or tokens.
+        _diag_log.warning('KV_DIAG slow_database_query elapsed_s=%.2f', elapsed)
+
+def _diag_watch():
+    reported = False
+    last_sample = time.monotonic()
+    last_cpu = time.process_time()
+    while not _diag_stop.wait(1):
+        now = time.monotonic()
+        lag = now - _diag_tick
+        if lag >= 4 and not reported:
+            reported = True
+            _diag_log.warning('KV_DIAG event_loop_stalled lag_s=%.2f; thread stacks follow', lag)
+            try:
+                _diag_faulthandler.dump_traceback(all_threads=True)
+            except Exception:
+                _diag_log.warning('KV_DIAG stack_dump_unavailable')
+        elif lag < 2 and reported:
+            reported = False
+            _diag_log.warning('KV_DIAG event_loop_recovered')
+        if now - last_sample >= 30:
+            cpu = time.process_time()
+            peak = (_diag_resource.getrusage(_diag_resource.RUSAGE_SELF).ru_maxrss / 1024
+                    if _diag_resource is not None else -1)
+            _diag_log.warning(
+                'KV_DIAG sample cpu_core_pct=%.1f peak_rss_mb=%.1f event_loop_lag_s=%.2f',
+                100 * (cpu - last_cpu) / (now - last_sample), peak, lag,
+            )
+            last_sample, last_cpu = now, cpu
+
+async def _diag_pulse():
+    global _diag_tick
+    while True:
+        _diag_tick = time.monotonic()
+        await asyncio.sleep(.25)
+
+@app.on_event('startup')
+async def _diag_start():
+    global _diag_tick, _diag_task, _diag_thread
+    _diag_stop.clear()
+    _diag_tick = time.monotonic()
+    _diag_task = asyncio.create_task(_diag_pulse())
+    _diag_thread = _diag_threading.Thread(target=_diag_watch, name='kyvien-diagnostics', daemon=True)
+    _diag_thread.start()
+    _diag_log.warning('KV_DIAG enabled version=1')
+
+@app.on_event('shutdown')
+async def _diag_shutdown():
+    _diag_stop.set()
+    if _diag_task:
+        _diag_task.cancel()
+        try:
+            await _diag_task
+        except asyncio.CancelledError:
+            pass
+    if _diag_thread:
+        await asyncio.to_thread(_diag_thread.join, 2)
