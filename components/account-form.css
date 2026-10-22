@@ -1,0 +1,238 @@
+@font-face {
+  font-family: KvAccount;
+  src: url("/fonts/xiangqi/noto-serif-sc-72-600-normal.woff2") format("woff2");
+  font-weight: 600;
+  font-display: swap;
+}
+.kv-account {
+  min-height: 100dvh;
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 28px !important;
+  display: flex !important;
+  flex-direction: column;
+  background:
+    radial-gradient(ellipse at 20% 45%, #314f3655, transparent 55%), #101e1b;
+  color: #e9e4d5;
+  font-family: Arial, sans-serif;
+}
+.kv-account * {
+  box-sizing: border-box;
+}
+.kv-account a {
+  text-decoration: none;
+}
+.kv-account-back {
+  color: #bbc7b2;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  align-self: flex-start;
+}
+.kv-account-shell {
+  margin: auto;
+  max-width: 940px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid #a698642f;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 100px #0004;
+  background: #1b2c24;
+}
+.kv-account-art {
+  padding: 48px 42px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 59px, #c3b4780a 60px),
+    repeating-linear-gradient(90deg, transparent 0 59px, #c3b4780a 60px),
+    radial-gradient(circle at 40% 35%, #44613e88, transparent 65%), #172a23;
+}
+.kv-account-brand {
+  font:
+    600 16px Georgia,
+    serif;
+  letter-spacing: 4px;
+  color: #e0bf7f;
+}
+.kv-account-emblem {
+  font:
+    600 74px KvAccount,
+    "SimSun",
+    serif;
+  display: grid;
+  place-items: center;
+  width: 136px;
+  height: 136px;
+  border-radius: 50%;
+  margin: 54px 0 37px;
+  border: 1px solid #caa766;
+  color: #b42f24;
+  background: radial-gradient(circle at 30% 20%, #f9eaca, #d7b475);
+  box-shadow:
+    inset 0 0 0 7px #efdab0,
+    inset 0 0 0 9px #c19b63,
+    0 6px 0 #79552e,
+    0 20px 40px #0003;
+}
+.kv-account-caption,
+.kv-account-kicker {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #baa77b;
+}
+.kv-account-art h1 {
+  font:
+    38px/1.35 Georgia,
+    serif;
+  color: #ebd8ad;
+  margin: 16px 0;
+}
+.kv-account-art p {
+  font-size: 13px;
+  line-height: 1.9;
+  color: #a6b59e;
+  max-width: 300px;
+}
+.kv-account-note {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  color: #aaa67e;
+  font-size: 10px;
+  margin-top: 28px;
+}
+.kv-account-form {
+  padding: 48px 38px;
+}
+.kv-account-form h2 {
+  font:
+    32px Georgia,
+    serif;
+  color: #efdbac;
+  margin: 13px 0;
+}
+.kv-account-form > p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #a6b8a6;
+  margin: 0 0 25px;
+}
+.kv-account-form label {
+  display: block;
+  margin: 20px 0 9px;
+  font-size: 12px;
+  color: #d0d8c7;
+}
+.kv-account-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #12221b;
+  border: 1px solid #72886866;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #8da384;
+}
+.kv-account-input:focus-within {
+  border-color: #d9b775;
+  box-shadow: 0 0 0 3px #d9b77510;
+}
+.kv-account-input input {
+  width: 100%;
+  min-width: 0;
+  background: none;
+  border: 0;
+  color: #ede8d7;
+  outline: none;
+  padding: 14px 0;
+  font-size: 13px;
+}
+.kv-account-input button {
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  color: #a7b499;
+  padding: 5px;
+}
+.kv-account-submit {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 28px;
+  border: 1px solid #dfbf85;
+  border-radius: 8px;
+  background: linear-gradient(115deg, #e5c88c, #b78d4e);
+  color: #243424;
+  padding: 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.kv-account-submit:disabled {
+  opacity: 0.55;
+}
+.kv-account-error {
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 6px;
+  background: #713b293f;
+  border: 1px solid #ad735244;
+  color: #f3c5ac;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.kv-account-form .kv-account-switch {
+  text-align: center;
+  margin: 23px 0;
+  font-size: 12px;
+}
+.kv-account-switch a {
+  color: #e3c486;
+}
+.kv-account-foot {
+  border-top: 1px solid #b0b68a22;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  padding-top: 20px;
+  color: #81977e;
+  font-size: 10px;
+}
+.kv-account a:focus-visible,
+.kv-account button:focus-visible {
+  outline: 2px solid #e0bc76;
+  outline-offset: 4px;
+}
+@media (max-width: 700px) {
+  .kv-account {
+    padding: 18px !important;
+  }
+  .kv-account-shell {
+    grid-template-columns: 1fr;
+    margin: 30px auto;
+    max-width: 440px;
+  }
+  .kv-account-art {
+    padding: 25px 28px;
+  }
+  .kv-account-emblem,
+  .kv-account-art h1,
+  .kv-account-art p,
+  .kv-account-note {
+    display: none;
+  }
+  .kv-account-caption {
+    display: block;
+    margin-top: 12px;
+    font-size: 8px;
+  }
+  .kv-account-form {
+    padding: 29px 26px;
+  }
+}

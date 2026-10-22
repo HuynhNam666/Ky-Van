@@ -122,7 +122,7 @@ button {
   cursor: pointer;
 
   transition:
-    background 0.2s,
+    * background * 0.2s,
     color 0.2s,
     opacity 0.2s;
 }
@@ -3055,23 +3055,36 @@ input::placeholder {
     font-size: 13px !important;
   }
 }
+
 /* Chinh chu trong quan co; giu nguyen bo cuc va cac trang thai cu. */
+
 .square {
   container-type: inline-size;
 }
 
 .chess-piece {
   font-family: "KaiTi", "STKaiti", "SimSun", serif;
+
   font-size: 24px;
+
   font-size: 62cqi;
+
   font-weight: 400;
+
   line-height: 1;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   letter-spacing: 0;
+
   text-indent: 0;
+
   user-select: none;
+
   text-shadow: 0 1px 0 rgba(255, 245, 215, 0.65);
 }
 
@@ -3081,4 +3094,47 @@ input::placeholder {
 
 .chess-piece.black {
   color: #252b24;
+}
+
+.lobby-invite {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 150;
+  width: min(360px, calc(100vw - 32px));
+  background: #142927;
+  color: #f3dfad;
+  border: 1px solid #a8853d;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 15px 50px #0009;
+  font-family: system-ui, sans-serif;
+}
+
+.lobby-invite p {
+  margin: 8px 0;
+}
+.lobby-invite div {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 15px;
+}
+.lobby-invite button {
+  border: 1px solid #bd9756;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.lobby-invite button:disabled {
+  opacity: 0.5;
+}
+
+.kyvan-reduced-motion *,
+.kyvan-reduced-motion *::before,
+.kyvan-reduced-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

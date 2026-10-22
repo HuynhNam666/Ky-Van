@@ -1,0 +1,672 @@
+{
+  "tiers": [
+    {
+      "index": 0,
+      "name": "Tập sự",
+      "minimum": 1000,
+      "color": "#a9b4ac",
+      "stars": 1,
+      "ornament": 1
+    },
+    {
+      "index": 1,
+      "name": "Nhập môn",
+      "minimum": 1200,
+      "color": "#94c991",
+      "stars": 2,
+      "ornament": 2
+    },
+    {
+      "index": 2,
+      "name": "Học đồ",
+      "minimum": 1450,
+      "color": "#62c59d",
+      "stars": 3,
+      "ornament": 3
+    },
+    {
+      "index": 3,
+      "name": "Kỳ sinh",
+      "minimum": 1750,
+      "color": "#42bfa8",
+      "stars": 4,
+      "ornament": 4
+    },
+    {
+      "index": 4,
+      "name": "Kỳ sĩ",
+      "minimum": 2100,
+      "color": "#37c4d0",
+      "stars": 5,
+      "ornament": 5
+    },
+    {
+      "index": 5,
+      "name": "Thiếu hiệp",
+      "minimum": 2500,
+      "color": "#5ac9fa",
+      "stars": 1,
+      "ornament": 6
+    },
+    {
+      "index": 6,
+      "name": "Du hiệp",
+      "minimum": 2950,
+      "color": "#68a2ff",
+      "stars": 2,
+      "ornament": 7
+    },
+    {
+      "index": 7,
+      "name": "Tinh anh",
+      "minimum": 3450,
+      "color": "#8d90ff",
+      "stars": 3,
+      "ornament": 8
+    },
+    {
+      "index": 8,
+      "name": "Cao thủ",
+      "minimum": 4000,
+      "color": "#b18bff",
+      "stars": 4,
+      "ornament": 9
+    },
+    {
+      "index": 9,
+      "name": "Danh thủ",
+      "minimum": 4600,
+      "color": "#d18af6",
+      "stars": 5,
+      "ornament": 10
+    },
+    {
+      "index": 10,
+      "name": "Đại cao thủ",
+      "minimum": 5250,
+      "color": "#f08cce",
+      "stars": 1,
+      "ornament": 11
+    },
+    {
+      "index": 11,
+      "name": "Kỳ sư",
+      "minimum": 5950,
+      "color": "#fc91a4",
+      "stars": 2,
+      "ornament": 12
+    },
+    {
+      "index": 12,
+      "name": "Đại kỳ sư",
+      "minimum": 6700,
+      "color": "#ffad79",
+      "stars": 3,
+      "ornament": 13
+    },
+    {
+      "index": 13,
+      "name": "Tông sư",
+      "minimum": 7500,
+      "color": "#ffd276",
+      "stars": 4,
+      "ornament": 14
+    },
+    {
+      "index": 14,
+      "name": "Đại tông sư",
+      "minimum": 8350,
+      "color": "#ffe89e",
+      "stars": 5,
+      "ornament": 15
+    },
+    {
+      "index": 15,
+      "name": "Kỳ vương",
+      "minimum": 9250,
+      "color": "#faf6bb",
+      "stars": 1,
+      "ornament": 16
+    },
+    {
+      "index": 16,
+      "name": "Kỳ hoàng",
+      "minimum": 10200,
+      "color": "#8ff4ed",
+      "stars": 2,
+      "ornament": 17
+    },
+    {
+      "index": 17,
+      "name": "Kỳ thánh",
+      "minimum": 11200,
+      "color": "#a4c9ff",
+      "stars": 3,
+      "ornament": 18
+    },
+    {
+      "index": 18,
+      "name": "Kỳ tiên",
+      "minimum": 12300,
+      "color": "#e3baff",
+      "stars": 4,
+      "ornament": 19
+    },
+    {
+      "index": 19,
+      "name": "Kỳ thần",
+      "minimum": 13500,
+      "color": "#fff0b4",
+      "stars": 5,
+      "ornament": 20
+    }
+  ],
+  "avatars": [
+    {
+      "id": "classic",
+      "name": "Kỳ thủ nguyên bản",
+      "url": "https://lh3.googleusercontent.com/aida-public/AB6AXuDW_ZDlb5_-pW3l5OZ_8Ij0-of8F7tlqQH9PlnJnY3avEuanI_3QTMi-q9JA-Twh_3sYCHE6ZrrlZBOm1Ai3RN9-G53W1ERTBZGz0TdYjxMTywlMxBkKsmXF8iej05w9EZkOLVT7vY4Ur8GyIi97_eWYREwuIQ31VMGAB6PHmgtBYCA0VK7GMQm8rJBoyWo6ee4KFaxIxFRZOjjdlnoFw4zk5_9uV2MBJlFUyQzk5GMUWlPdeF9WOJn",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-01",
+      "name": "Kiếm khách Ngọc",
+      "url": "/ky-rank/avatars/base-01.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-02",
+      "name": "Nữ hiệp Ngọc",
+      "url": "/ky-rank/avatars/base-02.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-03",
+      "name": "Mưu sĩ Ngọc",
+      "url": "/ky-rank/avatars/base-03.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-04",
+      "name": "Lão kỳ sư Ngọc",
+      "url": "/ky-rank/avatars/base-04.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-05",
+      "name": "Thiếu niên Ngọc",
+      "url": "/ky-rank/avatars/base-05.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-06",
+      "name": "Hồ ly Ngọc",
+      "url": "/ky-rank/avatars/base-06.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-07",
+      "name": "Bạch hổ Ngọc",
+      "url": "/ky-rank/avatars/base-07.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-08",
+      "name": "Hùng trúc Ngọc",
+      "url": "/ky-rank/avatars/base-08.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-09",
+      "name": "Linh miêu Ngọc",
+      "url": "/ky-rank/avatars/base-09.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-10",
+      "name": "Cú đêm Ngọc",
+      "url": "/ky-rank/avatars/base-10.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-11",
+      "name": "Kiếm khách Lam",
+      "url": "/ky-rank/avatars/base-11.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-12",
+      "name": "Nữ hiệp Lam",
+      "url": "/ky-rank/avatars/base-12.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-13",
+      "name": "Mưu sĩ Lam",
+      "url": "/ky-rank/avatars/base-13.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-14",
+      "name": "Lão kỳ sư Lam",
+      "url": "/ky-rank/avatars/base-14.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-15",
+      "name": "Thiếu niên Lam",
+      "url": "/ky-rank/avatars/base-15.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-16",
+      "name": "Hồ ly Lam",
+      "url": "/ky-rank/avatars/base-16.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-17",
+      "name": "Bạch hổ Lam",
+      "url": "/ky-rank/avatars/base-17.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-18",
+      "name": "Hùng trúc Lam",
+      "url": "/ky-rank/avatars/base-18.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-19",
+      "name": "Linh miêu Lam",
+      "url": "/ky-rank/avatars/base-19.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-20",
+      "name": "Cú đêm Lam",
+      "url": "/ky-rank/avatars/base-20.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-21",
+      "name": "Kiếm khách Tử",
+      "url": "/ky-rank/avatars/base-21.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-22",
+      "name": "Nữ hiệp Tử",
+      "url": "/ky-rank/avatars/base-22.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-23",
+      "name": "Mưu sĩ Tử",
+      "url": "/ky-rank/avatars/base-23.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-24",
+      "name": "Lão kỳ sư Tử",
+      "url": "/ky-rank/avatars/base-24.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-25",
+      "name": "Thiếu niên Tử",
+      "url": "/ky-rank/avatars/base-25.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-26",
+      "name": "Hồ ly Tử",
+      "url": "/ky-rank/avatars/base-26.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-27",
+      "name": "Bạch hổ Tử",
+      "url": "/ky-rank/avatars/base-27.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-28",
+      "name": "Hùng trúc Tử",
+      "url": "/ky-rank/avatars/base-28.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-29",
+      "name": "Linh miêu Tử",
+      "url": "/ky-rank/avatars/base-29.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-30",
+      "name": "Cú đêm Tử",
+      "url": "/ky-rank/avatars/base-30.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-31",
+      "name": "Kiếm khách Chu",
+      "url": "/ky-rank/avatars/base-31.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-32",
+      "name": "Nữ hiệp Chu",
+      "url": "/ky-rank/avatars/base-32.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-33",
+      "name": "Mưu sĩ Chu",
+      "url": "/ky-rank/avatars/base-33.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-34",
+      "name": "Lão kỳ sư Chu",
+      "url": "/ky-rank/avatars/base-34.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-35",
+      "name": "Thiếu niên Chu",
+      "url": "/ky-rank/avatars/base-35.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-36",
+      "name": "Hồ ly Chu",
+      "url": "/ky-rank/avatars/base-36.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-37",
+      "name": "Bạch hổ Chu",
+      "url": "/ky-rank/avatars/base-37.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-38",
+      "name": "Hùng trúc Chu",
+      "url": "/ky-rank/avatars/base-38.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-39",
+      "name": "Linh miêu Chu",
+      "url": "/ky-rank/avatars/base-39.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-40",
+      "name": "Cú đêm Chu",
+      "url": "/ky-rank/avatars/base-40.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-41",
+      "name": "Kiếm khách Kim",
+      "url": "/ky-rank/avatars/base-41.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-42",
+      "name": "Nữ hiệp Kim",
+      "url": "/ky-rank/avatars/base-42.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-43",
+      "name": "Mưu sĩ Kim",
+      "url": "/ky-rank/avatars/base-43.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-44",
+      "name": "Lão kỳ sư Kim",
+      "url": "/ky-rank/avatars/base-44.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-45",
+      "name": "Thiếu niên Kim",
+      "url": "/ky-rank/avatars/base-45.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-46",
+      "name": "Hồ ly Kim",
+      "url": "/ky-rank/avatars/base-46.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-47",
+      "name": "Bạch hổ Kim",
+      "url": "/ky-rank/avatars/base-47.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-48",
+      "name": "Hùng trúc Kim",
+      "url": "/ky-rank/avatars/base-48.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-49",
+      "name": "Linh miêu Kim",
+      "url": "/ky-rank/avatars/base-49.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "base-50",
+      "name": "Cú đêm Kim",
+      "url": "/ky-rank/avatars/base-50.svg",
+      "required_tier": 0,
+      "exclusive": false
+    },
+    {
+      "id": "rank-01",
+      "name": "Tập sự · Độc quyền",
+      "url": "/ky-rank/avatars/rank-01.svg",
+      "required_tier": 0,
+      "exclusive": true
+    },
+    {
+      "id": "rank-02",
+      "name": "Nhập môn · Độc quyền",
+      "url": "/ky-rank/avatars/rank-02.svg",
+      "required_tier": 1,
+      "exclusive": true
+    },
+    {
+      "id": "rank-03",
+      "name": "Học đồ · Độc quyền",
+      "url": "/ky-rank/avatars/rank-03.svg",
+      "required_tier": 2,
+      "exclusive": true
+    },
+    {
+      "id": "rank-04",
+      "name": "Kỳ sinh · Độc quyền",
+      "url": "/ky-rank/avatars/rank-04.svg",
+      "required_tier": 3,
+      "exclusive": true
+    },
+    {
+      "id": "rank-05",
+      "name": "Kỳ sĩ · Độc quyền",
+      "url": "/ky-rank/avatars/rank-05.svg",
+      "required_tier": 4,
+      "exclusive": true
+    },
+    {
+      "id": "rank-06",
+      "name": "Thiếu hiệp · Độc quyền",
+      "url": "/ky-rank/avatars/rank-06.svg",
+      "required_tier": 5,
+      "exclusive": true
+    },
+    {
+      "id": "rank-07",
+      "name": "Du hiệp · Độc quyền",
+      "url": "/ky-rank/avatars/rank-07.svg",
+      "required_tier": 6,
+      "exclusive": true
+    },
+    {
+      "id": "rank-08",
+      "name": "Tinh anh · Độc quyền",
+      "url": "/ky-rank/avatars/rank-08.svg",
+      "required_tier": 7,
+      "exclusive": true
+    },
+    {
+      "id": "rank-09",
+      "name": "Cao thủ · Độc quyền",
+      "url": "/ky-rank/avatars/rank-09.svg",
+      "required_tier": 8,
+      "exclusive": true
+    },
+    {
+      "id": "rank-10",
+      "name": "Danh thủ · Độc quyền",
+      "url": "/ky-rank/avatars/rank-10.svg",
+      "required_tier": 9,
+      "exclusive": true
+    },
+    {
+      "id": "rank-11",
+      "name": "Đại cao thủ · Độc quyền",
+      "url": "/ky-rank/avatars/rank-11.svg",
+      "required_tier": 10,
+      "exclusive": true
+    },
+    {
+      "id": "rank-12",
+      "name": "Kỳ sư · Độc quyền",
+      "url": "/ky-rank/avatars/rank-12.svg",
+      "required_tier": 11,
+      "exclusive": true
+    },
+    {
+      "id": "rank-13",
+      "name": "Đại kỳ sư · Độc quyền",
+      "url": "/ky-rank/avatars/rank-13.svg",
+      "required_tier": 12,
+      "exclusive": true
+    },
+    {
+      "id": "rank-14",
+      "name": "Tông sư · Độc quyền",
+      "url": "/ky-rank/avatars/rank-14.svg",
+      "required_tier": 13,
+      "exclusive": true
+    },
+    {
+      "id": "rank-15",
+      "name": "Đại tông sư · Độc quyền",
+      "url": "/ky-rank/avatars/rank-15.svg",
+      "required_tier": 14,
+      "exclusive": true
+    },
+    {
+      "id": "rank-16",
+      "name": "Kỳ vương · Độc quyền",
+      "url": "/ky-rank/avatars/rank-16.svg",
+      "required_tier": 15,
+      "exclusive": true
+    },
+    {
+      "id": "rank-17",
+      "name": "Kỳ hoàng · Độc quyền",
+      "url": "/ky-rank/avatars/rank-17.svg",
+      "required_tier": 16,
+      "exclusive": true
+    },
+    {
+      "id": "rank-18",
+      "name": "Kỳ thánh · Độc quyền",
+      "url": "/ky-rank/avatars/rank-18.svg",
+      "required_tier": 17,
+      "exclusive": true
+    },
+    {
+      "id": "rank-19",
+      "name": "Kỳ tiên · Độc quyền",
+      "url": "/ky-rank/avatars/rank-19.svg",
+      "required_tier": 18,
+      "exclusive": true
+    },
+    {
+      "id": "rank-20",
+      "name": "Kỳ thần · Độc quyền",
+      "url": "/ky-rank/avatars/rank-20.svg",
+      "required_tier": 19,
+      "exclusive": true
+    }
+  ],
+  "rules": {
+    "start": 1000,
+    "win": 40,
+    "draw": 10,
+    "loss": 0,
+    "min_moves_each": 3,
+    "elo_start": 1000,
+    "elo_k": 32
+  }
+}

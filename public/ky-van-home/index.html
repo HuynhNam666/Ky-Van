@@ -1,0 +1,1768 @@
+<!doctype html>
+
+<html class="dark" lang="vi" style="">
+  <head>
+    <base target="_top" />
+
+    <meta charset="utf-8" />
+
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+
+    <title>Kỳ Vân Các - Cờ Tướng Cổ Phong Đỉnh Cao</title>
+
+    <!-- Fonts -->
+
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;family=Cinzel:wght@600;800;900&amp;family=Ma+Shan+Zheng&amp;family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600&amp;family=Playfair+Display:ital,wght@0,700;1,700&amp;display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+
+        theme: {
+          extend: {
+            colors: {
+              "ancient-dark": "#0b1215",
+
+              "ink-black": "#070c0e",
+
+              "jade-dark": "#0a2622",
+
+              "jade-cyan": "#175249",
+
+              "gold-light": "#fae392",
+
+              "gold-main": "#d4af37",
+
+              "gold-dark": "#8b6508",
+
+              "crimson-dark": "#4a0e0e",
+
+              "crimson-glow": "#a82020",
+
+              "wood-rim": "#3e2716",
+            },
+
+            fontFamily: {
+              calligraphy: ["'Ma Shan Zheng'", "cursive"],
+
+              serif: ["'Noto Serif'", "serif"],
+
+              sans: ["'Be Vietnam Pro'", "sans-serif"],
+
+              classic: ["'Cinzel'", "serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <style>
+      /* Custom Shan-shui Ink Scroll & Atmosphere FX */
+
+      body {
+        background-color: #0b1215;
+
+        background-image:
+          radial-gradient(
+            circle at 50% 15%,
+
+            rgba(212, 175, 55, 0.12),
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 40%,
+
+            rgba(26, 77, 68, 0.2),
+            transparent 45%
+          ),
+          linear-gradient(
+            180deg,
+            #070d0f 0%,
+
+            #0d1a18 35%,
+
+            #152220 70%,
+
+            #080d0e 100%
+          );
+
+        color: #e5edea;
+
+        overflow-x: hidden;
+      }
+
+      /* Fog & Smoke floating animations */
+
+      @keyframes floatCloud {
+        0% {
+          transform: translateX(-4%) translateY(0px) scale(1);
+
+          opacity: 0.35;
+        }
+
+        50% {
+          transform: translateX(4%) translateY(-10px) scale(1.05);
+
+          opacity: 0.6;
+        }
+
+        100% {
+          transform: translateX(-4%) translateY(0px) scale(1);
+
+          opacity: 0.35;
+        }
+      }
+
+      .animate-fog-slow {
+        animation: floatCloud 22s ease-in-out infinite;
+      }
+
+      .animate-fog-reverse {
+        animation: floatCloud 28s ease-in-out infinite reverse;
+      }
+
+      /* Golden Dragon Qi Pulse & Glow */
+
+      @keyframes dragonGlow {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 15px rgba(234, 179, 8, 0.45))
+            drop-shadow(0 0 35px rgba(217, 119, 6, 0.25));
+        }
+
+        50% {
+          filter: drop-shadow(0 0 28px rgba(250, 204, 21, 0.75))
+            drop-shadow(0 0 60px rgba(245, 158, 11, 0.45));
+        }
+      }
+
+      .glow-dragon {
+        animation: dragonGlow 4s ease-in-out infinite;
+      }
+
+      /* Mystic levitation for chessboard & pieces */
+
+      @keyframes levitate {
+        0%,
+        100% {
+          transform: translateY(0px) rotateX(25deg);
+        }
+
+        50% {
+          transform: translateY(-8px) rotateX(23deg);
+        }
+      }
+
+      .perspective-board-wrap {
+        perspective: 1200px;
+      }
+
+      .board-3d-active {
+        transform: rotateX(28deg) rotateZ(0deg) scale(0.96);
+
+        transform-style: preserve-3d;
+
+        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+
+        box-shadow:
+          0 45px 65px -15px rgba(0, 0, 0, 0.9),
+          0 0 40px rgba(212, 175, 55, 0.2);
+      }
+
+      .board-3d-active:hover {
+        transform: rotateX(22deg) translateY(-8px) scale(1.01);
+
+        box-shadow:
+          0 55px 75px -12px rgba(0, 0, 0, 0.95),
+          0 0 55px rgba(212, 175, 55, 0.35);
+      }
+
+      /* Bronze and Gold Embossed Borders */
+
+      .golden-bronze-plate {
+        background: linear-gradient(
+          180deg,
+          #44321f 0%,
+
+          #291c10 50%,
+
+          #170f07 100%
+        );
+
+        border: 2px solid #a37f37;
+
+        box-shadow:
+          inset 0 1px 2px rgba(255, 235, 160, 0.4),
+          0 4px 10px rgba(0, 0, 0, 0.6);
+      }
+
+      .golden-stamp-text {
+        background: linear-gradient(
+          180deg,
+          #fff7cc 0%,
+
+          #ffd466 40%,
+
+          #c48b26 80%,
+
+          #7d520e 100%
+        );
+
+        -webkit-background-clip: text;
+
+        -webkit-text-fill-color: transparent;
+
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+      }
+
+      .crimson-stamp-text {
+        background: linear-gradient(
+          180deg,
+          #ffc7c7 0%,
+
+          #ff5252 50%,
+
+          #ab1111 100%
+        );
+
+        -webkit-background-clip: text;
+
+        -webkit-text-fill-color: transparent;
+
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.8));
+      }
+
+      /* Wood Piece Hover 3D Pop */
+
+      .chess-piece-3d {
+        box-shadow:
+          0 8px 12px rgba(0, 0, 0, 0.7),
+          inset 0 2px 4px rgba(255, 255, 255, 0.4),
+          inset 0 -4px 6px rgba(0, 0, 0, 0.6);
+
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .group:hover .chess-piece-lift-1 {
+        transform: translateY(-16px) rotate(-4deg) scale(1.08);
+
+        box-shadow:
+          0 22px 28px rgba(0, 0, 0, 0.8),
+          0 0 25px rgba(212, 175, 55, 0.5);
+      }
+
+      .group:hover .chess-piece-lift-2 {
+        transform: translateY(-22px) rotate(6deg) scale(1.12);
+
+        box-shadow:
+          0 24px 32px rgba(0, 0, 0, 0.85),
+          0 0 30px rgba(239, 68, 68, 0.55);
+      }
+
+      /* Subtle calligraphy cloud banner */
+
+      .cloud-btn {
+        background: radial-gradient(
+          circle,
+          rgba(14, 48, 42, 0.95) 0%,
+
+          rgba(7, 24, 21, 0.9) 70%,
+
+          rgba(2, 10, 9, 0.98) 100%
+        );
+
+        border: 1.5px solid #d4af37;
+
+        box-shadow:
+          0 0 20px rgba(212, 175, 55, 0.3),
+          inset 0 0 15px rgba(212, 175, 55, 0.2);
+      }
+
+      .cloud-btn:hover {
+        box-shadow:
+          0 0 35px rgba(250, 227, 146, 0.6),
+          inset 0 0 20px rgba(212, 175, 55, 0.4);
+
+        transform: scale(1.05);
+      }
+
+      /* Floating canvas particle overlay */
+
+      #particle-canvas {
+        position: absolute;
+
+        top: 0;
+
+        left: 0;
+
+        width: 100%;
+
+        height: 100%;
+
+        pointer-events: none;
+
+        z-index: 15;
+      }
+
+      /* Celestial Portal Animation Styles */
+
+      @keyframes spinSlowClockwise {
+        from {
+          transform: rotate(0deg);
+        }
+
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      @keyframes spinSlowCounter {
+        from {
+          transform: rotate(360deg);
+        }
+
+        to {
+          transform: rotate(0deg);
+        }
+      }
+
+      @keyframes pulseAura {
+        0%,
+        100% {
+          transform: scale(1);
+
+          opacity: 0.65;
+        }
+
+        50% {
+          transform: scale(1.06);
+
+          opacity: 0.95;
+        }
+      }
+
+      @keyframes gentleFloatPiece {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+
+      .animate-spin-slow {
+        animation: spinSlowClockwise 50s linear infinite;
+      }
+
+      .animate-spin-reverse-slow {
+        animation: spinSlowCounter 40s linear infinite;
+      }
+
+      .animate-pulse-aura {
+        animation: pulseAura 4s ease-in-out infinite;
+      }
+
+      .animate-float-gentle {
+        animation: gentleFloatPiece 4.5s ease-in-out infinite;
+      }
+
+      .portal-glass-jade {
+        background: radial-gradient(
+          circle at 50% 40%,
+
+          rgba(26, 92, 78, 0.42) 0%,
+
+          rgba(13, 50, 43, 0.65) 55%,
+
+          rgba(6, 24, 21, 0.88) 100%
+        );
+
+        box-shadow:
+          inset 0 0 30px rgba(78, 222, 185, 0.25),
+          inset 0 1px 2px rgba(254, 240, 138, 0.4);
+      }
+
+      .portal-glass-ruby {
+        background: radial-gradient(
+          circle at 50% 40%,
+
+          rgba(136, 19, 36, 0.42) 0%,
+
+          rgba(74, 11, 20, 0.65) 55%,
+
+          rgba(26, 5, 8, 0.88) 100%
+        );
+
+        box-shadow:
+          inset 0 0 30px rgba(244, 63, 94, 0.25),
+          inset 0 1px 2px rgba(254, 240, 138, 0.4);
+      }
+    </style>
+
+    <style id="integration-styles">
+      /* Missing sizes in the source's Tailwind CDN version. */
+
+      .w-22 {
+        width: 5.5rem;
+      }
+
+      .h-22 {
+        height: 5.5rem;
+      }
+
+      .w-26 {
+        width: 6.5rem;
+      }
+
+      .h-26 {
+        height: 6.5rem;
+      }
+
+      @media (min-width: 640px) {
+        .sm\:w-26 {
+          width: 6.5rem;
+        }
+
+        .sm\:h-26 {
+          height: 6.5rem;
+        }
+
+        .sm\:w-30 {
+          width: 7.5rem;
+        }
+
+        .sm\:h-30 {
+          height: 7.5rem;
+        }
+      }
+
+      .golden-stamp-text,
+      .crimson-stamp-text {
+        background-clip: text;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      [role="link"]:focus-visible,
+      [role="button"]:focus-visible {
+        outline: 2px solid #fae392;
+
+        outline-offset: 6px;
+      }
+
+      #home-info {
+        width: min(440px, 90vw);
+
+        padding: 25px;
+
+        border: 1px solid #b99944;
+
+        border-radius: 18px;
+
+        background: #0d211c;
+
+        color: #f2e6bd;
+
+        box-shadow: 0 25px 80px #0009;
+
+        font-family: "Be Vietnam Pro", sans-serif;
+      }
+
+      #home-info::backdrop {
+        background: #020807bf;
+
+        backdrop-filter: blur(5px);
+      }
+
+      #home-info h2 {
+        font-size: 20px;
+
+        margin-bottom: 12px;
+
+        color: #fae392;
+      }
+
+      #home-info p {
+        font-size: 14px;
+
+        line-height: 1.75;
+
+        margin-bottom: 20px;
+      }
+
+      #home-info button {
+        padding: 8px 22px;
+
+        border: 1px solid #d4af37;
+
+        border-radius: 8px;
+
+        background: #453817;
+
+        color: #fff0b5;
+
+        cursor: pointer;
+      }
+
+      .home-demo-note {
+        position: relative;
+
+        z-index: 20;
+
+        text-align: center;
+
+        color: #c5b780;
+
+        font-size: 11px;
+
+        padding: 5px 12px 12px;
+      }
+
+      @media (max-width: 480px) {
+        footer > div:first-child {
+          flex-wrap: wrap;
+
+          justify-content: center;
+        }
+
+        .font-calligraphy {
+          overflow-wrap: anywhere;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation: none !important;
+
+          transition: none !important;
+        }
+
+        #particle-canvas {
+          display: none;
+        }
+      }
+    </style>
+
+    <!-- BỔ SUNG DUY NHẤT: Ảnh nền sơn thủy lấy từ file mẫu số 2. -->
+
+    <!-- Giữ nguyên mọi thẻ HTML, CSS, JavaScript và hiệu ứng cũ. -->
+
+    <style id="kv-reference-scenery-additive">
+      /* Đổi ảnh HIỂN THỊ của lớp nền đã có; không chỉnh sửa code cũ. */
+
+      body
+        > .fixed.inset-0.pointer-events-none.z-0.overflow-hidden
+        > .absolute.inset-0.bg-cover.bg-center {
+        background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB71yQu6BqVIIl82xTuotJ3Z8KXiyEbJ4CntcvriBMJrjPgreTvR2KqfTmzrqzANacPcmHdIL6XNZAM5CMbX4188etA0SXBiCThtQ-DAt5dN1IF2W3OcLf1QtUHX53ifxwwbbPRSt50U3aTcNbG7KVlj904CTblxiUjaT2NR3QQRS3EhX_jHzLOES7qG_wYPLpueDHcvTkvW-4jYvGuwZUOvKZZJOAwSp0MejTOvS6Yu9qLUgXmgRa8") !important;
+      }
+    </style>
+  </head>
+
+  <body
+    class="min-h-screen relative font-sans antialiased selection:bg-amber-600/30 selection:text-amber-200"
+  >
+    <!-- Interactive Cherry Blossom & Golden Sparkle Particle Canvas -->
+
+    <canvas height="1194" id="particle-canvas" width="1280"></canvas>
+
+    <!-- BACKGROUND: Sơn Hà Thủy Mặc & Sương Khói Trừu Tượng -->
+
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <!-- Nền mây núi thủy mặc sâu thẳm -->
+
+      <div
+        class="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-luminosity filter blur-[0.5px] scale-105 transition-all duration-700"
+        style="
+          background-image: url(&quot;https://lh3.googleusercontent.com/aida/AEtjO1WZtsZJGHkKl7ABBWukxm-p5qQlj_XkqFL09IIGYHfUtaTDpR0EBwMuEpUwF5u9xJZbmGFA5ii2dU7J1PFdY60hRTNXIvfIvnJAhK5o9FisoA2wzyEjynQjYfRNddtDF9eDg1NUwiAOLqXCEQJcxPZB5K_WoG0_nGl7gFnzm45gUNPYUGck_FaFJPK3-DnU2Hla9lWyl7p_3AzA_HrymsdjAv42POrL-On26OJWQQAygPKP15F00yDvCF0&quot;);
+
+          mask-image: radial-gradient(
+            rgba(0, 0, 0, 0.85) 40%,
+
+            rgba(0, 0, 0, 0.2) 80%,
+
+            transparent 100%
+          );
+        "
+      ></div>
+
+      <!-- Lớp sương mù lững lờ trôi trên đỉnh núi -->
+
+      <div
+        class="absolute -top-24 left-0 w-[200%] h-96 bg-gradient-to-b from-transparent via-emerald-950/20 to-transparent animate-fog-slow opacity-60"
+      ></div>
+
+      <div
+        class="absolute top-1/3 -left-40 w-[220%] h-96 bg-gradient-to-r from-transparent via-cyan-900/15 to-transparent animate-fog-reverse opacity-50"
+      ></div>
+
+      <div
+        class="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-[#060b0d] via-[#091315]/80 to-transparent"
+      ></div>
+    </div>
+
+    <!-- CONTAINER CHÍNH CHUẨN DESKTOP 1440PX -->
+
+    <div
+      class="relative z-10 max-w-[1440px] mx-auto min-h-screen flex flex-col justify-between px-6 xl:px-12 py-5"
+    >
+      <!-- 1. HEADER CỔ PHONG HUYỀN THOẠI (Bám sát layout & chi tiết đỉnh cao ảnh mẫu) -->
+
+      <header
+        class="w-full flex flex-col md:flex-row items-center justify-between gap-4 py-2 border-b border-amber-900/30 pb-4"
+      >
+        <!-- CỤM TRÁI: AVATAR KỲ THỦ VÀNG KIM, TÊN & CẤP BẬC TẬP SỰ -->
+
+        <div class="flex items-center gap-4">
+          <!-- Avatar Đúc Vòng Kim Hoàng + Cấp 'Tập Sự' Sao Hoàng Kim -->
+
+          <div class="relative group cursor-pointer flex-shrink-0">
+            <!-- Vòng hào quang kim loại chạm nổi -->
+
+            <div
+              class="w-20 h-20 rounded-full p-[3px] bg-gradient-to-br from-amber-200 via-amber-500 to-amber-900 shadow-[0_0_15px_rgba(217,119,6,0.6)] flex items-center justify-center"
+            >
+              <div
+                class="w-full h-full rounded-full overflow-hidden border-2 border-amber-950 bg-stone-900"
+              >
+                <img
+                  alt="Avatar Kỳ Thủ"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW_ZDlb5_-pW3l5OZ_8Ij0-of8F7tlqQH9PlnJnY3avEuanI_3QTMi-q9JA-Twh_3sYCHE6ZrrlZBOm1Ai3RN9-G53W1ERTBZGz0TdYjxMTywlMxBkKsmXF8iej05w9EZkOLVT7vY4Ur8GyIi97_eWYREwuIQ31VMGAB6PHmgtBYCA0VK7GMQm8rJBoyWo6ee4KFaxIxFRZOjjdlnoFw4zk5_9uV2MBJlFUyQzk5GMUWlPdeF9WOJn"
+                />
+              </div>
+            </div>
+
+            <!-- Phù hiệu 'Tập Sự' đính 3 sao vàng đúc nổi cong theo đáy avatar -->
+
+            <div
+              class="absolute -bottom-2.5 inset-x-0 flex flex-col items-center"
+            >
+              <div
+                class="px-2.5 py-0.5 rounded-full bg-gradient-to-r from-stone-900 via-amber-950 to-stone-900 border border-amber-500/80 shadow-md flex items-center gap-1"
+              >
+                <span
+                  class="font-serif text-[11px] font-bold text-amber-200 tracking-wider"
+                  id="kv-account-rank"
+                  >Khách</span
+                >
+              </div>
+
+              <div
+                class="flex items-center -space-x-0.5 mt-0.5 text-amber-400 text-[10px] drop-shadow-[0_1px_2px_rgba(0,0,0,0.9)]"
+              >
+                <span
+                  class="material-symbols-outlined text-[12px] fill-1 text-amber-400"
+                  >star</span
+                >
+
+                <span
+                  class="material-symbols-outlined text-[13px] fill-1 text-amber-300"
+                  >star</span
+                >
+
+                <span
+                  class="material-symbols-outlined text-[12px] fill-1 text-amber-400"
+                  >star</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- Bảng Tên Kỳ Thủ Bút Lông & Túi Tiền Cổ Phong 2 Loại -->
+
+          <div class="flex flex-col gap-1.5 ml-1">
+            <!-- Tên người chơi & Bút chỉnh sửa -->
+
+            <div
+              class="golden-bronze-plate px-3.5 py-1 rounded-md flex items-center justify-between gap-3 min-w-[170px]"
+            >
+              <span
+                class="font-serif font-bold text-sm tracking-wider text-amber-100/90"
+                id="kv-account-name"
+                >Khách chưa đăng nhập</span
+              >
+
+              <button
+                class="text-amber-400/90 hover:text-amber-200 transition-colors"
+                title="Chỉnh sửa ngoại hiệu"
+              >
+                <span class="material-symbols-outlined text-[15px]">edit</span>
+              </button>
+            </div>
+
+            <!-- 2 Hộc Tiền Cổ: Tiền Đồng (1000) & Ngân Phiếu/Ngọc Bảo (1000) -->
+
+            <div class="flex items-center gap-2">
+              <!-- Tiền Đồng -->
+
+              <div
+                class="golden-bronze-plate px-2.5 py-0.5 rounded flex items-center gap-1.5 shadow-inner"
+              >
+                <span
+                  class="w-4 h-4 rounded-full bg-gradient-to-tr from-amber-700 via-amber-500 to-amber-300 text-[10px] font-serif font-black text-amber-950 flex items-center justify-center border border-amber-900"
+                  >將</span
+                >
+
+                <span
+                  class="font-serif text-xs font-bold text-amber-200 tracking-wide"
+                  >—</span
+                >
+              </div>
+
+              <!-- Ngân Phiếu/Ngọc Bảo -->
+
+              <div
+                class="golden-bronze-plate px-2.5 py-0.5 rounded flex items-center gap-1.5 shadow-inner"
+              >
+                <span
+                  class="w-4 h-4 rounded-full bg-gradient-to-tr from-yellow-600 via-amber-300 to-yellow-100 text-[10px] font-serif font-black text-amber-950 flex items-center justify-center border border-yellow-800"
+                  >寶</span
+                >
+
+                <span
+                  class="font-serif text-xs font-bold text-amber-200 tracking-wide"
+                  >—</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CỤM GIỮA: THỂ LỰC (10+) & THẺ NHIỆM VỤ GẤM HOÀNG KIM (0/5) -->
+
+        <div class="flex items-center gap-4 lg:gap-6">
+          <!-- Sinh Lực / Thể Lực Trái Tim Đúc Kim Cương Ngọc -->
+
+          <!-- Biển Thẻ Bài Nhiệm Vụ 0/5 Cổ Phong Cực Đẹp -->
+
+          <div
+            class="golden-bronze-plate px-4 py-1.5 rounded-lg flex flex-col items-center min-w-[140px] border border-amber-700/60 shadow-lg relative overflow-hidden group cursor-pointer hover:border-amber-400 transition-all"
+          >
+            <div
+              class="flex items-center justify-between w-full text-[11px] font-serif font-semibold text-amber-200 tracking-wide pb-1"
+            >
+              <span class="italic">Nhiệm vụ kỳ các</span>
+
+              <span class="text-amber-400 font-bold">0/5</span>
+            </div>
+
+            <!-- Thanh tiến độ hoàng kim -->
+
+            <div
+              class="w-full h-2 rounded-full bg-stone-950/80 p-[1px] border border-amber-900/60 overflow-hidden"
+            >
+              <div
+                class="h-full rounded-full bg-gradient-to-r from-amber-700 via-amber-400 to-yellow-200 transition-all duration-500 shadow-[0_0_6px_rgba(251,191,36,0.6)]"
+                style="width: 15%"
+              ></div>
+            </div>
+          </div>
+
+          <!-- Biển hiệu Kỳ Vân Các chính tâm thư pháp -->
+
+          <div
+            class="hidden xl:flex flex-col items-center pl-2 border-l border-amber-900/40"
+          >
+            <span
+              class="font-calligraphy text-2xl text-amber-300 tracking-widest drop-shadow-[0_0_12px_rgba(217,119,6,0.5)]"
+              >Kỳ Vân Các</span
+            >
+
+            <span
+              class="font-serif text-[10px] tracking-[0.25em] text-amber-500/80 uppercase"
+              >Tuyệt Thế Kỳ Môn</span
+            >
+          </div>
+        </div>
+
+        <!-- CỤM PHẢI: HỆ THỐNG TIỆN ÍCH & NÚT ĐỒNG ĐÚC NỔI CỔ TRANG (KHÔNG CÓ QUẢNG CÁO) -->
+
+        <div class="flex items-center gap-2.5">
+          <!-- Nút Kỳ Hữu / Kết Giao -->
+
+          <button
+            class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
+            title="Tạo phòng"
+          >
+            <span
+              class="material-symbols-outlined text-[20px] group-hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
+              >meeting_room</span
+            ></button
+          ><button
+            class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
+            title="Bằng Hữu / Kết Giao"
+          >
+            <span
+              class="material-symbols-outlined text-[20px] group-hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
+              >groups</span
+            >
+          </button>
+
+          <!-- Nút Âm Luật / Chuông Nhạc Cổ -->
+
+          <button
+            class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
+            title="Âm Luật Kỳ Các"
+          >
+            <span
+              class="material-symbols-outlined text-[20px] group-hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
+              >music_note</span
+            >
+          </button>
+
+          <!-- Nút Chia Sẻ / Lan Tỏa Kì Đạo -->
+
+          <button
+            class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
+            title="Chia sẻ phong vân"
+          >
+            <span
+              class="material-symbols-outlined text-[20px] group-hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
+              >share</span
+            >
+          </button>
+
+          <!-- Nút Bánh Răng Cài Đặt Kim Khí -->
+
+          <button
+            class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
+            title="Thiết Lập"
+          >
+            <span
+              class="material-symbols-outlined text-[20px] group-hover:rotate-45 transition-transform duration-300"
+              >settings</span
+            >
+          </button>
+        </div>
+      </header>
+
+      <!-- 2. KHU VỰC HERO LIVE SHOWCASE BATTLE: "TRẬN HAY ĐANG ĐẤU" (Tái hiện trực tiếp trung tâm ảnh 4) -->
+
+      <main
+        class="w-full my-auto py-4 flex flex-col items-center justify-center relative"
+      >
+        <!-- HÀO QUANG ĐẠI CHIẾN: RỒNG VÀNG THẦN THOẠI & LONG KHÍ CUỒN CUỘN -->
+
+        <div class="w-full max-w-5xl relative flex flex-col items-center">
+          <!-- BIỂN HIỆU THƯ PHÁP TRỰC DIỆN: "TRẬN HAY ĐANG ĐẤU" -->
+
+          <div class="relative z-20 flex flex-col items-center mb-1">
+            <!-- Phiến mực thư pháp ngưng tụ -->
+
+            <div class="relative px-8 py-2 flex flex-col items-center">
+              <!-- Vệt mực thủy mặc mờ ảo đằng sau -->
+
+              <div
+                class="absolute inset-0 bg-stone-950/80 rounded-full blur-md -z-10 scale-125 border border-amber-600/30"
+              ></div>
+
+              <h2
+                class="font-calligraphy text-3xl md:text-5xl lg:text-5xl text-amber-200 tracking-wider drop-shadow-[0_0_15px_rgba(234,179,8,0.7)] text-center leading-tight"
+              >
+                Trận hay đang đấu
+              </h2>
+
+              <div class="flex items-center gap-2 mt-0.5">
+                <span
+                  class="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"
+                ></span>
+
+                <span
+                  class="font-serif text-xs md:text-sm text-amber-300/80 tracking-widest uppercase"
+                  >Trực Tiếp Kỳ Đài • Vạn Tiên Phong Vân</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <!-- KHUNG CẢNH 2 ĐẠI KỲ THỦ TRANH ĐẤU TRONG KHÍ THẾ RỒNG VÀNG VÀ BÀN CỜ 3D -->
+
+          <div
+            class="w-full relative flex items-center justify-center min-h-[300px] lg:min-h-[360px]"
+          >
+            <!-- BÊN TRÁI: ĐẠI KỲ THỦ THÁI THƯỢNG LÃO QUÂN -->
+
+            <!-- TRUNG TÂM: BÀN CỜ TƯỚNG GỖ 3D GÓC NGHIÊNG CHIẾU TƯỞNG NHƯ TRONG ẢNH MẪU -->
+
+            <div class="perspective-board-wrap z-10 flex flex-col items-center">
+              <!-- BÀN CỜ GỖ TƯỚNG KHẮC HOA VĂN THỰC THẾ -->
+
+              <div
+                class="relative w-[360px] sm:w-[540px] md:w-[680px] lg:w-[780px] aspect-[16/9] flex items-center justify-center cursor-pointer group transition-all duration-700 hover:scale-[1.02]"
+              >
+                <div
+                  class="absolute -inset-4 bg-gradient-to-r from-amber-500/10 via-yellow-400/20 to-amber-500/10 blur-3xl pointer-events-none opacity-50 group-hover:opacity-80 transition-opacity"
+                ></div>
+
+                <img
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCipqn980piqzsNdpwBrbL6WsOHCK3mDMTtKFa2u8UX40i2MiB_RB0E2VwC6CAYsseEbOJ-e3UXMIfkX4rIWgGCZCkV3tWy0Bv9lnbyr8QxPHr4e473ncR2hCKzd-x6Z_cPwkARTi5aaiEp9Yjrvuq12V95RKNCuDNlfNvwrsxYBsuDpVIW9FNkfVgOGftQsdUjZcB14diQtTferjRqwqvj6B95oDSJat1_uRezkpqQWdEKFz_jQ1B9uSlmJiCzFDxBDA"
+                  alt="Đại Chiến Kỳ Đài Phong Vân"
+                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none"
+                  style="
+                    mask-image: radial-gradient(
+                      ellipse 85% 75% at 50% 50%,
+
+                      black 45%,
+
+                      rgba(0, 0, 0, 0.85) 60%,
+
+                      transparent 92%
+                    );
+
+                    -webkit-mask-image: radial-gradient(
+                      ellipse 85% 75% at 50% 50%,
+
+                      black 45%,
+
+                      rgba(0, 0, 0, 0.85) 60%,
+
+                      transparent 92%
+                    );
+
+                    filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.25));
+                  "
+                />
+              </div>
+
+              <!-- NÚT THƯ PHÁP "XEM CỜ" BỒNG BỀNH TRÊN DẢI MÂY (Chuẩn 100% linh hồn ảnh gốc) -->
+
+              <div
+                class="relative -mt-6 sm:-mt-8 z-30 flex items-center justify-center"
+              >
+                <a
+                  class="cloud-btn px-8 sm:px-12 py-2.5 sm:py-3.5 rounded-full flex items-center gap-3 transition-all duration-300 group cursor-pointer"
+                  href="#"
+                >
+                  <!-- Cánh mây trang trí bên trái -->
+
+                  <span
+                    class="material-symbols-outlined text-amber-300 text-[18px] group-hover:-translate-x-1 transition-transform"
+                    >cloud</span
+                  >
+
+                  <span
+                    class="font-calligraphy text-2xl sm:text-3xl text-amber-200 tracking-wider font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] group-hover:text-yellow-100"
+                  >
+                    Xem cờ
+                  </span>
+
+                  <!-- Cánh mây trang trí bên phải -->
+
+                  <span
+                    class="material-symbols-outlined text-amber-300 text-[18px] group-hover:translate-x-1 transition-transform"
+                    >cloud</span
+                  >
+                </a>
+              </div>
+            </div>
+
+            <!-- BÊN PHẢI: ĐẠI KỲ VƯƠNG LONG KHÍ HOÀNG KIM (Rồng vàng uốn lượn hào quang) -->
+          </div>
+        </div>
+
+        <!-- 3. KHU VỰC CHỌN CHẾ ĐỘ TRỌNG TÂM: 'CỜ TƯỚNG' & 'CỜ ÚP' (Nâng cấp Tiên Đài Huyền Thoại - Bán trong suốt, Đa tầng xoay, Hào quang Ngọc Bích & Chu Sa) -->
+
+        <section
+          class="w-full max-w-5xl mt-6 lg:mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 z-20"
+        >
+          <!-- CỔNG TRÁI: "CỜ TƯỚNG" (Ngọc đài xanh lục bích & Hai quân Tướng gỗ chạm trổ) -->
+
+          <div class="group relative flex flex-col items-center cursor-pointer">
+            <!-- Hiệu ứng vầng hào quang bích ngọc tỏa sáng đa tầng phía sau -->
+
+            <div
+              class="absolute -inset-6 bg-gradient-to-b from-emerald-500/30 via-teal-500/20 to-transparent blur-3xl rounded-full opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 animate-pulse-aura"
+            ></div>
+
+            <div
+              class="absolute -inset-2 bg-gradient-to-tr from-amber-500/15 via-emerald-400/20 to-teal-300/10 blur-xl rounded-full opacity-40 group-hover:opacity-90 transition-all duration-500"
+            ></div>
+
+            <!-- VÒNG KHUNG CHÍNH: KHUNG NGỌC BÍCH CỔ PHONG & VIỀN KIM HOÀNG CHẠM PHÙ ĐIÊU -->
+
+            <div
+              class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full p-2.5 bg-gradient-to-b from-[#d4af37] via-[#3a2712] to-[#0f342d] shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(20,184,166,0.35)] border-2 border-amber-400/80 group-hover:border-amber-300 group-hover:shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_55px_rgba(45,212,191,0.6)] group-hover:scale-[1.03] transition-all duration-500"
+            >
+              <!-- Lớp 1: Vòng hoa văn Bát Quái / Mây Thần Kim Hoàng xoay chầm chậm -->
+
+              <div
+                class="absolute inset-1 rounded-full border border-amber-300/40 pointer-events-none animate-spin-slow"
+              >
+                <div
+                  class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-amber-300 shadow-[0_0_8px_#fde047]"
+                ></div>
+
+                <div
+                  class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"
+                ></div>
+
+                <div
+                  class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-amber-400/80"
+                ></div>
+
+                <div
+                  class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-2.5 h-2.5 rounded-full bg-teal-400/80"
+                ></div>
+
+                <div
+                  class="absolute inset-2 rounded-full border border-dashed border-amber-400/25"
+                ></div>
+              </div>
+
+              <!-- Lớp 2: Vòng rãnh viền ngọc chạm hoa văn đối ứng ngược chiều -->
+
+              <div
+                class="absolute inset-2.5 rounded-full border border-teal-500/30 pointer-events-none animate-spin-reverse-slow"
+              >
+                <div
+                  class="w-full h-full rounded-full border-t-2 border-b-2 border-amber-400/40 opacity-70"
+                ></div>
+              </div>
+
+              <!-- LỚP NỀN TIÊN CẢNH BÁN TRONG SUỐT VỚI BACKDROP BLUR & HIỆU ỨNG SƯƠNG KHÓI NGỌC BÍCH -->
+
+              <div
+                class="w-full h-full rounded-full overflow-hidden relative border-2 border-emerald-500/50 portal-glass-jade backdrop-blur-md flex items-center justify-center"
+              >
+                <!-- Họa tiết mây bay âm dương xoáy tròn mờ ảo -->
+
+                <div
+                  class="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-screen scale-110 group-hover:scale-125 transition-transform duration-1000"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida/AEtjO1WZtsZJGHkKl7ABBWukxm-p5qQlj_XkqFL09IIGYHfUtaTDpR0EBwMuEpUwF5u9xJZbmGFA5ii2dU7J1PFdY60hRTNXIvfIvnJAhK5o9FisoA2wzyEjynQjYfRNddtDF9eDg1NUwiAOLqXCEQJcxPZB5K_WoG0_nGl7gFnzm45gUNPYUGck_FaFJPK3-DnU2Hla9lWyl7p_3AzA_HrymsdjAv42POrL-On26OJWQQAygPKP15F00yDvCF0&quot;);
+
+                    filter: hue-rotate(25deg) contrast(1.1);
+                  "
+                ></div>
+
+                <!-- Xoáy khí tức Bích Ngọc (Jade Qi Spiral) -->
+
+                <div
+                  class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(52,211,153,0.25)_0%,rgba(16,185,129,0.12)_45%,transparent_75%)] pointer-events-none animate-pulse"
+                ></div>
+
+                <!-- Tia sáng ngọc chiếu lung linh -->
+
+                <div
+                  class="absolute -top-10 left-1/4 w-32 h-44 bg-gradient-to-b from-teal-200/20 via-emerald-400/10 to-transparent rotate-45 blur-lg pointer-events-none group-hover:opacity-100 transition-opacity"
+                ></div>
+
+                <!-- Dải sương ngọc cuộn sóng ở đáy đài -->
+
+                <div
+                  class="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-[#051c17]/95 via-[#082e25]/60 to-transparent pointer-events-none"
+                ></div>
+
+                <!-- Cụm phiến mây tiên nâng đỡ quân cờ -->
+
+                <div
+                  class="absolute bottom-5 inset-x-4 h-9 bg-emerald-300/10 rounded-full blur-sm border-t border-emerald-400/30 pointer-events-none"
+                ></div>
+
+                <!-- HAI QUÂN CỜ TƯỚNG GỖ NỔI 3D TRỰC DIỆN (Quân Đen 將 và Quân Đỏ 將) -->
+
+                <div
+                  class="relative z-10 flex items-center justify-center -space-x-4 animate-float-gentle"
+                >
+                  <!-- Quân Tướng Đen (將 gỗ mun chạm khắc) -->
+
+                  <div
+                    class="chess-piece-lift-1 w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-b from-[#dfbe8e] via-[#c69a5e] to-[#8d622a] border-[3px] border-[#422509] shadow-[0_15px_25px_rgba(0,0,0,0.85),0_0_15px_rgba(217,119,6,0.3)] flex items-center justify-center chess-piece-3d transform -rotate-6 group-hover:-translate-y-2 group-hover:rotate-[-8deg] transition-all duration-300"
+                  >
+                    <div
+                      class="w-[84%] h-[84%] rounded-full border border-amber-900/60 flex items-center justify-center bg-gradient-to-b from-amber-100/15 to-transparent shadow-inner"
+                    >
+                      <span
+                        class="font-calligraphy text-4xl sm:text-5xl font-black text-stone-900 select-none drop-shadow-[0_2px_3px_rgba(255,255,255,0.4)]"
+                        >將</span
+                      >
+                    </div>
+                  </div>
+
+                  <!-- Quân Tướng Đỏ (將 hồng mộc chu sa rực rỡ chèn lên) -->
+
+                  <div
+                    class="chess-piece-lift-2 w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-gradient-to-b from-[#fed89e] via-[#deb071] to-[#a27435] border-[3px] border-amber-950 shadow-[0_18px_30px_rgba(0,0,0,0.9),0_0_20px_rgba(220,38,38,0.4)] flex items-center justify-center chess-piece-3d transform rotate-6 z-10 group-hover:-translate-y-3 group-hover:rotate-[8deg] transition-all duration-300"
+                  >
+                    <div
+                      class="w-[84%] h-[84%] rounded-full border border-amber-900/60 flex items-center justify-center bg-gradient-to-b from-amber-100/25 to-transparent shadow-inner"
+                    >
+                      <span
+                        class="font-calligraphy text-5xl sm:text-6xl font-black text-red-700 select-none drop-shadow-[0_2px_4px_rgba(255,255,255,0.45)]"
+                        >將</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CHỮ THƯ PHÁP VÀNG HOÀNG KIM: "CỜ TƯỚNG" -->
+
+            <div class="mt-3 flex flex-col items-center">
+              <h3
+                class="font-calligraphy text-4xl sm:text-5xl golden-stamp-text tracking-wide group-hover:scale-105 transition-transform drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]"
+              >
+                Cờ Tướng
+              </h3>
+
+              <span
+                class="font-serif text-xs text-amber-400/70 tracking-widest uppercase mt-0.5 group-hover:text-amber-300"
+              >
+                Chính Đạo Tranh Hùng • Minh Bàn Đối Trí
+              </span>
+            </div>
+          </div>
+
+          <!-- CỔNG PHẢI: "CỜ ÚP" (Ngọc đài huyết ngọc & Quân cờ úp lưng hoa văn + Quân lật bí ẩn) -->
+
+          <div class="group relative flex flex-col items-center cursor-pointer">
+            <!-- Hiệu ứng hào quang huyết ngọc / đào hoa ma mị tỏa rộng -->
+
+            <div
+              class="absolute -inset-6 bg-gradient-to-b from-rose-600/30 via-red-600/20 to-transparent blur-3xl rounded-full opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700 animate-pulse-aura"
+            ></div>
+
+            <div
+              class="absolute -inset-2 bg-gradient-to-tr from-amber-500/15 via-rose-500/25 to-red-400/10 blur-xl rounded-full opacity-40 group-hover:opacity-90 transition-all duration-500"
+            ></div>
+
+            <!-- VÒNG KHUNG CHÍNH: KHUNG HUYẾT NGỌC CỔ ĐẠI VIỀN CHU SA DÁT VÀNG HOÀNG KIM -->
+
+            <div
+              class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full p-2.5 bg-gradient-to-b from-[#e11d48] via-[#450a0a] to-[#26050a] shadow-[0_20px_50px_rgba(0,0,0,0.9),0_0_35px_rgba(244,63,94,0.35)] border-2 border-red-500/80 group-hover:border-amber-300 group-hover:shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_55px_rgba(244,63,94,0.65)] group-hover:scale-[1.03] transition-all duration-500"
+            >
+              <!-- Lớp 1: Vòng hoa văn Tinh Tú / Chu Sa dát vàng xoay chầm chậm -->
+
+              <div
+                class="absolute inset-1 rounded-full border border-rose-300/40 pointer-events-none animate-spin-slow"
+              >
+                <div
+                  class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-amber-300 shadow-[0_0_8px_#fde047]"
+                ></div>
+
+                <div
+                  class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]"
+                ></div>
+
+                <div
+                  class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-amber-400/80"
+                ></div>
+
+                <div
+                  class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-2.5 h-2.5 rounded-full bg-rose-400/80"
+                ></div>
+
+                <div
+                  class="absolute inset-2 rounded-full border border-dashed border-rose-400/25"
+                ></div>
+              </div>
+
+              <!-- Lớp 2: Vòng hoa văn Long Phụng mờ ảo xoay ngược chiều -->
+
+              <div
+                class="absolute inset-2.5 rounded-full border border-red-500/30 pointer-events-none animate-spin-reverse-slow"
+              >
+                <div
+                  class="w-full h-full rounded-full border-t-2 border-b-2 border-amber-400/40 opacity-70"
+                ></div>
+              </div>
+
+              <!-- LỚP NỀN TIÊN CẢNH BÁN TRONG SUỐT VỚI BACKDROP BLUR & HIỆU ỨNG SƯƠNG KHÓI HUYẾT ĐÀO -->
+
+              <div
+                class="w-full h-full rounded-full overflow-hidden relative border-2 border-rose-500/50 portal-glass-ruby backdrop-blur-md flex items-center justify-center"
+              >
+                <!-- Cảnh hoa đào vương rải trong sương gió bán trong suốt -->
+
+                <div
+                  class="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-screen scale-110 group-hover:scale-125 transition-transform duration-1000"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida/AEtjO1WZtsZJGHkKl7ABBWukxm-p5qQlj_XkqFL09IIGYHfUtaTDpR0EBwMuEpUwF5u9xJZbmGFA5ii2dU7J1PFdY60hRTNXIvfIvnJAhK5o9FisoA2wzyEjynQjYfRNddtDF9eDg1NUwiAOLqXCEQJcxPZB5K_WoG0_nGl7gFnzm45gUNPYUGck_FaFJPK3-DnU2Hla9lWyl7p_3AzA_HrymsdjAv42POrL-On26OJWQQAygPKP15F00yDvCF0&quot;);
+
+                    filter: hue-rotate(310deg) saturate(1.4);
+                  "
+                ></div>
+
+                <!-- Xoáy khí tức Huyết Nguyệt Đào Hoa (Mystic Crimson Aura) -->
+
+                <div
+                  class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(244,63,94,0.25)_0%,rgba(190,18,60,0.14)_45%,transparent_75%)] pointer-events-none animate-pulse"
+                ></div>
+
+                <!-- Tia sáng chu sa chiếu rọi huyền bí -->
+
+                <div
+                  class="absolute -top-10 right-1/4 w-32 h-44 bg-gradient-to-b from-rose-200/20 via-pink-500/10 to-transparent -rotate-45 blur-lg pointer-events-none group-hover:opacity-100 transition-opacity"
+                ></div>
+
+                <!-- Dải sương đỏ thẫm quấn quanh đáy đài -->
+
+                <div
+                  class="absolute bottom-0 inset-x-0 h-20 bg-gradient-to-t from-[#200407]/95 via-[#36080e]/60 to-transparent pointer-events-none"
+                ></div>
+
+                <!-- Cụm phiến mây tiên nâng đỡ quân cờ úp -->
+
+                <div
+                  class="absolute bottom-5 inset-x-4 h-9 bg-rose-400/10 rounded-full blur-sm border-t border-rose-400/30 pointer-events-none"
+                ></div>
+
+                <!-- HAI QUÂN CỜ ÚP: QUÂN ÚP HOA VĂN LONG PHỤNG & QUÂN LẬT BÍ ẨN -->
+
+                <div
+                  class="relative z-10 flex items-center justify-center -space-x-3 animate-float-gentle"
+                  style="animation-delay: -2s"
+                >
+                  <!-- Quân Úp Tròn Mặt Mộc Vân Long chạm rỗng tinh xảo -->
+
+                  <div
+                    class="chess-piece-lift-1 w-26 h-26 sm:w-30 sm:h-30 rounded-full bg-gradient-to-b from-[#e7be87] via-[#ca9755] to-[#8d5f24] border-[3px] border-[#4d2806] shadow-[0_15px_25px_rgba(0,0,0,0.85),0_0_15px_rgba(217,119,6,0.3)] flex items-center justify-center chess-piece-3d transform -rotate-3 p-1 group-hover:-translate-y-2 group-hover:rotate-[-6deg] transition-all duration-300"
+                  >
+                    <!-- Mặt sau vân gỗ đồng tâm chạm gấm cổ tích -->
+
+                    <div
+                      class="w-full h-full rounded-full border-2 border-amber-900/60 flex items-center justify-center bg-gradient-to-tr from-amber-900/20 via-transparent to-amber-100/30"
+                    >
+                      <div
+                        class="w-16 h-16 rounded-full border border-dashed border-amber-900/50 flex items-center justify-center shadow-inner"
+                      >
+                        <span
+                          class="material-symbols-outlined text-amber-950/70 text-2xl drop-shadow-[0_1px_1px_rgba(255,255,255,0.4)]"
+                          >auto_awesome</span
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Quân Cờ Đỏ Son hé lộ sau cánh úp -->
+
+                  <div
+                    class="chess-piece-lift-2 w-22 h-22 sm:w-26 sm:h-26 rounded-full bg-gradient-to-b from-[#ffd696] via-[#dfad68] to-[#9c6c29] border-[3px] border-red-950 shadow-[0_18px_30px_rgba(0,0,0,0.9),0_0_20px_rgba(225,29,72,0.4)] flex items-center justify-center chess-piece-3d transform rotate-12 z-10 group-hover:-translate-y-3 group-hover:rotate-[16deg] transition-all duration-300"
+                  >
+                    <div
+                      class="w-[82%] h-[82%] rounded-full border border-red-900/70 flex items-center justify-center bg-gradient-to-b from-red-500/15 to-transparent shadow-inner"
+                    >
+                      <span
+                        class="font-calligraphy text-4xl sm:text-5xl font-black text-red-700 select-none drop-shadow-[0_2px_3px_rgba(255,255,255,0.45)]"
+                        >帥</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CHỮ THƯ PHÁP VÀNG SON: "CỜ ÚP" -->
+
+            <div class="mt-3 flex flex-col items-center">
+              <h3
+                class="font-calligraphy text-4xl sm:text-5xl golden-stamp-text tracking-wide group-hover:scale-105 transition-transform drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]"
+              >
+                Cờ Úp
+              </h3>
+
+              <span
+                class="font-serif text-xs text-amber-400/70 tracking-widest uppercase mt-0.5 group-hover:text-amber-300"
+              >
+                Ẩn Tướng Đoạt Soái • Biến Hóa Vô Cùng
+              </span>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- 4. LỐI TẮT BỔ SUNG & THANH LỆNH BÀI CHÂN TRANG ĐẲNG CẤP THƯƠNG GIA -->
+
+      <footer
+        class="w-full pt-4 pb-2 border-t border-amber-900/30 flex flex-col md:flex-row items-center justify-between gap-4"
+      >
+        <!-- Lối tắt 3 chế độ phụ dạng Thẻ Lệnh Bài Đồng Cổ -->
+
+        <div class="flex items-center gap-3">
+          <!-- Luyện với máy -->
+
+          <a
+            class="golden-bronze-plate px-3 py-1.5 rounded-lg flex items-center gap-2 hover:border-amber-400 hover:scale-105 transition-all text-xs font-serif text-amber-100 group shadow-md"
+            href="#"
+          >
+            <span
+              class="material-symbols-outlined text-[17px] text-amber-400 group-hover:rotate-12 transition-transform"
+              >smart_toy</span
+            >
+
+            <span class="">Luyện Với Máy</span>
+          </a>
+
+          <!-- Giải Thế Cờ Sát Cục -->
+
+          <a
+            class="golden-bronze-plate px-3 py-1.5 rounded-lg flex items-center gap-2 hover:border-amber-400 hover:scale-105 transition-all text-xs font-serif text-amber-100 group shadow-md"
+            href="#"
+          >
+            <span
+              class="material-symbols-outlined text-[17px] text-amber-400 group-hover:scale-110 transition-transform"
+              >psychology</span
+            >
+
+            <span class="">Phá Thế Sát Cục</span>
+          </a>
+
+          <!-- Bảng Phong Vân -->
+
+          <a
+            class="golden-bronze-plate px-3 py-1.5 rounded-lg flex items-center gap-2 hover:border-amber-400 hover:scale-105 transition-all text-xs font-serif text-amber-100 group shadow-md"
+            href="#"
+          >
+            <span
+              class="material-symbols-outlined text-[17px] text-amber-400 group-hover:scale-110 transition-transform"
+              >military_tech</span
+            >
+
+            <span class="">Bảng Phong Vân</span>
+          </a>
+        </div>
+
+        <!-- Khẩu Quyết Kỳ Môn & Bản Quyền Cổ Phong -->
+
+        <div class="flex items-center gap-4 text-center md:text-right">
+          <span class="font-serif italic text-xs text-amber-300/60">
+            "Một nước cờ khai sinh nhật nguyệt — Muôn thế trận định đoạt giang
+            sơn"
+          </span>
+
+          <div class="h-4 w-[1px] bg-amber-900/50 hidden md:block"></div>
+
+          <span
+            class="font-classic text-[11px] tracking-widest text-amber-500/80 font-bold"
+          >
+            © KỲ VÂN CÁC • GIÁP THÌN 2025
+          </span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- SCRIPT TẠO HIỆU ỨNG CÁNH HOA ĐÀO RƠI & TIA SÁNG TIÊN KHÍ LẤP LÁNH (CANVAS PARTICLES) -->
+
+    <script>
+      (function () {
+        const canvas = document.getElementById("particle-canvas");
+
+        const ctx = canvas.getContext("2d");
+
+        let width = (canvas.width = window.innerWidth);
+
+        let height = (canvas.height = window.innerHeight);
+
+        window.addEventListener("resize", () => {
+          width = canvas.width = window.innerWidth;
+
+          height = canvas.height = window.innerHeight;
+        });
+
+        // Tạo hạt hoa đào và hạt bụi sáng
+
+        const particles = [];
+
+        const particleCount = 45;
+
+        class Particle {
+          constructor() {
+            this.reset();
+          }
+
+          reset() {
+            this.x = Math.random() * width;
+
+            this.y = Math.random() * -100;
+
+            this.size = Math.random() * 5 + 3;
+
+            this.speedY = Math.random() * 1.2 + 0.6;
+
+            this.speedX = Math.random() * 1.5 - 0.75;
+
+            this.angle = Math.random() * 360;
+
+            this.angularSpeed = Math.random() * 2 - 1;
+
+            this.type = Math.random() > 0.4 ? "petal" : "sparkle"; // Cánh đào hoặc bụi kim khí
+
+            this.opacity = Math.random() * 0.6 + 0.3;
+          }
+
+          update() {
+            this.y += this.speedY;
+
+            this.x +=
+              this.speedX + Math.sin(this.angle * (Math.PI / 180)) * 0.5;
+
+            this.angle += this.angularSpeed;
+
+            if (this.y > height + 20 || this.x < -20 || this.x > width + 20) {
+              this.reset();
+
+              this.y = -10;
+            }
+          }
+
+          draw() {
+            ctx.save();
+
+            ctx.translate(this.x, this.y);
+
+            ctx.rotate((this.angle * Math.PI) / 180);
+
+            ctx.globalAlpha = this.opacity;
+
+            if (this.type === "petal") {
+              // Vẽ cánh hoa đào hồng đào vương nhẹ
+
+              ctx.fillStyle = "#ffb3ba";
+
+              ctx.shadowBlur = 4;
+
+              ctx.shadowColor = "#f43f5e";
+
+              ctx.beginPath();
+
+              ctx.ellipse(
+                0,
+
+                0,
+
+                this.size * 1.2,
+
+                this.size * 0.6,
+
+                Math.PI / 4,
+
+                0,
+
+                2 * Math.PI,
+              );
+
+              ctx.fill();
+            } else {
+              // Vẽ hạt bụi sáng hào quang vàng kim
+
+              ctx.fillStyle = "#fde047";
+
+              ctx.shadowBlur = 8;
+
+              ctx.shadowColor = "#d97706";
+
+              ctx.beginPath();
+
+              ctx.arc(0, 0, this.size * 0.4, 0, Math.PI * 2);
+
+              ctx.fill();
+            }
+
+            ctx.restore();
+          }
+        }
+
+        for (let i = 0; i < particleCount; i++) {
+          const p = new Particle();
+
+          p.y = Math.random() * height; // Phân bổ ban đầu khắp màn hình
+
+          particles.push(p);
+        }
+
+        function animate() {
+          ctx.clearRect(0, 0, width, height);
+
+          particles.forEach((p) => {
+            p.update();
+
+            p.draw();
+          });
+
+          if (
+            !window.matchMedia("(prefers-reduced-motion: reduce)").matches &&
+            !document.hidden
+          )
+            requestAnimationFrame(animate);
+        }
+
+        document.addEventListener("visibilitychange", () => {
+          if (!document.hidden) animate();
+        });
+
+        window
+
+          .matchMedia("(prefers-reduced-motion: reduce)")
+
+          .addEventListener("change", (event) => {
+            if (!event.matches && !document.hidden) animate();
+          });
+
+        animate();
+      })();
+    </script>
+
+    <dialog id="home-info" aria-labelledby="home-info-title">
+      <h2 id="home-info-title"></h2>
+
+      <p id="home-info-text"></p>
+
+      <form method="dialog"><button autofocus>Đã hiểu</button></form>
+    </dialog>
+
+    <p class="home-demo-note">
+      Bản giao diện thử nghiệm · Tên, cấp bậc, tiền và nhiệm vụ đang là dữ liệu
+      mẫu.
+    </p>
+
+    <script>
+      (() => {
+        const dialog = document.getElementById("home-info");
+
+        const notice = (title, message) => {
+          document.getElementById("home-info-title").textContent = title;
+
+          document.getElementById("home-info-text").textContent = message;
+
+          if (!dialog.open) dialog.showModal();
+        };
+
+        const soon = (name) =>
+          notice(
+            name,
+
+            "Giao diện mục này đã có trong mẫu. Chức năng sẽ được kết nối ở bước tiếp theo.",
+          );
+
+        const gameURL = "/kydai"; // The original playable page remains at app/kydai/page.tsx.
+
+        document.querySelectorAll("a").forEach((link) => {
+          const label = link.textContent.replace(/\s+/g, " ").trim();
+
+          if (label.includes("Luyện Với Máy")) {
+            link.href = gameURL;
+
+            link.title = "Mở kỳ đài hiện tại; chọn Chơi với máy để luyện tập";
+          } else {
+            link.addEventListener("click", (event) => {
+              event.preventDefault();
+
+              soon(
+                label.includes("Xem cờ")
+                  ? "Xem cờ trực tiếp"
+                  : label.includes("Sát Cục")
+                    ? "Phá Thế Sát Cục"
+                    : "Bảng Phong Vân",
+              );
+            });
+          }
+        });
+
+        document.querySelectorAll("h3").forEach((title) => {
+          const card = title.closest(".group");
+
+          if (!card) return;
+
+          const chess = title.textContent.trim() === "Cờ Tướng";
+
+          card.setAttribute("role", chess ? "link" : "button");
+
+          card.tabIndex = 0;
+
+          card.setAttribute(
+            "aria-label",
+
+            chess ? "Vào chơi Cờ Tướng" : "Cờ Úp — chưa kết nối",
+          );
+
+          const activate = () =>
+            chess ? window.kyVanEnterGame("/ghep-tran") : soon("Cờ Úp");
+
+          card.addEventListener("click", activate);
+
+          card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+
+              activate();
+            }
+          });
+        });
+
+        document.querySelectorAll("button[title]").forEach((button) => {
+          button.type = "button";
+
+          button.addEventListener("click", async () => {
+            const title = button.title;
+
+            // BỔ SUNG: nối thanh chức năng, giữ nguyên nhánh xử lý cũ phía dưới.
+
+            const featureRoutes = {
+              "Tạo phòng": "/phong",
+
+              "Bằng Hữu / Kết Giao": "/ban-be",
+
+              "Thiết Lập": "/cai-dat",
+            };
+
+            if (featureRoutes[title]) {
+              await window.kyVanEnterGame(featureRoutes[title]);
+
+              return;
+            }
+
+            if (title === "Âm Luật Kỳ Các") {
+              window.dispatchEvent(new Event("kyvan-toggle-music"));
+
+              return;
+            }
+
+            if (title === "Chia sẻ phong vân") {
+              const url = new URL("/", location.origin).href;
+
+              try {
+                await navigator.clipboard.writeText(url);
+
+                notice(
+                  "Đã sao chép liên kết",
+
+                  "Đường dẫn trang chủ đã được sao chép. Nếu đang chạy localhost, liên kết chỉ mở được trên máy đang chạy dự án.",
+                );
+              } catch {
+                notice("Liên kết trang chủ", url);
+              }
+            } else if (title === "Tạo phòng") {
+              notice(
+                "Tạo phòng",
+
+                "Bấm Luyện Với Máy để vào kỳ đài cũ, sau đó chọn Tạo phòng mới.",
+              );
+            } else soon(title);
+          });
+        });
+      })();
+    </script>
+
+    <script src="/ky-van-watch/home-link.js"></script>
+
+    <!-- BỔ SUNG: Kết nối các ô xu/điểm/nhiệm vụ mà không xóa hoặc thay cấu trúc HTML cũ. -->
+
+    <script id="kv-economy-home-integration">
+      (() => {
+        // Giữ nguyên hai ô tiền vốn có trong khối hồ sơ cũ.
+
+        const accountName = document.getElementById("kv-account-name");
+
+        const accountInfo = accountName?.parentElement?.parentElement;
+
+        if (accountInfo) {
+          const amounts = accountInfo.querySelectorAll(
+            ".golden-bronze-plate span.font-serif.text-xs.font-bold.text-amber-200.tracking-wide",
+          );
+
+          if (amounts[0]) {
+            amounts[0].id = "kv-coins";
+
+            amounts[0].title = "Xu miễn phí";
+          }
+
+          if (amounts[1]) {
+            amounts[1].id = "kv-points";
+
+            amounts[1].title = "Điểm nhiệm vụ";
+          }
+        }
+
+        // Giữ nguyên thẻ và thanh tiến độ nhiệm vụ cũ, gắn ID để account.js cập nhật.
+
+        const taskLabel = Array.from(
+          document.querySelectorAll("span.italic"),
+        ).find((element) => element.textContent.trim() === "Nhiệm vụ kỳ các");
+
+        if (taskLabel) {
+          const taskHeader = taskLabel.parentElement;
+
+          const taskCard = taskHeader?.parentElement;
+
+          const taskCount = taskHeader?.querySelector(
+            "span.text-amber-400.font-bold",
+          );
+
+          const taskProgress = taskCard?.querySelector("div[style*='width']");
+
+          if (taskCount) taskCount.id = "kv-quest-count";
+
+          if (taskProgress) taskProgress.id = "kv-quest-progress";
+
+          // Liên kết tới nhiệm vụ mà không thay span cũ bằng thẻ a.
+
+          taskLabel.textContent = "Nhiệm vụ hôm nay";
+
+          taskLabel.setAttribute("role", "link");
+
+          taskLabel.setAttribute("tabindex", "0");
+
+          taskLabel.title = "Mở trang nhiệm vụ";
+
+          taskLabel.style.cursor = "pointer";
+
+          const enterTasks = () => window.top.location.assign("/nhiem-vu");
+
+          taskLabel.addEventListener("click", enterTasks);
+
+          taskLabel.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+
+              enterTasks();
+            }
+          });
+        }
+
+        // Nội dung cũ vẫn được giữ nguyên trong file, chỉ cập nhật thông báo trên giao diện.
+
+        const demoNote = document.querySelector(".home-demo-note");
+
+        if (demoNote) {
+          demoNote.textContent =
+            "Tài khoản, xu và nhiệm vụ đã kết nối máy chủ. Cấp bậc và các mục chưa kết nối vẫn là giao diện mẫu.";
+        }
+      })();
+    </script>
+
+    <script src="/ky-van-home/account.js"></script>
+
+    <!-- KYVIEN_YOUTUBE_V1 -->
+    <script src="/ky-music/player.js"></script>
+    <script src="/ky-van-home/preferences.js"></script>
+
+    <!-- KYVIEN_RANK_V1: bổ sung hồ sơ, giữ nguyên cảnh nền -->
+
+    <script src="/ky-rank/home.js" defer></script>
+
+    <!-- KYVIEN_COUP_V1 -->
+    <script src="/ky-coup/home.js" defer></script>
+    <!-- KYVIEN_JOURNEY_V1 -->
+    <script src="/ky-profile/home.js" defer></script>
+    <script src="/ky-training/home.js" defer></script>
+  </body>
+</html>
