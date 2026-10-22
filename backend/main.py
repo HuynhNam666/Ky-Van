@@ -1160,11 +1160,17 @@ async def read_room(code:str,u:Current,s:DB):
 
     r=s.scalar(select(Room).where(Room.code==code.upper()).with_for_update());member(r,u)
 
-    expired=expire_clock(s,r,time.time())
-
-    if expired:s.commit()
-
-    data=room_data(r,s)
+    # Release the room row lock on EVERY successful read, before yielding.
+    # ORIGINAL | expired=expire_clock(s,r,time.time())
+    # ORIGINAL | if expired:s.commit()
+    # ORIGINAL | data=room_data(r,s)
+    try:
+        expired=expire_clock(s,r,time.time())
+        data=room_data(r,s)
+        s.commit()
+    except Exception:
+        s.rollback()
+        raise
 
     if expired:await broadcast(r.code,{'type':'state','room':data})
 
