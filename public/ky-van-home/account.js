@@ -4,7 +4,22 @@
   const name = document.getElementById("kv-account-name");
   const rank = document.getElementById("kv-account-rank");
   if (!name) return;
+  const PROFILE_KEY = "kyvan.tab-profile.v1";
   let user = null;
+  try {
+    const profile = JSON.parse(sessionStorage.getItem(PROFILE_KEY) || "null");
+    if (
+      token() &&
+      profile?.token === token() &&
+      typeof profile?.user?.id === "number" &&
+      typeof profile?.user?.username === "string"
+    )
+      user = profile.user;
+  } catch {
+    /* The server will load the profile. */
+  }
+  let checkingAccount = !!token(),
+    walletBusy = false;
   const avatar = document.querySelector('img[alt="Avatar Kỳ Thủ"]');
   const style = document.createElement("style");
   style.textContent =
@@ -49,11 +64,19 @@
   }
 
   async function loadWallet() {
+    // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+    // ORIGINAL |     if (!user) {
+    // ORIGINAL |       resetWallet();
+    // ORIGINAL |       return;
+    // ORIGINAL |     }
+    // ORIGINAL |
+    // --- PHAN CAP NHAT DANG SU DUNG ---
     if (!user) {
       resetWallet();
       return;
     }
-
+    if (walletBusy) return;
+    walletBusy = true;
     const current = user.id;
     try {
       const r = await fetch("/api/economy", {
@@ -82,12 +105,24 @@
       }
     } catch (e) {
       status.textContent = e.message;
+      // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+      // ORIGINAL |     }
+      // --- PHAN CAP NHAT DANG SU DUNG ---
+    } finally {
+      walletBusy = false;
     }
   }
 
   function render() {
     actions.replaceChildren();
-    name.textContent = user ? user.username : "Khách chưa đăng nhập";
+    // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+    // ORIGINAL |     name.textContent = user ? user.username : "Khách chưa đăng nhập";
+    // --- PHAN CAP NHAT DANG SU DUNG ---
+    name.textContent = user
+      ? user.username
+      : checkingAccount
+        ? "Đang tải tài khoản…"
+        : "Khách chưa đăng nhập";
     if (rank) rank.textContent = user ? "Kỳ thủ" : "Khách";
     if (avatar) {
       avatar.style.opacity = user ? "1" : ".25";
@@ -95,6 +130,7 @@
     }
     if (!user) {
       resetWallet();
+      if (checkingAccount) return;
       link("Đăng nhập", "/dang-nhap");
       link("Đăng ký", "/dang-ky");
       return;
@@ -113,6 +149,8 @@
         if (!r.ok && r.status !== 401)
           throw Error("Chưa đăng xuất được. Hãy kiểm tra backend rồi thử lại.");
         sessionStorage.removeItem(KEY);
+        sessionStorage.removeItem(PROFILE_KEY);
+        checkingAccount = false;
         user = null;
         render();
         status.textContent = "Đã đăng xuất khỏi tab này.";
@@ -129,15 +167,24 @@
 
   render();
   const load = async () => {
-    if (!token()) return;
+    // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+    // ORIGINAL |     if (!token()) return;
+    // --- PHAN CAP NHAT DANG SU DUNG ---
+    const requestedToken = token();
+    if (!requestedToken) return;
     try {
       const r = await fetch("/api/auth/me", {
+        signal: AbortSignal.timeout(20000),
         credentials: "omit",
         cache: "no-store",
         headers: headers(),
       });
+      if (token() !== requestedToken) return;
       if (r.status === 401) {
         sessionStorage.removeItem(KEY);
+        sessionStorage.removeItem(PROFILE_KEY);
+        checkingAccount = false;
+        user = null;
         render();
         status.textContent = "Phiên hết hạn. Vui lòng đăng nhập lại.";
         return;
@@ -146,7 +193,23 @@
         throw Error(
           "Chưa tải được tài khoản. Kiểm tra backend và tải lại trang.",
         );
-      user = await r.json();
+      // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+      // ORIGINAL |       user = await r.json();
+      // --- PHAN CAP NHAT DANG SU DUNG ---
+      const loadedUser = await r.json();
+      if (token() !== requestedToken) return;
+      user = loadedUser;
+      checkingAccount = false;
+      sessionStorage.setItem(
+        PROFILE_KEY,
+        JSON.stringify({
+          token: requestedToken,
+          user: { id: user.id, username: user.username },
+          verifiedAt: Date.now(),
+        }),
+      );
+      status.textContent = "";
+      status.classList.remove("error");
       render();
     } catch (e) {
       status.textContent = e.message;
@@ -154,6 +217,26 @@
     }
   };
   const loaded = load();
+  const accountRetry = setInterval(() => {
+    if (!checkingAccount || !token()) {
+      clearInterval(accountRetry);
+      return;
+    }
+    // load() runs once initially; retry only after that initial request settles.
+    if (!document.hidden && !accountBusy) void retryAccount();
+  }, 5000);
+  let accountBusy = true;
+  void loaded.finally(() => {
+    accountBusy = false;
+  });
+  async function retryAccount() {
+    accountBusy = true;
+    try {
+      await load();
+    } finally {
+      accountBusy = false;
+    }
+  }
 
   setInterval(() => {
     if (!document.hidden) void loadWallet();
@@ -162,16 +245,19 @@
     if (!document.hidden) void loadWallet();
   });
 
-  const presence = () => {
-    if (user && !document.hidden)
-      void fetch("/api/presence/heartbeat", {
-        method: "POST",
-        credentials: "omit",
-        headers: headers(),
-      }).catch(() => {});
-  };
-  presence();
-  setInterval(presence, 20000);
+  // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+  // ORIGINAL |   const presence = () => {
+  // ORIGINAL |     if (user && !document.hidden)
+  // ORIGINAL |       void fetch("/api/presence/heartbeat", {
+  // ORIGINAL |         method: "POST",
+  // ORIGINAL |         credentials: "omit",
+  // ORIGINAL |         headers: headers(),
+  // ORIGINAL |       }).catch(() => {});
+  // ORIGINAL |   };
+  // ORIGINAL |   presence();
+  // ORIGINAL |   setInterval(presence, 20000);
+  // --- PHAN CAP NHAT DANG SU DUNG ---
+  // PresenceHeartbeat in the parent layout owns the heartbeat.
   let musicContext = null,
     musicTimer = null,
     musicStep = 0;
@@ -289,7 +375,10 @@
     })
     .catch(() => {
       status.textContent =
-        "Chưa kết nối backend. Kiểm tra terminal cổng 8000 và BACKEND_URL.";
+        // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+        // ORIGINAL |         "Chưa kết nối backend. Kiểm tra terminal cổng 8000 và BACKEND_URL.";
+        // --- PHAN CAP NHAT DANG SU DUNG ---
+        "Máy chủ đang kết nối lại. Tài khoản được giữ nguyên; vui lòng chờ một chút.";
       status.classList.add("error");
     });
 })();

@@ -13,6 +13,9 @@ import jwt
 from fastapi import FastAPI, Depends, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
 
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import SQLAlchemyError
+import logging
 
 from pydantic import BaseModel, Field
 
@@ -28,7 +31,10 @@ SECRET = os.environ['JWT_SECRET']
 
 if len(SECRET) < 32: raise RuntimeError('JWT_SECRET must contain at least 32 characters')
 
-ORIGINS = [s.strip() for s in os.getenv('ALLOWED_ORIGINS','http://localhost:3000').split(',')]
+# --- MA CU DUOC GIU LAI DE DOI CHIEU (khong thuc thi) ---
+# ORIGINAL | ORIGINS = [s.strip() for s in os.getenv('ALLOWED_ORIGINS','http://localhost:3000').split(',')]
+# --- HET MA CU; PHAN CAP NHAT DANG SU DUNG O DUOI ---
+ORIGINS = [value.strip().rstrip('/') for value in os.getenv('ALLOWED_ORIGINS','http://localhost:3000').split(',') if value.strip()]
 
 COOKIE_SECURE = os.getenv('COOKIE_SECURE','true').lower() == 'true'
 
@@ -228,9 +234,31 @@ def migrate(eng=engine):
 
 migrate()
 
-app = FastAPI(title='Kỳ Viện API', version='1.0.0')
+# --- MA CU DUOC GIU LAI DE DOI CHIEU (khong thuc thi) ---
+# ORIGINAL | app = FastAPI(title='Kỳ Viện API', version='1.0.0')
+# --- HET MA CU; PHAN CAP NHAT DANG SU DUNG O DUOI ---
+class BrowserAPI(FastAPI):
+    def build_middleware_stack(self):
+        # Include CORS on error responses too; keep FastAPI routes/lifespan intact.
+        return CORSMiddleware(
+            super().build_middleware_stack(), allow_origins=ORIGINS,
+            allow_credentials=True, allow_methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+            allow_headers=['Content-Type', 'Authorization', 'X-Session-Mode'],
+        )
 
-app.add_middleware(CORSMiddleware, allow_origins=ORIGINS, allow_credentials=True, allow_methods=['GET','POST','DELETE'], allow_headers=['Content-Type','Authorization','X-Session-Mode'])
+# --- MA CU DUOC GIU LAI DE DOI CHIEU (khong thuc thi) ---
+# ORIGINAL | app.add_middleware(CORSMiddleware, allow_origins=ORIGINS, allow_credentials=True, allow_methods=['GET','POST','DELETE'], allow_headers=['Content-Type','Authorization','X-Session-Mode'])
+# --- HET MA CU; PHAN CAP NHAT DANG SU DUNG O DUOI ---
+app = BrowserAPI(title='Kỳ Viện API', version='1.0.0')
+
+@app.exception_handler(SQLAlchemyError)
+async def database_unavailable(request: Request, error: SQLAlchemyError):
+    logging.getLogger(__name__).error('Database request failed: %s', type(error).__name__)
+    return JSONResponse(
+        status_code=503,
+        content={'detail': 'Kết nối dữ liệu tạm thời gián đoạn. Phiên đăng nhập được giữ nguyên; vui lòng thử lại.'},
+        headers={'Retry-After': '3'},
+    )
 
 @app.middleware('http')
 
@@ -249,22 +277,40 @@ def db():
 DB = Annotated[Session, Depends(db)]
 
 def get_user(request: Request, s: DB):
-
+# --- MA CU DUOC GIU LAI DE DOI CHIEU (khong thuc thi) ---
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT DANG SU DUNG O DUOI ---
+    authorization = request.headers.get('authorization', '')
+    token = authorization[7:] if authorization.startswith('Bearer ') else (
+        '' if request.headers.get('x-session-mode') == 'tab' else request.cookies.get('session', '')
+    )
     try:
-
-        authorization=request.headers.get('authorization','')
-
-        token=authorization[7:] if authorization.startswith('Bearer ') else ('' if request.headers.get('x-session-mode')=='tab' else request.cookies.get('session',''))
-
+# --- MA CU DUOC GIU LAI DE DOI CHIEU (khong thuc thi) ---
+# ORIGINAL | 
+# ORIGINAL |         authorization=request.headers.get('authorization','')
+# ORIGINAL | 
+# ORIGINAL |         token=authorization[7:] if authorization.startswith('Bearer ') else ('' if request.headers.get('x-session-mode')=='tab' else request.cookies.get('session',''))
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT DANG SU DUNG O DUOI ---
         payload = jwt.decode(token, SECRET, algorithms=['HS256'])
-
-        u = s.get(User, int(payload['sub']))
-
-        if not u: raise ValueError()
-
-        return u
-
-    except Exception: raise HTTPException(401,'Vui lòng đăng nhập.')
+# --- MA CU DUOC GIU LAI DE DOI CHIEU (khong thuc thi) ---
+# ORIGINAL | 
+# ORIGINAL |         u = s.get(User, int(payload['sub']))
+# ORIGINAL | 
+# ORIGINAL |         if not u: raise ValueError()
+# ORIGINAL | 
+# ORIGINAL |         return u
+# ORIGINAL | 
+# ORIGINAL |     except Exception: raise HTTPException(401,'Vui lòng đăng nhập.')
+# --- HET MA CU; PHAN CAP NHAT DANG SU DUNG O DUOI ---
+        uid = int(payload['sub'])
+    except (jwt.InvalidTokenError, ValueError, TypeError, KeyError):
+        raise HTTPException(401, 'Vui lòng đăng nhập.')
+    # Database/network errors must reach the 503 handler, not invalidate tokens.
+    user = s.get(User, uid)
+    if not user:
+        raise HTTPException(401, 'Vui lòng đăng nhập.')
+    return user
 
 Current = Annotated[User, Depends(get_user)]
 
@@ -929,7 +975,14 @@ async def sweep_matches():
 
             async with match_lock:
 
-                with SessionLocal() as s: changed=expire_quick(s)
+# --- MA CU DUOC GIU LAI DE DOI CHIEU (khong thuc thi) ---
+# ORIGINAL |                 with SessionLocal() as s: changed=expire_quick(s)
+# --- HET MA CU; PHAN CAP NHAT DANG SU DUNG O DUOI ---
+                # Synchronous PostgreSQL I/O must not block WebSocket heartbeats.
+                def sweep_database():
+                    with SessionLocal() as s:
+                        return expire_quick(s)
+                changed = await asyncio.to_thread(sweep_database)
 
             await publish_rooms(changed)
 

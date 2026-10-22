@@ -69,7 +69,17 @@ import {
 
 import { Toaster } from "sonner";
 
-import { api, ApiError, type Chat, type Room, type User } from "@/lib/api";
+// --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+// ORIGINAL | import { api, ApiError, type Chat, type Room, type User } from "@/lib/api";
+// --- PHAN CAP NHAT DANG SU DUNG ---
+import {
+  api,
+  ApiError,
+  sessionToken,
+  type Chat,
+  type Room,
+  type User,
+} from "@/lib/api";
 
 import {
   initial,
@@ -460,30 +470,63 @@ export default function Arena() {
 
   useEffect(() => {
     let live = true;
-
-    api<User>("/auth/me")
-      .then((u) => {
-        if (live) setUser(u);
-      })
-
-      .catch((e) => {
+    // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+    // ORIGINAL |
+    // ORIGINAL |     api<User>("/auth/me")
+    // ORIGINAL |       .then((u) => {
+    // ORIGINAL |         if (live) setUser(u);
+    // ORIGINAL |       })
+    // ORIGINAL |
+    // ORIGINAL |       .catch((e) => {
+    // --- PHAN CAP NHAT DANG SU DUNG ---
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    const loadAccount = async () => {
+      if (!sessionToken()) {
+        if (live) setLoading(false);
+        return;
+      }
+      try {
+        const u = await api<User>("/auth/me");
+        if (live) {
+          setUser(u);
+          setLoading(false);
+          setError("");
+        }
+      } catch (e) {
         if (!live) return;
-
+        // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+        // ORIGINAL |
+        // --- PHAN CAP NHAT DANG SU DUNG ---
         if (e instanceof ApiError && e.status === 401) {
+          // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+          // ORIGINAL |           location.replace("/dang-nhap");
+          // ORIGINAL |
+          // ORIGINAL |           return;
+          // --- PHAN CAP NHAT DANG SU DUNG ---
           location.replace("/dang-nhap");
-
           return;
         }
-
-        setError(e.message);
-      })
-
-      .finally(() => {
-        if (live) setLoading(false);
-      });
-
+        // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
+        // ORIGINAL |
+        // ORIGINAL |         setError(e.message);
+        // ORIGINAL |       })
+        // ORIGINAL |
+        // ORIGINAL |       .finally(() => {
+        // ORIGINAL |         if (live) setLoading(false);
+        // ORIGINAL |       });
+        // ORIGINAL |
+        // ORIGINAL |     return () => {
+        // ORIGINAL |       live = false;
+        // --- PHAN CAP NHAT DANG SU DUNG ---
+        setError(e instanceof Error ? e.message : "Đang kết nối lại máy chủ…");
+        // Keep the loading state instead of showing a false signed-out screen.
+        retry = setTimeout(() => void loadAccount(), 5000);
+      }
+    };
+    void loadAccount();
     return () => {
       live = false;
+      clearTimeout(retry);
     };
   }, []);
 
