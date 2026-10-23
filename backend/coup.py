@@ -48,9 +48,16 @@ def personalize(data,s,uid):
     return out
 
 @m.app.post('/api/coup/rooms')
-async def create_coup_room(data:m.RoomInput,u:m.Current,s:m.DB):
+# --- MA CU GIU DE DOI CHIEU 01 (khong thuc thi; dong 51-51 ban cu) ---
+# ORIGINAL | async def create_coup_room(data:m.RoomInput,u:m.Current,s:m.DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@m.db_action
+def create_coup_room(data:m.RoomInput,u:m.Current,s:m.DB):
     m.limit(('create',u.id),10,60)
-    async with m.match_lock:
+# --- MA CU GIU DE DOI CHIEU 02 (khong thuc thi; dong 53-53 ban cu) ---
+# ORIGINAL |     async with m.match_lock:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    with m.match_lock:
         if data.stake not in (100,250,500,1000):raise HTTPException(400,'Mức xu không hợp lệ.')
         if m.active_quick(s,u.id):raise HTTPException(409,'Hãy kết thúc trận hiện tại trước.')
         if m.wallet(s,u.id).coins<data.stake:raise HTTPException(409,'Bạn không đủ xu để tạo bàn này.')
@@ -59,9 +66,16 @@ async def create_coup_room(data:m.RoomInput,u:m.Current,s:m.DB):
         s.commit();return m.room_data(r,s)
 
 @m.app.post('/api/coup/matchmaking/join')
-async def join_coup_queue(u:m.Current,s:m.DB):
+# --- MA CU GIU DE DOI CHIEU 03 (khong thuc thi; dong 62-62 ban cu) ---
+# ORIGINAL | async def join_coup_queue(u:m.Current,s:m.DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@m.db_action
+def join_coup_queue(u:m.Current,s:m.DB):
     m.limit(('match-join',u.id),20,60)
-    async with m.match_lock:
+# --- MA CU GIU DE DOI CHIEU 04 (khong thuc thi; dong 64-64 ban cu) ---
+# ORIGINAL |     async with m.match_lock:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    with m.match_lock:
         changed=m.expire_quick(s)
         active=m.active_quick(s,u.id)
         if active:result={'status':'matched','room':personalize(m.room_data(active,s),s,u.id)}
@@ -88,27 +102,45 @@ async def join_coup_queue(u:m.Current,s:m.DB):
                 m.reserve_coins(s,r)
                 for uid in (u.id,opponent):clear_queues(s,uid)
                 s.commit();result={'status':'matched','room':m.room_data(r,s)}
-    await m.publish_rooms(changed)
+# --- MA CU GIU DE DOI CHIEU 05 (khong thuc thi; dong 91-91 ban cu) ---
+# ORIGINAL |     await m.publish_rooms(changed)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    m.publish_rooms(changed)
     return result
 
 @m.app.get('/api/coup/matchmaking/status')
-async def coup_status(u:m.Current,s:m.DB):
-    async with m.match_lock:
+# --- MA CU GIU DE DOI CHIEU 06 (khong thuc thi; dong 95-96 ban cu) ---
+# ORIGINAL | async def coup_status(u:m.Current,s:m.DB):
+# ORIGINAL |     async with m.match_lock:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@m.db_action
+def coup_status(u:m.Current,s:m.DB):
+    with m.match_lock:
         changed=m.expire_quick(s);r=m.active_quick(s,u.id)
         if r:result={'status':'matched','room':personalize(m.room_data(r,s),s,u.id)}
         else:
             q=s.get(CoupQueue,u.id)
             if q:q.heartbeat=time.time();s.commit()
             result={'status':'searching' if q else 'idle'}
-    await m.publish_rooms(changed)
+# --- MA CU GIU DE DOI CHIEU 07 (khong thuc thi; dong 103-103 ban cu) ---
+# ORIGINAL |     await m.publish_rooms(changed)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    m.publish_rooms(changed)
     return result
 
 @m.app.delete('/api/coup/matchmaking/queue')
-async def cancel_coup_queue(u:m.Current,s:m.DB):
+# --- MA CU GIU DE DOI CHIEU 08 (khong thuc thi; dong 107-107 ban cu) ---
+# ORIGINAL | async def cancel_coup_queue(u:m.Current,s:m.DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@m.db_action
+def cancel_coup_queue(u:m.Current,s:m.DB):
     q=s.get(CoupQueue,u.id)
     if q:s.delete(q)
     # Existing flow checks whether the match started, refunds holds, and broadcasts.
-    return await m.cancel_matchmaking(u,s)
+# --- MA CU GIU DE DOI CHIEU 09 (khong thuc thi; dong 111-111 ban cu) ---
+# ORIGINAL |     return await m.cancel_matchmaking(u,s)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    return m.cancel_matchmaking(u,s)
 
 def install_coup(namespace):
     original_room=namespace['room_data']; original_command=namespace['quick_command']; original_broadcast=namespace['broadcast']
@@ -118,14 +150,28 @@ def install_coup(namespace):
         return data
     async def broadcast_with_privacy(code,data,exclude=None):
         if data.get('type')!='state' or data.get('room',{}).get('variant')!='coup':return await original_broadcast(code,data,exclude)
-        with m.SessionLocal() as s:
-            for ws,uid in list(m.connections.get(code,{}).items()):
-                if ws is exclude:continue
-                try:await ws.send_json({**data,'room':personalize(data['room'],s,uid)})
-                except Exception:m.connections[code].pop(ws,None)
-    async def command_with_variant(s,r,uid,d):
+# --- MA CU GIU DE DOI CHIEU 10 (khong thuc thi; dong 121-126 ban cu) ---
+# ORIGINAL |         with m.SessionLocal() as s:
+# ORIGINAL |             for ws,uid in list(m.connections.get(code,{}).items()):
+# ORIGINAL |                 if ws is exclude:continue
+# ORIGINAL |                 try:await ws.send_json({**data,'room':personalize(data['room'],s,uid)})
+# ORIGINAL |                 except Exception:m.connections[code].pop(ws,None)
+# ORIGINAL |     async def command_with_variant(s,r,uid,d):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        peers=[(ws,uid) for ws,uid in list(m.connections.get(code,{}).items()) if ws is not exclude]
+        def payloads():
+            with m.SessionLocal() as s:
+                return [{**data,'room':personalize(data['room'],s,uid)} for _,uid in peers]
+        packets=await m.run_in_threadpool(payloads)
+        results=await m.asyncio.gather(*(m.send_socket(ws,packet) for (ws,_),packet in zip(peers,packets)))
+        for (ws,_),ok in zip(peers,results):
+            if not ok:m.connections.get(code,{}).pop(ws,None)
+    def command_with_variant(s,r,uid,d):
         state=s.get(CoupState,r.code)
-        if d.get('type')!='move' or state is None:return await original_command(s,r,uid,d)
+# --- MA CU GIU DE DOI CHIEU 11 (khong thuc thi; dong 128-128 ban cu) ---
+# ORIGINAL |         if d.get('type')!='move' or state is None:return await original_command(s,r,uid,d)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        if d.get('type')!='move' or state is None:return original_command(s,r,uid,d)
         if r.status!='playing':raise ValueError('Ván cờ chưa bắt đầu hoặc đã kết thúc.')
         side='r' if uid==r.red_id else 'b'
         if uid not in (r.red_id,r.black_id):raise ValueError('Bạn không thuộc phòng này.')
@@ -147,7 +193,10 @@ def install_coup(namespace):
         elif r.positions.count(key)>=3:r.status='draw'
         if r.status in ('finished','draw'):m.spend_clock(s,r,now,stop=True)
         m.settle_coins(s,r);s.commit()
-        await namespace['broadcast'](r.code,{'type':'state','room':namespace['room_data'](r,s)})
+# --- MA CU GIU DE DOI CHIEU 12 (khong thuc thi; dong 150-150 ban cu) ---
+# ORIGINAL |         await namespace['broadcast'](r.code,{'type':'state','room':namespace['room_data'](r,s)})
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        m.notify('broadcast', r.code,{'type':'state','room':namespace['room_data'](r,s)})
         return True
     namespace['room_data']=room_with_variant
     namespace['quick_command']=command_with_variant
@@ -158,18 +207,32 @@ def install_coup(namespace):
         if dep is None:continue
         original=dep.call
         if original is namespace.get('join_matchmaking'):
-            async def normal_join(u,s,_original=original):
+# --- MA CU GIU DE DOI CHIEU 13 (khong thuc thi; dong 161-161 ban cu) ---
+# ORIGINAL |             async def normal_join(u,s,_original=original):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            @m.db_action
+            def normal_join(u,s,_original=original):
                 q=s.get(CoupQueue,u.id)
                 if q:s.delete(q);s.commit()
-                result=await _original(u,s)
+# --- MA CU GIU DE DOI CHIEU 14 (khong thuc thi; dong 164-164 ban cu) ---
+# ORIGINAL |                 result=await _original(u,s)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+                result=_original(u,s)
                 if result.get('room'):result={**result,'room':personalize(result['room'],s,u.id)}
                 return result
             dep.call=normal_join
         elif original is namespace.get('cancel_matchmaking'):
-            async def normal_cancel(u,s,_original=original):
+# --- MA CU GIU DE DOI CHIEU 15 (khong thuc thi; dong 169-169 ban cu) ---
+# ORIGINAL |             async def normal_cancel(u,s,_original=original):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            @m.db_action
+            def normal_cancel(u,s,_original=original):
                 q=s.get(CoupQueue,u.id)
                 if q:s.delete(q)
-                return await _original(u,s)
+# --- MA CU GIU DE DOI CHIEU 16 (khong thuc thi; dong 172-172 ban cu) ---
+# ORIGINAL |                 return await _original(u,s)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+                return _original(u,s)
             dep.call=normal_cancel
         elif original is namespace.get('create_room'):
             def normal_create(data,u,s,_original=original):
@@ -178,17 +241,33 @@ def install_coup(namespace):
                 return _original(data,u,s)
             dep.call=normal_create
         elif original is namespace.get('join'):
-            async def room_join(code,u,s,_original=original):
+# --- MA CU GIU DE DOI CHIEU 17 (khong thuc thi; dong 181-181 ban cu) ---
+# ORIGINAL |             async def room_join(code,u,s,_original=original):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            @m.db_action
+            def room_join(code,u,s,_original=original):
                 q=s.get(CoupQueue,u.id)
                 if q:s.delete(q)
-                return personalize(await _original(code,u,s),s,u.id)
+# --- MA CU GIU DE DOI CHIEU 18 (khong thuc thi; dong 184-184 ban cu) ---
+# ORIGINAL |                 return personalize(await _original(code,u,s),s,u.id)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+                return personalize(_original(code,u,s),s,u.id)
             dep.call=room_join
         elif original is namespace.get('read_room'):
-            async def room_read(code,u,s,_original=original):return personalize(await _original(code,u,s),s,u.id)
+# --- MA CU GIU DE DOI CHIEU 19 (khong thuc thi; dong 187-187 ban cu) ---
+# ORIGINAL |             async def room_read(code,u,s,_original=original):return personalize(await _original(code,u,s),s,u.id)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            @m.db_action
+            def room_read(code,u,s,_original=original):return personalize(_original(code,u,s),s,u.id)
             dep.call=room_read
         elif original is namespace.get('matchmaking_status'):
-            async def normal_status(u,s,_original=original):
-                result=await _original(u,s)
+# --- MA CU GIU DE DOI CHIEU 20 (khong thuc thi; dong 190-191 ban cu) ---
+# ORIGINAL |             async def normal_status(u,s,_original=original):
+# ORIGINAL |                 result=await _original(u,s)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            @m.db_action
+            def normal_status(u,s,_original=original):
+                result=_original(u,s)
                 if result.get('room'):result={**result,'room':personalize(result['room'],s,u.id)}
                 return result
             dep.call=normal_status
@@ -201,6 +280,13 @@ def install_coup(namespace):
 
 @m.app.on_event('startup')
 async def clear_stale_coup_queue():
-    with m.SessionLocal() as s:
-        for q in s.scalars(select(CoupQueue)):s.delete(q)
-        s.commit()
+# --- MA CU GIU DE DOI CHIEU 21 (khong thuc thi; dong 204-206 ban cu) ---
+# ORIGINAL |     with m.SessionLocal() as s:
+# ORIGINAL |         for q in s.scalars(select(CoupQueue)):s.delete(q)
+# ORIGINAL |         s.commit()
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    def clear():
+        with m.SessionLocal() as s:
+            for q in s.scalars(select(CoupQueue)):s.delete(q)
+            s.commit()
+    await m.run_in_threadpool(clear)

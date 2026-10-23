@@ -64,6 +64,8 @@ export function useRoomSocket(
     let closed = false,
       timer: ReturnType<typeof setTimeout> | undefined,
       beat: ReturnType<typeof setInterval> | undefined,
+      opening: ReturnType<typeof setTimeout> | undefined,
+      lastSeen = Date.now(),
       sock: WebSocket | undefined;
     async function connect() {
       try {
@@ -76,16 +78,33 @@ export function useRoomSocket(
         const s = new WebSocket(url);
         sock = s;
         ws.current = s;
+        opening = setTimeout(() => {
+          if (s.readyState === WebSocket.CONNECTING) s.close();
+        }, 15000);
         s.onopen = () => {
+          clearTimeout(opening);
+          if (closed || ws.current !== s) {
+            s.close();
+            return;
+          }
+          lastSeen = Date.now();
           setConnected(true);
           setReplaced(false);
           beat = setInterval(() => {
+            if (Date.now() - lastSeen > 35000) {
+              setConnected(false);
+              s.close();
+              return;
+            }
             if (s.readyState === WebSocket.OPEN) s.send('{"type":"ping"}');
-          }, 20000);
+            // ORIGINAL | }, 20000);
+          }, 10000);
         };
         s.onclose = (e) => {
           clearInterval(beat);
-          if (closed) return;
+          clearTimeout(opening);
+          // ORIGINAL | if (closed) return;
+          if (closed || ws.current !== s) return;
           setConnected(false);
           if (e.code === 4001) {
             closed = true;
@@ -95,6 +114,8 @@ export function useRoomSocket(
           timer = setTimeout(connect, 2500);
         };
         s.onmessage = (e) => {
+          if (closed || ws.current !== s) return;
+          lastSeen = Date.now();
           let d: { type: string; [k: string]: unknown };
           try {
             d = JSON.parse(e.data);
@@ -135,6 +156,7 @@ export function useRoomSocket(
     return () => {
       closed = true;
       clearTimeout(timer);
+      clearTimeout(opening);
       clearInterval(beat);
       sock?.close();
       if (ws.current === sock) ws.current = null;

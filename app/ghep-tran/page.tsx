@@ -446,6 +446,8 @@ export default function Arena() {
 
     setError("");
 
+    roomRef.current = null;
+    setRoom(null);
     setSearching(true);
 
     const task = api<Match>("/matchmaking/join", "POST")
@@ -454,7 +456,12 @@ export default function Arena() {
       })
 
       .catch((e) => {
-        setSearching(false);
+        // ORIGINAL | setSearching(false);
+        // A failed response can still belong to a committed match. Read status;
+        // never repeat the POST automatically or abandon the other player.
+        const transient =
+          e instanceof ApiError && (e.status === 0 || e.status >= 500);
+        setSearching(transient);
 
         setError(e.message);
       })
@@ -541,7 +548,8 @@ export default function Arena() {
       inFlight = false;
 
     const t = setInterval(async () => {
-      if (inFlight) return;
+      // ORIGINAL | if (inFlight) return;
+      if (inFlight || request.current) return;
 
       inFlight = true;
 

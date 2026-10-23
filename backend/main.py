@@ -1,6 +1,12 @@
 """Kỳ Viện FastAPI service. Run one worker; PostgreSQL is authoritative."""
 
-import asyncio, hashlib, hmac, json, os, re, secrets, time
+# --- MA CU GIU DE DOI CHIEU 01 (khong thuc thi; dong 3-3 ban cu) ---
+# ORIGINAL | import asyncio, hashlib, hmac, json, os, re, secrets, time
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+import asyncio, hashlib, hmac, json, os, re, secrets, time, threading
+from starlette.concurrency import run_in_threadpool
+from .db_runtime import db_action, notify
+from . import db_runtime
 
 from collections import defaultdict, deque
 
@@ -44,7 +50,22 @@ COOKIE_SAMESITE = os.getenv('COOKIE_SAMESITE','lax')
 
 PROXY_HOPS = int(os.getenv('TRUSTED_PROXY_HOPS','0'))
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+# --- MA CU GIU DE DOI CHIEU 02 (khong thuc thi; dong 47-47 ban cu) ---
+# ORIGINAL | engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+# Bound connection/lock waits; one failed database request must not stall sockets.
+engine_options = dict(pool_pre_ping=True)
+if DATABASE_URL.startswith('postgresql'):
+    engine_options.update(pool_size=5, max_overflow=5, pool_timeout=5)
+    engine_options['connect_args'] = {'connect_timeout': 8}
+engine = create_engine(DATABASE_URL, **engine_options)
+if engine.dialect.name == 'postgresql':
+    from sqlalchemy import event as _db_event
+    @_db_event.listens_for(engine, 'begin')
+    def _bounded_transaction(connection):
+        # SET LOCAL works with transaction-pooling proxies and resets on commit.
+        connection.exec_driver_sql("SET LOCAL lock_timeout = '3s'")
+        connection.exec_driver_sql("SET LOCAL statement_timeout = '8s'")
 
 SessionLocal = sessionmaker(engine, expire_on_commit=False)
 
@@ -310,6 +331,7 @@ def get_user(request: Request, s: DB):
     user = s.get(User, uid)
     if not user:
         raise HTTPException(401, 'Vui lòng đăng nhập.')
+    s.commit()  # Release the auth read before waiting for another worker/lock.
     return user
 
 Current = Annotated[User, Depends(get_user)]
@@ -345,22 +367,45 @@ def login_result(response,request,u):
     return public_user(u)
 
 limits = defaultdict(deque)
+limits_lock = threading.RLock()
 
 def limit(key, n=30, seconds=60):
+    with limits_lock:
 
-    now = time.monotonic(); q = limits[key]
+# --- MA CU GIU DE DOI CHIEU 03 (khong thuc thi; dong 351-351 ban cu) ---
+# ORIGINAL |     now = time.monotonic(); q = limits[key]
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        now = time.monotonic(); q = limits[key]
 
-    while q and q[0] < now-seconds: q.popleft()
+# --- MA CU GIU DE DOI CHIEU 04 (khong thuc thi; dong 353-353 ban cu) ---
+# ORIGINAL |     while q and q[0] < now-seconds: q.popleft()
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        while q and q[0] < now-seconds: q.popleft()
 
-    if len(q) >= n: raise HTTPException(429,'Thao tác quá nhanh. Vui lòng thử lại sau.')
+# --- MA CU GIU DE DOI CHIEU 05 (khong thuc thi; dong 355-355 ban cu) ---
+# ORIGINAL |     if len(q) >= n: raise HTTPException(429,'Thao tác quá nhanh. Vui lòng thử lại sau.')
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        if len(q) >= n: raise HTTPException(429,'Thao tác quá nhanh. Vui lòng thử lại sau.')
 
-    q.append(now)
+# --- MA CU GIU DE DOI CHIEU 06 (khong thuc thi; dong 357-357 ban cu) ---
+# ORIGINAL |     q.append(now)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        q.append(now)
 
-    if len(limits)>10000:
+# --- MA CU GIU DE DOI CHIEU 07 (khong thuc thi; dong 359-359 ban cu) ---
+# ORIGINAL |     if len(limits)>10000:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        if len(limits)>10000:
 
-        for k in list(limits):
+# --- MA CU GIU DE DOI CHIEU 08 (khong thuc thi; dong 361-361 ban cu) ---
+# ORIGINAL |         for k in list(limits):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            for k in list(limits):
 
-            if not limits[k] or limits[k][-1]<now-600: del limits[k]
+# --- MA CU GIU DE DOI CHIEU 09 (khong thuc thi; dong 363-363 ban cu) ---
+# ORIGINAL |             if not limits[k] or limits[k][-1]<now-600: del limits[k]
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+                if not limits[k] or limits[k][-1]<now-600: del limits[k]
 
 def client_ip(request):
 
@@ -377,6 +422,10 @@ class Credentials(BaseModel):
     username: str = Field(pattern=r'^[a-zA-Z0-9_]{3,24}$')
 
     password: str = Field(min_length=8,max_length=128)
+
+@app.get('/api/live')
+async def live():
+    return {'status': 'ok', 'release': 'match-stability-v2'}
 
 @app.get('/api/health')
 
@@ -458,35 +507,86 @@ connections: dict[str,dict[WebSocket,int]]=defaultdict(dict)
 
 def online(code):return sorted(set(connections.get(code,{}).values()))
 
+async def send_socket(ws, data):
+    try:
+        await asyncio.wait_for(ws.send_json(data), timeout=3)
+        return True
+    except Exception:
+        try:
+            await asyncio.wait_for(ws.close(code=1013), timeout=.5)
+        except Exception:
+            pass
+        return False
+
 async def broadcast(code,data,exclude=None):
+    peers = [ws for ws in list(connections.get(code, {})) if ws is not exclude]
+    results = await asyncio.gather(*(send_socket(ws, data) for ws in peers))
+    for ws, ok in zip(peers, results):
+        if not ok:
+            connections.get(code, {}).pop(ws, None)
 
-    for ws in list(connections.get(code,{})):
-
-        if ws is exclude:continue
-
-        try:await ws.send_json(data)
-
-        except Exception:connections[code].pop(ws,None)
+# --- MA CU GIU DE DOI CHIEU 10 (khong thuc thi; dong 463-469 ban cu) ---
+# ORIGINAL |     for ws in list(connections.get(code,{})):
+# ORIGINAL | 
+# ORIGINAL |         if ws is exclude:continue
+# ORIGINAL | 
+# ORIGINAL |         try:await ws.send_json(data)
+# ORIGINAL | 
+# ORIGINAL |         except Exception:connections[code].pop(ws,None)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+async def deliver_notification(kind, *args):
+    if kind == 'broadcast':
+        await broadcast(*args)
+    elif kind == 'user':
+        uid, data = args
+        peers = [ws for group in list(connections.values())
+                 for ws, player in list(group.items()) if player == uid]
+        await asyncio.gather(*(send_socket(ws, data) for ws in peers))
 
 @app.post('/api/rooms')
 
 def create_room(data:RoomInput,u:Current,s:DB):
+    with match_lock:
 
-    limit(('create',u.id),10,60)
+# --- MA CU GIU DE DOI CHIEU 11 (khong thuc thi; dong 475-475 ban cu) ---
+# ORIGINAL |     limit(('create',u.id),10,60)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        limit(('create',u.id),10,60)
 
-    if data.stake not in (100,250,500,1000):raise HTTPException(400,'Mức xu không hợp lệ.')
+# --- MA CU GIU DE DOI CHIEU 12 (khong thuc thi; dong 477-477 ban cu) ---
+# ORIGINAL |     if data.stake not in (100,250,500,1000):raise HTTPException(400,'Mức xu không hợp lệ.')
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        if data.stake not in (100,250,500,1000):raise HTTPException(400,'Mức xu không hợp lệ.')
 
-    if wallet(s,u.id).coins<data.stake:raise HTTPException(409,'Bạn không đủ xu để tạo bàn này.')
+# --- MA CU GIU DE DOI CHIEU 13 (khong thuc thi; dong 479-479 ban cu) ---
+# ORIGINAL |     if wallet(s,u.id).coins<data.stake:raise HTTPException(409,'Bạn không đủ xu để tạo bàn này.')
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        if wallet(s,u.id).coins<data.stake:raise HTTPException(409,'Bạn không đủ xu để tạo bàn này.')
 
-    if active_quick(s,u.id):raise HTTPException(409,'Hãy kết thúc trận hiện tại trước.')
+# --- MA CU GIU DE DOI CHIEU 14 (khong thuc thi; dong 481-481 ban cu) ---
+# ORIGINAL |     if active_quick(s,u.id):raise HTTPException(409,'Hãy kết thúc trận hiện tại trước.')
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        if active_quick(s,u.id):raise HTTPException(409,'Hãy kết thúc trận hiện tại trước.')
 
-    for _ in range(20):
+# --- MA CU GIU DE DOI CHIEU 15 (khong thuc thi; dong 483-483 ban cu) ---
+# ORIGINAL |     for _ in range(20):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        for _ in range(20):
 
-        code=''.join(secrets.choice('ABCDEFGHJKLMNPQRSTUVWXYZ23456789') for _ in range(6))
+# --- MA CU GIU DE DOI CHIEU 16 (khong thuc thi; dong 485-485 ban cu) ---
+# ORIGINAL |         code=''.join(secrets.choice('ABCDEFGHJKLMNPQRSTUVWXYZ23456789') for _ in range(6))
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            code=''.join(secrets.choice('ABCDEFGHJKLMNPQRSTUVWXYZ23456789') for _ in range(6))
 
-        if not s.get(Room,code):break
+# --- MA CU GIU DE DOI CHIEU 17 (khong thuc thi; dong 487-487 ban cu) ---
+# ORIGINAL |         if not s.get(Room,code):break
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            if not s.get(Room,code):break
 
-    b=initial();r=Room(code=code,name=data.name.strip() or 'Giao hữu',red_id=u.id,board=b,history=[],positions=[position_key(b,'r')],total_seconds=data.total_seconds,move_seconds=data.move_seconds,stake=data.stake);s.add(r);s.commit();return room_data(r,s)
+# --- MA CU GIU DE DOI CHIEU 18 (khong thuc thi; dong 489-489 ban cu) ---
+# ORIGINAL |     b=initial();r=Room(code=code,name=data.name.strip() or 'Giao hữu',red_id=u.id,board=b,history=[],positions=[position_key(b,'r')],total_seconds=data.total_seconds,move_seconds=data.move_seconds,stake=data.stake);s.add(r);s.commit();return room_data(r,s)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        b=initial();r=Room(code=code,name=data.name.strip() or 'Giao hữu',red_id=u.id,board=b,history=[],positions=[position_key(b,'r')],total_seconds=data.total_seconds,move_seconds=data.move_seconds,stake=data.stake);s.add(r);s.commit();return room_data(r,s)
 
 @app.get('/api/rooms')
 
@@ -508,39 +608,92 @@ def my_rooms(u:Current,s:DB):
 
 @app.post('/api/rooms/{code}/join')
 
-async def join(code:str,u:Current,s:DB):
+# --- MA CU GIU DE DOI CHIEU 19 (khong thuc thi; dong 511-511 ban cu) ---
+# ORIGINAL | async def join(code:str,u:Current,s:DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@db_action
+def join(code:str,u:Current,s:DB):
+    with match_lock:
 
-    limit(('join',u.id),30,60)
+# --- MA CU GIU DE DOI CHIEU 20 (khong thuc thi; dong 513-513 ban cu) ---
+# ORIGINAL |     limit(('join',u.id),30,60)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        limit(('join',u.id),30,60)
 
-    r=s.scalar(select(Room).where(Room.code==code.upper()).with_for_update())
+# --- MA CU GIU DE DOI CHIEU 21 (khong thuc thi; dong 515-515 ban cu) ---
+# ORIGINAL |     r=s.scalar(select(Room).where(Room.code==code.upper()).with_for_update())
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        r=s.scalar(select(Room).where(Room.code==code.upper()).with_for_update())
 
-    if not r:raise HTTPException(404,'Không tìm thấy mã phòng này.')
+# --- MA CU GIU DE DOI CHIEU 22 (khong thuc thi; dong 517-517 ban cu) ---
+# ORIGINAL |     if not r:raise HTTPException(404,'Không tìm thấy mã phòng này.')
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        if not r:raise HTTPException(404,'Không tìm thấy mã phòng này.')
 
-    if u.id not in (r.red_id,r.black_id):
+# --- MA CU GIU DE DOI CHIEU 23 (khong thuc thi; dong 519-519 ban cu) ---
+# ORIGINAL |     if u.id not in (r.red_id,r.black_id):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        if u.id not in (r.red_id,r.black_id):
 
-        if active_quick(s,u.id) or active_quick(s,r.red_id):raise HTTPException(409,'Một kỳ thủ đang có trận ngẫu nhiên. Hãy kết thúc trận đó trước.')
+# --- MA CU GIU DE DOI CHIEU 24 (khong thuc thi; dong 521-521 ban cu) ---
+# ORIGINAL |         if active_quick(s,u.id) or active_quick(s,r.red_id):raise HTTPException(409,'Một kỳ thủ đang có trận ngẫu nhiên. Hãy kết thúc trận đó trước.')
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            if active_quick(s,u.id) or active_quick(s,r.red_id):raise HTTPException(409,'Một kỳ thủ đang có trận ngẫu nhiên. Hãy kết thúc trận đó trước.')
 
-        if r.black_id or r.status!='waiting':raise HTTPException(409,'Phòng đã đủ người hoặc đã kết thúc.')
+# --- MA CU GIU DE DOI CHIEU 25 (khong thuc thi; dong 523-523 ban cu) ---
+# ORIGINAL |         if r.black_id or r.status!='waiting':raise HTTPException(409,'Phòng đã đủ người hoặc đã kết thúc.')
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            if r.black_id or r.status!='waiting':raise HTTPException(409,'Phòng đã đủ người hoặc đã kết thúc.')
 
-        r.black_id=u.id;r.status='playing';r.version+=1
+# --- MA CU GIU DE DOI CHIEU 26 (khong thuc thi; dong 525-525 ban cu) ---
+# ORIGINAL |         r.black_id=u.id;r.status='playing';r.version+=1
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            r.black_id=u.id;r.status='playing';r.version+=1
 
-        reserve_coins(s,r,r.stake)
+# --- MA CU GIU DE DOI CHIEU 27 (khong thuc thi; dong 527-527 ban cu) ---
+# ORIGINAL |         reserve_coins(s,r,r.stake)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            reserve_coins(s,r,r.stake)
 
-        s.add(MatchClock(code=r.code,total_seconds=r.total_seconds,move_seconds=r.move_seconds,
+# --- MA CU GIU DE DOI CHIEU 28 (khong thuc thi; dong 529-529 ban cu) ---
+# ORIGINAL |         s.add(MatchClock(code=r.code,total_seconds=r.total_seconds,move_seconds=r.move_seconds,
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            s.add(MatchClock(code=r.code,total_seconds=r.total_seconds,move_seconds=r.move_seconds,
 
-            red_remaining=r.total_seconds,black_remaining=r.total_seconds,turn_started=time.time()))
+# --- MA CU GIU DE DOI CHIEU 29 (khong thuc thi; dong 531-531 ban cu) ---
+# ORIGINAL |             red_remaining=r.total_seconds,black_remaining=r.total_seconds,turn_started=time.time()))
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+                red_remaining=r.total_seconds,black_remaining=r.total_seconds,turn_started=time.time()))
 
-        s.add(QuickMatch(code=r.code,red_ready=1,black_ready=1,deadline=0))
+# --- MA CU GIU DE DOI CHIEU 30 (khong thuc thi; dong 533-533 ban cu) ---
+# ORIGINAL |         s.add(QuickMatch(code=r.code,red_ready=1,black_ready=1,deadline=0))
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            s.add(QuickMatch(code=r.code,red_ready=1,black_ready=1,deadline=0))
 
-        for pid in (r.red_id,r.black_id):
+# --- MA CU GIU DE DOI CHIEU 31 (khong thuc thi; dong 535-535 ban cu) ---
+# ORIGINAL |         for pid in (r.red_id,r.black_id):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            for pid in (r.red_id,r.black_id):
 
-            queued=s.get(QuickQueue,pid)
+# --- MA CU GIU DE DOI CHIEU 32 (khong thuc thi; dong 537-537 ban cu) ---
+# ORIGINAL |             queued=s.get(QuickQueue,pid)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+                queued=s.get(QuickQueue,pid)
 
-            if queued:s.delete(queued)
+# --- MA CU GIU DE DOI CHIEU 33 (khong thuc thi; dong 539-539 ban cu) ---
+# ORIGINAL |             if queued:s.delete(queued)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+                if queued:s.delete(queued)
 
-        s.flush();start_coins(s,r)
+# --- MA CU GIU DE DOI CHIEU 34 (khong thuc thi; dong 541-541 ban cu) ---
+# ORIGINAL |         s.flush();start_coins(s,r)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            s.flush();start_coins(s,r)
 
-    s.commit();data=room_data(r,s);await broadcast(r.code,{'type':'state','room':data});return data
+# --- MA CU GIU DE DOI CHIEU 35 (khong thuc thi; dong 543-543 ban cu) ---
+# ORIGINAL |     s.commit();data=room_data(r,s);await broadcast(r.code,{'type':'state','room':data});return data
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        s.commit();data=room_data(r,s);notify('broadcast', r.code,{'type':'state','room':data});return data
 
 @app.get('/api/rooms/{code}/preview')
 
@@ -653,6 +806,7 @@ def rtc_config(u:Current):
     return {'iceServers':servers}
 
 tickets={}
+pending_sockets={}
 
 @app.post('/api/ws-ticket')
 
@@ -666,6 +820,106 @@ def ticket(u:Current):
 
     key=secrets.token_urlsafe(32);tickets[key]=(u.id,time.time()+30);return {'ticket':key}
 
+def socket_snapshot(code, uid):
+    with SessionLocal() as s:
+        r=s.get(Room,code)
+        if not r or uid not in (r.red_id,r.black_id):return None
+        snapshot=personalize_coup(room_data(r,s),s,uid)
+        recent=list(s.scalars(select(Message).where(Message.room_code==code).order_by(Message.id.desc()).limit(100)))
+        messages=[{'username':s.get(User,m.user_id).username,'text':m.text,'time':m.time} for m in reversed(recent)]
+        return snapshot,messages
+
+def signal_allowed(code, uid):
+    with SessionLocal() as s:
+        active=s.get(Room,code)
+        return bool(active and uid in (active.red_id,active.black_id) and active.status in ('ready','playing'))
+
+@db_action
+def process_room_command(code, uid, d):
+    kind=d.get("type")
+    with match_lock:
+        with SessionLocal() as s:
+
+            r=s.scalar(select(Room).where(Room.code==code).with_for_update())
+
+            if not r: raise ValueError('Phòng không tồn tại.')
+            if uid not in (r.red_id, r.black_id): raise ValueError('Bạn không thuộc phòng này.')
+
+            clock_now=time.time()
+
+            if expire_clock(s,r,clock_now):
+
+                s.commit()
+
+                notify('broadcast', code,{'type':'state','room':room_data(r,s)})
+
+                return
+
+            if quick_command(s,r,uid,d): return
+
+            if r.status=='cancelled': raise ValueError('Trận đã hủy.')
+
+            if kind=='chat':
+
+                text=d.get('text','')
+
+                if not isinstance(text,str) or not 1<=len(text.strip())<=1000:raise ValueError('Tin nhắn phải dài 1–1000 ký tự.')
+
+                limit(('chat',uid),20,60)
+
+                stamp=datetime.now(timezone.utc).isoformat();text=text.strip()
+
+                s.add(Message(room_code=code,user_id=uid,text=text,time=stamp));s.commit()
+
+                notify('broadcast', code,{'type':'chat','message':{'username':s.get(User,uid).username,'text':text,'time':stamp}});return
+
+            if r.status!='playing':raise ValueError('Ván cờ chưa bắt đầu hoặc đã kết thúc.')
+
+            side='r' if uid==r.red_id else 'b'
+
+            if kind=='resign':r.status='finished';r.winner=other(side);r.version+=1
+
+            elif kind=='move':
+
+                f,t=d.get('from'),d.get('to')
+
+                if side!=r.turn:raise ValueError('Chưa đến lượt của bạn.')
+
+                if d.get('version')!=r.version:raise ValueError('Bàn cờ đã thay đổi. Hãy chờ đồng bộ.')
+
+                if type(f)!=int or type(t)!=int or not (0<=f<90 and 0<=t<90):raise ValueError('Ô cờ không hợp lệ.')
+
+                if not r.board[f] or r.board[f][0]!=side or not legal(r.board,f,t):raise ValueError('Nước đi không hợp lệ.')
+
+                m={'from':f,'to':t,'piece':r.board[f],'captured':r.board[t]}
+
+                quick=s.get(QuickMatch,r.code)
+
+                if quick: quick.draw_by=None
+
+                if coin_data(r,s):move_coins(s,uid,m['captured'])
+
+                spend_clock(s,r,clock_now,advance=True)
+
+                r.board=moved(r.board,f,t);r.history=r.history+[m];r.turn=other(side);r.version+=1
+
+                key=position_key(r.board,r.turn);r.positions=r.positions+[key]
+
+                if not has_moves(r.board,r.turn):r.status='finished';r.winner=side
+
+                elif r.positions.count(key)>=3:r.status='draw'
+
+            else:raise ValueError('Thao tác không được hỗ trợ.')
+
+            if r.status in ('finished','draw'):spend_clock(s,r,clock_now,stop=True)
+
+            settle_coins(s,r)
+
+            s.commit();state=room_data(r,s)
+
+        notify('broadcast', code,{'type':'state','room':state})
+
+
 @app.websocket('/api/ws/{code}')
 
 async def websocket(ws:WebSocket,code:str):
@@ -677,41 +931,71 @@ async def websocket(ws:WebSocket,code:str):
     if not credential or credential[1]<time.time():await ws.close(code=1008);return
 
     uid=credential[0]
-
-    with SessionLocal() as s:
-
-        r=s.get(Room,code)
-
-        if not r or uid not in (r.red_id,r.black_id):await ws.close(code=1008);return
-
-        snapshot=room_data(r,s)
-        snapshot=personalize_coup(snapshot,s,uid) # KYVIEN_COUP_SNAPSHOT
-
-        recent=list(s.scalars(select(Message).where(Message.room_code==code).order_by(Message.id.desc()).limit(100)))
-
-        messages=[{'username':s.get(User,m.user_id).username,'text':m.text,'time':m.time} for m in reversed(recent)]
-
-    # One socket per player/room prevents duplicated game commands and calls.
-
-    # Close code 4001 tells the replaced tab not to reconnect (two tabs would otherwise kick each other forever).
-
-    for old, user_id in list(connections.get(code,{}).items()):
-
-        if user_id==uid:
-
-            connections[code].pop(old,None)
-
-            try:await old.close(code=4001)
-
-            except Exception:pass
-
-    await ws.accept();connections[code][ws]=uid
-
-    await ws.send_json({'type':'state','room':snapshot});await ws.send_json({'type':'messages','messages':messages})
-
-    await broadcast(code,{'type':'presence','online':online(code)})
-
+# --- MA CU GIU DE DOI CHIEU 36 (khong thuc thi; dong 680-705 ban cu) ---
+# ORIGINAL | 
+# ORIGINAL |     with SessionLocal() as s:
+# ORIGINAL | 
+# ORIGINAL |         r=s.get(Room,code)
+# ORIGINAL | 
+# ORIGINAL |         if not r or uid not in (r.red_id,r.black_id):await ws.close(code=1008);return
+# ORIGINAL | 
+# ORIGINAL |         snapshot=room_data(r,s)
+# ORIGINAL |         snapshot=personalize_coup(snapshot,s,uid) # KYVIEN_COUP_SNAPSHOT
+# ORIGINAL | 
+# ORIGINAL |         recent=list(s.scalars(select(Message).where(Message.room_code==code).order_by(Message.id.desc()).limit(100)))
+# ORIGINAL | 
+# ORIGINAL |         messages=[{'username':s.get(User,m.user_id).username,'text':m.text,'time':m.time} for m in reversed(recent)]
+# ORIGINAL | 
+# ORIGINAL |     # One socket per player/room prevents duplicated game commands and calls.
+# ORIGINAL | 
+# ORIGINAL |     # Close code 4001 tells the replaced tab not to reconnect (two tabs would otherwise kick each other forever).
+# ORIGINAL | 
+# ORIGINAL |     for old, user_id in list(connections.get(code,{}).items()):
+# ORIGINAL | 
+# ORIGINAL |         if user_id==uid:
+# ORIGINAL | 
+# ORIGINAL |             connections[code].pop(old,None)
+# ORIGINAL | 
+# ORIGINAL |             try:await old.close(code=4001)
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    attempt=object();key=(code,uid)
+    pending_sockets[key]=attempt
     try:
+        loaded=await run_in_threadpool(socket_snapshot,code,uid)
+    except SQLAlchemyError:
+        if pending_sockets.get(key) is attempt:pending_sockets.pop(key,None)
+        logging.getLogger(__name__).warning('KV_RUNTIME socket_database_unavailable')
+        await ws.close(code=1013);return
+    # A delayed old handshake must never replace a newer, healthy connection.
+    if pending_sockets.get(key) is not attempt:await ws.close(code=4001);return
+    if loaded is None:
+        pending_sockets.pop(key,None)
+        await ws.close(code=1008);return
+    snapshot,messages=loaded
+    await ws.accept()
+    if pending_sockets.get(key) is not attempt:await ws.close(code=4001);return
+    pending_sockets.pop(key,None)
+    old_peers=[old for old,user_id in list(connections.get(code,{}).items()) if user_id==uid]
+    for old in old_peers:connections[code].pop(old,None)
+    connections[code][ws]=uid
+    try:
+        # Close code 4001 prevents replaced tabs from reconnecting endlessly.
+        for old in old_peers:
+            try:await asyncio.wait_for(old.close(code=4001),timeout=1)
+            except Exception:pass
+# --- MA CU GIU DE DOI CHIEU 37 (khong thuc thi; dong 707-714 ban cu) ---
+# ORIGINAL | 
+# ORIGINAL |     await ws.accept();connections[code][ws]=uid
+# ORIGINAL | 
+# ORIGINAL |     await ws.send_json({'type':'state','room':snapshot});await ws.send_json({'type':'messages','messages':messages})
+# ORIGINAL | 
+# ORIGINAL |     await broadcast(code,{'type':'presence','online':online(code)})
+# ORIGINAL | 
+# ORIGINAL |     try:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        await ws.send_json({'type':'state','room':snapshot});await ws.send_json({'type':'messages','messages':messages})
+        await broadcast(code,{'type':'presence','online':online(code)})
 
         while True:
 
@@ -737,11 +1021,15 @@ async def websocket(ws:WebSocket,code:str):
 
                 if kind=='signal':
 
-                    with SessionLocal() as guard:
-
-                        active=guard.get(Room,code)
-
-                        if not active or active.status not in ('ready','playing'): raise ValueError('Cuộc gọi chỉ khả dụng trong trận đang hoạt động.')
+# --- MA CU GIU DE DOI CHIEU 38 (khong thuc thi; dong 740-744 ban cu) ---
+# ORIGINAL |                     with SessionLocal() as guard:
+# ORIGINAL | 
+# ORIGINAL |                         active=guard.get(Room,code)
+# ORIGINAL | 
+# ORIGINAL |                         if not active or active.status not in ('ready','playing'): raise ValueError('Cuộc gọi chỉ khả dụng trong trận đang hoạt động.')
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+                    if not await run_in_threadpool(signal_allowed,code,uid):
+                        raise ValueError('Cuộc gọi chỉ khả dụng trong trận đang hoạt động.')
 
                     payload=d.get('data')
 
@@ -749,85 +1037,93 @@ async def websocket(ws:WebSocket,code:str):
 
                     await broadcast(code,{'type':'signal','data':payload},exclude=ws);continue
 
-                with SessionLocal() as s:
+# --- MA CU GIU DE DOI CHIEU 39 (khong thuc thi; dong 752-752 ban cu) ---
+# ORIGINAL |                 with SessionLocal() as s:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+                await run_in_threadpool(process_room_command,code,uid,d)
 
-                    r=s.scalar(select(Room).where(Room.code==code).with_for_update())
-
-                    if not r: raise ValueError('Phòng không tồn tại.')
-
-                    clock_now=time.time()
-
-                    if expire_clock(s,r,clock_now):
-
-                        s.commit()
-
-                        await broadcast(code,{'type':'state','room':room_data(r,s)})
-
-                        continue
-
-                    if await quick_command(s,r,uid,d): continue
-
-                    if r.status=='cancelled': raise ValueError('Trận đã hủy.')
-
-                    if kind=='chat':
-
-                        text=d.get('text','')
-
-                        if not isinstance(text,str) or not 1<=len(text.strip())<=1000:raise ValueError('Tin nhắn phải dài 1–1000 ký tự.')
-
-                        limit(('chat',uid),20,60)
-
-                        stamp=datetime.now(timezone.utc).isoformat();text=text.strip()
-
-                        s.add(Message(room_code=code,user_id=uid,text=text,time=stamp));s.commit()
-
-                        await broadcast(code,{'type':'chat','message':{'username':s.get(User,uid).username,'text':text,'time':stamp}});continue
-
-                    if r.status!='playing':raise ValueError('Ván cờ chưa bắt đầu hoặc đã kết thúc.')
-
-                    side='r' if uid==r.red_id else 'b'
-
-                    if kind=='resign':r.status='finished';r.winner=other(side);r.version+=1
-
-                    elif kind=='move':
-
-                        f,t=d.get('from'),d.get('to')
-
-                        if side!=r.turn:raise ValueError('Chưa đến lượt của bạn.')
-
-                        if d.get('version')!=r.version:raise ValueError('Bàn cờ đã thay đổi. Hãy chờ đồng bộ.')
-
-                        if type(f)!=int or type(t)!=int or not (0<=f<90 and 0<=t<90):raise ValueError('Ô cờ không hợp lệ.')
-
-                        if not r.board[f] or r.board[f][0]!=side or not legal(r.board,f,t):raise ValueError('Nước đi không hợp lệ.')
-
-                        m={'from':f,'to':t,'piece':r.board[f],'captured':r.board[t]}
-
-                        quick=s.get(QuickMatch,r.code)
-
-                        if quick: quick.draw_by=None
-
-                        if coin_data(r,s):move_coins(s,uid,m['captured'])
-
-                        spend_clock(s,r,clock_now,advance=True)
-
-                        r.board=moved(r.board,f,t);r.history=r.history+[m];r.turn=other(side);r.version+=1
-
-                        key=position_key(r.board,r.turn);r.positions=r.positions+[key]
-
-                        if not has_moves(r.board,r.turn):r.status='finished';r.winner=side
-
-                        elif r.positions.count(key)>=3:r.status='draw'
-
-                    else:raise ValueError('Thao tác không được hỗ trợ.')
-
-                    if r.status in ('finished','draw'):spend_clock(s,r,clock_now,stop=True)
-
-                    settle_coins(s,r)
-
-                    s.commit();state=room_data(r,s)
-
-                await broadcast(code,{'type':'state','room':state})
+# --- MA CU GIU DE DOI CHIEU 40 (khong thuc thi; dong 754-830 ban cu) ---
+# ORIGINAL |                     r=s.scalar(select(Room).where(Room.code==code).with_for_update())
+# ORIGINAL | 
+# ORIGINAL |                     if not r: raise ValueError('Phòng không tồn tại.')
+# ORIGINAL | 
+# ORIGINAL |                     clock_now=time.time()
+# ORIGINAL | 
+# ORIGINAL |                     if expire_clock(s,r,clock_now):
+# ORIGINAL | 
+# ORIGINAL |                         s.commit()
+# ORIGINAL | 
+# ORIGINAL |                         await broadcast(code,{'type':'state','room':room_data(r,s)})
+# ORIGINAL | 
+# ORIGINAL |                         continue
+# ORIGINAL | 
+# ORIGINAL |                     if await quick_command(s,r,uid,d): continue
+# ORIGINAL | 
+# ORIGINAL |                     if r.status=='cancelled': raise ValueError('Trận đã hủy.')
+# ORIGINAL | 
+# ORIGINAL |                     if kind=='chat':
+# ORIGINAL | 
+# ORIGINAL |                         text=d.get('text','')
+# ORIGINAL | 
+# ORIGINAL |                         if not isinstance(text,str) or not 1<=len(text.strip())<=1000:raise ValueError('Tin nhắn phải dài 1–1000 ký tự.')
+# ORIGINAL | 
+# ORIGINAL |                         limit(('chat',uid),20,60)
+# ORIGINAL | 
+# ORIGINAL |                         stamp=datetime.now(timezone.utc).isoformat();text=text.strip()
+# ORIGINAL | 
+# ORIGINAL |                         s.add(Message(room_code=code,user_id=uid,text=text,time=stamp));s.commit()
+# ORIGINAL | 
+# ORIGINAL |                         await broadcast(code,{'type':'chat','message':{'username':s.get(User,uid).username,'text':text,'time':stamp}});continue
+# ORIGINAL | 
+# ORIGINAL |                     if r.status!='playing':raise ValueError('Ván cờ chưa bắt đầu hoặc đã kết thúc.')
+# ORIGINAL | 
+# ORIGINAL |                     side='r' if uid==r.red_id else 'b'
+# ORIGINAL | 
+# ORIGINAL |                     if kind=='resign':r.status='finished';r.winner=other(side);r.version+=1
+# ORIGINAL | 
+# ORIGINAL |                     elif kind=='move':
+# ORIGINAL | 
+# ORIGINAL |                         f,t=d.get('from'),d.get('to')
+# ORIGINAL | 
+# ORIGINAL |                         if side!=r.turn:raise ValueError('Chưa đến lượt của bạn.')
+# ORIGINAL | 
+# ORIGINAL |                         if d.get('version')!=r.version:raise ValueError('Bàn cờ đã thay đổi. Hãy chờ đồng bộ.')
+# ORIGINAL | 
+# ORIGINAL |                         if type(f)!=int or type(t)!=int or not (0<=f<90 and 0<=t<90):raise ValueError('Ô cờ không hợp lệ.')
+# ORIGINAL | 
+# ORIGINAL |                         if not r.board[f] or r.board[f][0]!=side or not legal(r.board,f,t):raise ValueError('Nước đi không hợp lệ.')
+# ORIGINAL | 
+# ORIGINAL |                         m={'from':f,'to':t,'piece':r.board[f],'captured':r.board[t]}
+# ORIGINAL | 
+# ORIGINAL |                         quick=s.get(QuickMatch,r.code)
+# ORIGINAL | 
+# ORIGINAL |                         if quick: quick.draw_by=None
+# ORIGINAL | 
+# ORIGINAL |                         if coin_data(r,s):move_coins(s,uid,m['captured'])
+# ORIGINAL | 
+# ORIGINAL |                         spend_clock(s,r,clock_now,advance=True)
+# ORIGINAL | 
+# ORIGINAL |                         r.board=moved(r.board,f,t);r.history=r.history+[m];r.turn=other(side);r.version+=1
+# ORIGINAL | 
+# ORIGINAL |                         key=position_key(r.board,r.turn);r.positions=r.positions+[key]
+# ORIGINAL | 
+# ORIGINAL |                         if not has_moves(r.board,r.turn):r.status='finished';r.winner=side
+# ORIGINAL | 
+# ORIGINAL |                         elif r.positions.count(key)>=3:r.status='draw'
+# ORIGINAL | 
+# ORIGINAL |                     else:raise ValueError('Thao tác không được hỗ trợ.')
+# ORIGINAL | 
+# ORIGINAL |                     if r.status in ('finished','draw'):spend_clock(s,r,clock_now,stop=True)
+# ORIGINAL | 
+# ORIGINAL |                     settle_coins(s,r)
+# ORIGINAL | 
+# ORIGINAL |                     s.commit();state=room_data(r,s)
+# ORIGINAL | 
+# ORIGINAL |                 await broadcast(code,{'type':'state','room':state})
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            except SQLAlchemyError:
+                logging.getLogger(__name__).warning('KV_RUNTIME command_database_unavailable')
+                await send_socket(ws, {'type':'error','message':'Máy chủ dữ liệu đang bận. Hãy chờ bàn cờ đồng bộ trước khi thao tác lại.'})
 
             except (ValueError,HTTPException) as e:
 
@@ -849,7 +1145,10 @@ async def websocket(ws:WebSocket,code:str):
 
 READY_SECONDS = 30
 
-QUEUE_TTL = 15
+# --- MA CU GIU DE DOI CHIEU 41 (khong thuc thi; dong 852-852 ban cu) ---
+# ORIGINAL | QUEUE_TTL = 15
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+QUEUE_TTL = max(60, int(os.getenv('QUEUE_TTL', '60')))
 
 # Defaults apply to new games. No increment: unused thinking time stays in the bank.
 
@@ -913,7 +1212,10 @@ def expire_clock(s,r,now):
 
 EMOTIONS = ('👍','👏','😄','😮','🤔','😅','😢','🤝','🔥','❤️')
 
-match_lock = asyncio.Lock()
+# --- MA CU GIU DE DOI CHIEU 42 (khong thuc thi; dong 916-916 ban cu) ---
+# ORIGINAL | match_lock = asyncio.Lock()
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+match_lock = threading.RLock()
 
 match_sweeper = None
 
@@ -937,9 +1239,17 @@ def expire_quick(s):
 
         s.delete(queue)
 
-    for q in s.scalars(select(QuickMatch).join(Room).where(Room.status=='ready',QuickMatch.deadline<=now)):
+# --- MA CU GIU DE DOI CHIEU 43 (khong thuc thi; dong 940-940 ban cu) ---
+# ORIGINAL |     for q in s.scalars(select(QuickMatch).join(Room).where(Room.status=='ready',QuickMatch.deadline<=now)):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    for r in s.scalars(select(Room).join(QuickMatch).where(Room.status=='ready',QuickMatch.deadline<=now).order_by(Room.code).with_for_update(of=Room)):
 
-        r=s.get(Room,q.code);r.status='cancelled';r.version+=1
+# --- MA CU GIU DE DOI CHIEU 44 (khong thuc thi; dong 942-942 ban cu) ---
+# ORIGINAL |         r=s.get(Room,q.code);r.status='cancelled';r.version+=1
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        q=s.get(QuickMatch,r.code)
+
+        r.status='cancelled';r.version+=1
 
         q.cancel_reason='Hết 30 giây: chưa đủ hai người sẵn sàng.'
 
@@ -947,7 +1257,10 @@ def expire_quick(s):
 
         changed.append(r.code)
 
-    for r in s.scalars(select(Room).join(MatchClock).where(Room.status=='playing').with_for_update()):
+# --- MA CU GIU DE DOI CHIEU 45 (khong thuc thi; dong 950-950 ban cu) ---
+# ORIGINAL |     for r in s.scalars(select(Room).join(MatchClock).where(Room.status=='playing').with_for_update()):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    for r in s.scalars(select(Room).join(MatchClock).where(Room.status=='playing', MatchClock.turn_started.is_not(None), or_(MatchClock.turn_started + MatchClock.move_seconds <= now, (Room.turn == 'r') & (MatchClock.turn_started + MatchClock.red_remaining <= now), (Room.turn == 'b') & (MatchClock.turn_started + MatchClock.black_remaining <= now))).order_by(Room.code).with_for_update(of=Room)):
 
         if expire_clock(s,r,now):changed.append(r.code)
 
@@ -955,59 +1268,99 @@ def expire_quick(s):
 
     return changed
 
-async def publish_rooms(codes):
-
-    for code in codes:
-
-        with SessionLocal() as s:
-
+# --- MA CU GIU DE DOI CHIEU 46 (khong thuc thi; dong 958-958 ban cu) ---
+# ORIGINAL | async def publish_rooms(codes):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+def publish_rooms(codes):
+    # Called only from a database worker. Materialize JSON, then release SQL.
+    with SessionLocal() as s:
+        for code in set(codes):
             r=s.get(Room,code)
+            if r: notify('broadcast', code, {'type':'state','room':room_data(r,s)})
 
-            if r: await broadcast(code,{'type':'state','room':room_data(r,s)})
+# --- MA CU GIU DE DOI CHIEU 47 (khong thuc thi; dong 960-961 ban cu) ---
+# ORIGINAL |     for code in codes:
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@db_action
+def sweep_database():
+    with match_lock:
+        with SessionLocal() as s:
+# --- MA CU GIU DE DOI CHIEU 48 (khong thuc thi; dong 963-966 ban cu) ---
+# ORIGINAL | 
+# ORIGINAL |             r=s.get(Room,code)
+# ORIGINAL | 
+# ORIGINAL |             if r: await broadcast(code,{'type':'state','room':room_data(r,s)})
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            changed=expire_quick(s)
+        publish_rooms(changed)
 
 async def sweep_matches():
-
+# --- MA CU GIU DE DOI CHIEU 49 (khong thuc thi; dong 969-969 ban cu) ---
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
     while True:
-
+# --- MA CU GIU DE DOI CHIEU 50 (khong thuc thi; dong 971-971 ban cu) ---
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
         await asyncio.sleep(.5)
-
+# --- MA CU GIU DE DOI CHIEU 51 (khong thuc thi; dong 973-973 ban cu) ---
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
         try:
-
-            async with match_lock:
-
-# --- MA CU DUOC GIU LAI DE DOI CHIEU (khong thuc thi) ---
-# ORIGINAL |                 with SessionLocal() as s: changed=expire_quick(s)
-# --- HET MA CU; PHAN CAP NHAT DANG SU DUNG O DUOI ---
-                # Synchronous PostgreSQL I/O must not block WebSocket heartbeats.
-                def sweep_database():
-                    with SessionLocal() as s:
-                        return expire_quick(s)
-                changed = await asyncio.to_thread(sweep_database)
-
-            await publish_rooms(changed)
-
-        except asyncio.CancelledError: raise
-
+# --- MA CU GIU DE DOI CHIEU 52 (khong thuc thi; dong 975-990 ban cu) ---
+# ORIGINAL | 
+# ORIGINAL |             async with match_lock:
+# ORIGINAL | 
+# ORIGINAL | # --- MA CU DUOC GIU LAI DE DOI CHIEU (khong thuc thi) ---
+# ORIGINAL | # ORIGINAL |                 with SessionLocal() as s: changed=expire_quick(s)
+# ORIGINAL | # --- HET MA CU; PHAN CAP NHAT DANG SU DUNG O DUOI ---
+# ORIGINAL |                 # Synchronous PostgreSQL I/O must not block WebSocket heartbeats.
+# ORIGINAL |                 def sweep_database():
+# ORIGINAL |                     with SessionLocal() as s:
+# ORIGINAL |                         return expire_quick(s)
+# ORIGINAL |                 changed = await asyncio.to_thread(sweep_database)
+# ORIGINAL | 
+# ORIGINAL |             await publish_rooms(changed)
+# ORIGINAL | 
+# ORIGINAL |         except asyncio.CancelledError: raise
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+            await run_in_threadpool(sweep_database)
+        except asyncio.CancelledError:
+            raise
         except Exception:
-
-            import logging
-
+# --- MA CU GIU DE DOI CHIEU 53 (khong thuc thi; dong 992-994 ban cu) ---
+# ORIGINAL | 
+# ORIGINAL |             import logging
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
             logging.getLogger(__name__).exception('Match deadline sweep failed')
 
 @app.on_event('startup')
 
 async def start_match_sweeper():
-
+# --- MA CU GIU DE DOI CHIEU 54 (khong thuc thi; dong 1000-1000 ban cu) ---
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
     global match_sweeper
-
-    # A server restart must not match users from stale queue entries.
-
-    with SessionLocal() as s:
-
-        for q in s.scalars(select(QuickQueue)):s.delete(q)
-
-        s.commit()
-
+# --- MA CU GIU DE DOI CHIEU 55 (khong thuc thi; dong 1002-1010 ban cu) ---
+# ORIGINAL | 
+# ORIGINAL |     # A server restart must not match users from stale queue entries.
+# ORIGINAL | 
+# ORIGINAL |     with SessionLocal() as s:
+# ORIGINAL | 
+# ORIGINAL |         for q in s.scalars(select(QuickQueue)):s.delete(q)
+# ORIGINAL | 
+# ORIGINAL |         s.commit()
+# ORIGINAL | 
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    db_runtime.configure(deliver_notification)
+    def clear_queue():
+        with SessionLocal() as s:
+            for q in s.scalars(select(QuickQueue)):s.delete(q)
+            s.commit()
+    await run_in_threadpool(clear_queue)
     match_sweeper=asyncio.create_task(sweep_matches())
 
 @app.on_event('shutdown')
@@ -1021,6 +1374,7 @@ async def stop_match_sweeper():
         try: await match_sweeper
 
         except asyncio.CancelledError: pass
+    await db_runtime.shutdown()
 
 def active_quick(s, uid):
 
@@ -1032,11 +1386,18 @@ def active_quick(s, uid):
 
 @app.post('/api/matchmaking/join')
 
-async def join_matchmaking(u:Current,s:DB):
+# --- MA CU GIU DE DOI CHIEU 56 (khong thuc thi; dong 1035-1035 ban cu) ---
+# ORIGINAL | async def join_matchmaking(u:Current,s:DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@db_action
+def join_matchmaking(u:Current,s:DB):
 
     limit(('match-join',u.id),20,60)
 
-    async with match_lock:
+# --- MA CU GIU DE DOI CHIEU 57 (khong thuc thi; dong 1039-1039 ban cu) ---
+# ORIGINAL |     async with match_lock:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    with match_lock:
 
         changed=expire_quick(s)
 
@@ -1098,15 +1459,25 @@ async def join_matchmaking(u:Current,s:DB):
 
                 s.commit();result={'status':'matched','room':room_data(r,s)}
 
-    await publish_rooms(changed)
+# --- MA CU GIU DE DOI CHIEU 58 (khong thuc thi; dong 1101-1101 ban cu) ---
+# ORIGINAL |     await publish_rooms(changed)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    publish_rooms(changed)
 
     return result
 
 @app.get('/api/matchmaking/status')
 
-async def matchmaking_status(u:Current,s:DB):
+# --- MA CU GIU DE DOI CHIEU 59 (khong thuc thi; dong 1107-1107 ban cu) ---
+# ORIGINAL | async def matchmaking_status(u:Current,s:DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@db_action
+def matchmaking_status(u:Current,s:DB):
 
-    async with match_lock:
+# --- MA CU GIU DE DOI CHIEU 60 (khong thuc thi; dong 1109-1109 ban cu) ---
+# ORIGINAL |     async with match_lock:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    with match_lock:
 
         changed=expire_quick(s)
 
@@ -1122,15 +1493,25 @@ async def matchmaking_status(u:Current,s:DB):
 
             result={'status':'searching' if q else 'idle'}
 
-    await publish_rooms(changed)
+# --- MA CU GIU DE DOI CHIEU 61 (khong thuc thi; dong 1125-1125 ban cu) ---
+# ORIGINAL |     await publish_rooms(changed)
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    publish_rooms(changed)
 
     return result
 
 @app.delete('/api/matchmaking/queue')
 
-async def cancel_matchmaking(u:Current,s:DB):
+# --- MA CU GIU DE DOI CHIEU 62 (khong thuc thi; dong 1131-1131 ban cu) ---
+# ORIGINAL | async def cancel_matchmaking(u:Current,s:DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@db_action
+def cancel_matchmaking(u:Current,s:DB):
 
-    async with match_lock:
+# --- MA CU GIU DE DOI CHIEU 63 (khong thuc thi; dong 1133-1133 ban cu) ---
+# ORIGINAL |     async with match_lock:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    with match_lock:
 
         q=s.get(QuickQueue,u.id)
 
@@ -1150,13 +1531,20 @@ async def cancel_matchmaking(u:Current,s:DB):
 
         s.commit();code=r.code if r else None
 
-    if code:await publish_rooms([code])
+# --- MA CU GIU DE DOI CHIEU 64 (khong thuc thi; dong 1153-1153 ban cu) ---
+# ORIGINAL |     if code:await publish_rooms([code])
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    if code:publish_rooms([code])
 
     return {'ok':True}
 
 @app.get('/api/rooms/{code}')
 
-async def read_room(code:str,u:Current,s:DB):
+# --- MA CU GIU DE DOI CHIEU 65 (khong thuc thi; dong 1159-1159 ban cu) ---
+# ORIGINAL | async def read_room(code:str,u:Current,s:DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@db_action
+def read_room(code:str,u:Current,s:DB):
 
     r=s.scalar(select(Room).where(Room.code==code.upper()).with_for_update());member(r,u)
 
@@ -1172,11 +1560,17 @@ async def read_room(code:str,u:Current,s:DB):
         s.rollback()
         raise
 
-    if expired:await broadcast(r.code,{'type':'state','room':data})
+# --- MA CU GIU DE DOI CHIEU 66 (khong thuc thi; dong 1175-1175 ban cu) ---
+# ORIGINAL |     if expired:await broadcast(r.code,{'type':'state','room':data})
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    if expired:notify('broadcast', r.code,{'type':'state','room':data})
 
     return data
 
-async def quick_command(s,r,uid,d):
+# --- MA CU GIU DE DOI CHIEU 67 (khong thuc thi; dong 1179-1179 ban cu) ---
+# ORIGINAL | async def quick_command(s,r,uid,d):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+def quick_command(s,r,uid,d):
 
     kind=d.get('type');q=s.get(QuickMatch,r.code)
 
@@ -1190,7 +1584,10 @@ async def quick_command(s,r,uid,d):
 
         limit(('reaction',uid),6,10)
 
-        await broadcast(r.code,{'type':'reaction','user_id':uid,'emoji':emoji});return True
+# --- MA CU GIU DE DOI CHIEU 68 (khong thuc thi; dong 1193-1193 ban cu) ---
+# ORIGINAL |         await broadcast(r.code,{'type':'reaction','user_id':uid,'emoji':emoji});return True
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        notify('broadcast', r.code,{'type':'reaction','user_id':uid,'emoji':emoji});return True
 
     if kind not in ('ready','cancel_ready','leave','draw_offer','draw_accept','draw_decline'):return False
 
@@ -1198,7 +1595,10 @@ async def quick_command(s,r,uid,d):
 
         r.status='cancelled';r.version+=1;s.commit()
 
-        await broadcast(r.code,{'type':'state','room':room_data(r,s)});return True
+# --- MA CU GIU DE DOI CHIEU 69 (khong thuc thi; dong 1201-1201 ban cu) ---
+# ORIGINAL |         await broadcast(r.code,{'type':'state','room':room_data(r,s)});return True
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+        notify('broadcast', r.code,{'type':'state','room':room_data(r,s)});return True
 
     if not q:raise ValueError('Thao tác này chỉ áp dụng cho ghép trận ngẫu nhiên.')
 
@@ -1278,7 +1678,10 @@ async def quick_command(s,r,uid,d):
 
     settle_coins(s,r)
 
-    s.commit();await broadcast(r.code,{'type':'state','room':room_data(r,s)});return True
+# --- MA CU GIU DE DOI CHIEU 70 (khong thuc thi; dong 1281-1281 ban cu) ---
+# ORIGINAL |     s.commit();await broadcast(r.code,{'type':'state','room':room_data(r,s)});return True
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    s.commit();notify('broadcast', r.code,{'type':'state','room':room_data(r,s)});return True
 
 # Friend graph, requests, and lobby presence are additive to the original account API.
 
@@ -1358,7 +1761,11 @@ class FriendRequestInput(BaseModel): username:str=Field(min_length=3,max_length=
 
 @app.post('/api/friends/requests')
 
-async def send_friend_request(data:FriendRequestInput,u:Current,s:DB):
+# --- MA CU GIU DE DOI CHIEU 71 (khong thuc thi; dong 1361-1361 ban cu) ---
+# ORIGINAL | async def send_friend_request(data:FriendRequestInput,u:Current,s:DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+@db_action
+def send_friend_request(data:FriendRequestInput,u:Current,s:DB):
 
     limit(('friend-request',u.id),20,60)
 
@@ -1392,15 +1799,18 @@ async def send_friend_request(data:FriendRequestInput,u:Current,s:DB):
 
     pending=s.scalar(select(FriendRequest).where(FriendRequest.sender_id==u.id,FriendRequest.receiver_id==target.id))
 
-    for peers in list(connections.values()):
-
-        for ws,uid in list(peers.items()):
-
-            if uid==target.id:
-
-                try:await ws.send_json({'type':'friend_request','username':u.username,'request_id':pending.id if pending else None,'status':status})
-
-                except Exception:pass
+# --- MA CU GIU DE DOI CHIEU 72 (khong thuc thi; dong 1395-1403 ban cu) ---
+# ORIGINAL |     for peers in list(connections.values()):
+# ORIGINAL | 
+# ORIGINAL |         for ws,uid in list(peers.items()):
+# ORIGINAL | 
+# ORIGINAL |             if uid==target.id:
+# ORIGINAL | 
+# ORIGINAL |                 try:await ws.send_json({'type':'friend_request','username':u.username,'request_id':pending.id if pending else None,'status':status})
+# ORIGINAL | 
+# ORIGINAL |                 except Exception:pass
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    notify('user', target.id, {'type':'friend_request','username':u.username,'request_id':pending.id if pending else None,'status':status})
 
     return {'ok':True,'status':status}
 

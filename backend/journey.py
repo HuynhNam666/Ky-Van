@@ -168,9 +168,15 @@ def invite_status(code:str,response:Response,u:m.Current,s:m.DB):
     row=s.get(Rematch,code);data=invite_data(row,u.id);s.commit();return data
 
 @m.app.post('/api/journey/rematch/{code}')
-async def invite(code:str,u:m.Current,s:m.DB):
+# --- MA CU GIU DE DOI CHIEU 01 (khong thuc thi; dong 171-171 ban cu) ---
+# ORIGINAL | async def invite(code:str,u:m.Current,s:m.DB):
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+def invite(code:str,u:m.Current,s:m.DB):
     m.limit(('rematch',u.id),20,60)
-    async with m.match_lock:
+# --- MA CU GIU DE DOI CHIEU 02 (khong thuc thi; dong 173-173 ban cu) ---
+# ORIGINAL |     async with m.match_lock:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+    with m.match_lock:
         r=done_room(s,code,u.id);row=s.get(Rematch,code);data=invite_data(row,u.id)
         if row and data['status'] in ('pending','accepted'):s.commit();return data
         for uid in sorted((r.red_id,r.black_id)):available(s,uid)
@@ -182,8 +188,12 @@ class Decision(BaseModel):
     request_id:str
     action:str
 @m.app.post('/api/journey/rematch/{code}/decision')
-async def decide(code:str,data:Decision,u:m.Current,s:m.DB):
-    async with m.match_lock:
+# --- MA CU GIU DE DOI CHIEU 03 (khong thuc thi; dong 185-186 ban cu) ---
+# ORIGINAL | async def decide(code:str,data:Decision,u:m.Current,s:m.DB):
+# ORIGINAL |     async with m.match_lock:
+# --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
+def decide(code:str,data:Decision,u:m.Current,s:m.DB):
+    with m.match_lock:
         old=done_room(s,code,u.id)
         row=s.scalar(select(Rematch).where(Rematch.code==code).with_for_update())
         if not row or row.request_id!=data.request_id:raise HTTPException(409,'Lời mời này không còn hiệu lực.')

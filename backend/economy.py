@@ -131,13 +131,15 @@ def snapshot(s,uid):
         'puzzle':{'question':'Ở khai cuộc, Tốt Đỏ a4 được đi đến ô nào?','choices':['a5','b4','a3']}}
 
 @app.get('/api/economy')
-async def get_economy(u:Current,s:DB):
+# ORIGINAL | async def get_economy(u:Current,s:DB):
+def get_economy(u:Current,s:DB):
     data=snapshot(s,u.id);s.commit();return data
 class QuestAction(BaseModel):
     action:str
     answer:str=''
 @app.post('/api/economy/action')
-async def quest_action(data:QuestAction,u:Current,s:DB):
+# ORIGINAL | async def quest_action(data:QuestAction,u:Current,s:DB):
+def quest_action(data:QuestAction,u:Current,s:DB):
     wallet(s,u.id)
     if data.action=='rules':progress(s,u.id,'rules')
     elif data.action=='puzzle':
@@ -149,7 +151,8 @@ class Claim(BaseModel):
     day:str
     task_id:str
 @app.post('/api/economy/claim')
-async def claim_quest(data:Claim,u:Current,s:DB):
+# ORIGINAL | async def claim_quest(data:Claim,u:Current,s:DB):
+def claim_quest(data:Claim,u:Current,s:DB):
     wallet(s,u.id);d=daily(s,u.id)
     if data.day!=d.day:raise HTTPException(409,'Đã sang ngày mới. Hãy tải lại nhiệm vụ.')
     t=next((t for t in d.tasks if t['id']==data.task_id),None)
