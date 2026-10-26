@@ -1,0 +1,38 @@
+/* Phá Thế Sát Cục — token từ public/kv-shared/kv-theme.css */
+.pz-page{padding:16px max(18px,calc((100vw - 1320px)/2)) 72px;font-size:17px}
+.pz-hero{text-align:center;padding:24px 12px 10px}
+.pz-hero h1{display:block;margin:0;font:700 clamp(40px,8vw,76px) var(--kv-font-display);color:var(--kv-gold-light);text-shadow:0 0 18px rgba(217,119,6,.45)}
+.pz-progress{margin:6px 0 0;color:var(--kv-muted);font-size:17px}
+.pz-tabs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px 0 26px}
+.pz-page button{font-family:inherit}
+.pz-tab{padding:12px 22px;border-radius:999px;border:1px solid var(--kv-plate-border);background:var(--kv-plate);color:var(--kv-gold-light);font-weight:700;font-size:16px;cursor:pointer}
+.pz-tab.on{background:linear-gradient(180deg,#ecca62,#b08023);color:#20160a;border-color:#f1d680}
+.pz-tab.add{border-style:dashed}
+.pz-layout,.pz-editor{display:grid;grid-template-columns:minmax(0,760px) minmax(320px,1fr);gap:32px;align-items:start}
+.pz-board-wrap{padding:18px;border-radius:18px;background:linear-gradient(130deg,#7c5635,#493823);box-shadow:0 16px 40px rgba(0,0,0,.55),inset 0 0 0 1px var(--kv-plate-border)}
+.pz-board{display:block;width:100%;height:auto;border-radius:10px}
+.pz-sq{cursor:pointer}
+.pz-side{padding:26px 28px}
+.pz-side h2{margin:0 0 8px;font-size:28px}
+.pz-goal{margin:0 0 16px;color:var(--kv-muted);font-size:17px;line-height:1.6}
+.pz-goal b{color:var(--kv-gold-light);font-size:1.4em}
+.pz-msg{min-height:64px;margin:0 0 18px;padding:14px 16px;border-radius:12px;background:rgba(5,10,11,.6);border:1px solid var(--kv-line);color:var(--kv-gold-light);font-size:18px;line-height:1.55}
+.pz-msg.win{border-color:rgba(117,214,156,.6);color:var(--kv-ok)}
+.pz-actions{display:flex;gap:10px;flex-wrap:wrap}
+.pz-actions .kv-btn{padding:13px 22px;font-size:16px}
+.pz-own{margin-top:18px}
+.pz-stat{margin:16px 0;color:var(--kv-muted);font-size:15px}
+.pz-list{list-style:none;display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0;padding:0}
+.pz-chip{width:52px;height:52px;border-radius:50%;border:1px solid var(--kv-plate-border);background:var(--kv-plate);color:var(--kv-gold-light);font-weight:700;font-size:17px;cursor:pointer}
+.pz-chip.on{outline:3px solid var(--kv-gold-light);outline-offset:2px}
+.pz-chip.ok{background:linear-gradient(180deg,#2d6b4a,#164030);color:#c8f1d9;border-color:#59b684}
+.pz-palette{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 18px}
+.pz-piece{height:58px;border-radius:12px;border:2px solid var(--kv-plate-border);background:radial-gradient(circle at 40% 30%,#fff0c4,#e4bd79);font:700 32px "Noto Serif SC","KaiTi","STKaiti","SimSun",serif;cursor:pointer}
+.pz-piece.red{color:#a72e22}
+.pz-piece.black{color:#343629}
+.pz-piece.eraser{font:700 16px var(--kv-font-sans);background:var(--kv-plate);color:var(--kv-gold-light)}
+.pz-piece.on{outline:4px solid #1f7aa8;outline-offset:2px}
+.pz-field{display:grid;gap:8px;margin:0 0 16px;color:var(--kv-gold-light);font-weight:600}
+.pz-fen-row{display:flex;gap:8px}
+.pz-page .kv-input{font-size:16px;padding:13px 14px}
+@media(max-width:900px){.pz-layout,.pz-editor{grid-template-columns:1fr}.pz-board-wrap{max-width:760px;margin:auto;width:100%}.pz-page{font-size:16px}.pz-side{padding:20px}}

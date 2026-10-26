@@ -1,5 +1,6 @@
 "use client";
 // KYVIEN_YOUTUBE_V1
+import { go } from "@/lib/go";
 import { useYouTubeMusic } from "@/hooks/use-youtube-music";
 // KYVIEN_JOURNEY_V1
 import ClassicResult from "@/components/classic-result";
@@ -398,7 +399,7 @@ export default function Arena() {
         next.status === "draw" ||
         next.status === "cancelled")
     ) {
-      location.assign("/");
+      go("/");
 
       return;
     }
@@ -662,7 +663,7 @@ export default function Arena() {
   useEffect(() => {
     if (room?.status !== "cancelled") return;
 
-    const t = setTimeout(() => location.assign("/"), 2500);
+    const t = setTimeout(() => go("/"), 2500);
 
     return () => clearTimeout(t);
   }, [room?.status]);
@@ -725,7 +726,7 @@ export default function Arena() {
     try {
       await api("/matchmaking/queue", "DELETE");
 
-      location.assign("/");
+      go("/");
     } catch (e) {
       setError((e as Error).message);
 
@@ -893,7 +894,7 @@ export default function Arena() {
         <div className="arena-brand">
           弈{" "}
           <span>
-            KỲ VÂN CÁC<small>GẶP TRI KỶ · ĐẤU TRÍ CỜ</small>
+            KỲ VÂN CÁC
           </span>
         </div>
 
@@ -1413,7 +1414,7 @@ export default function Arena() {
                       onClick={() => {
                         setMenu(false);
 
-                        ended ? location.assign("/") : setConfirm("leave");
+                        ended ? go("/") : setConfirm("leave");
                       }}
                     >
                       <LogOut /> Ra ngoài

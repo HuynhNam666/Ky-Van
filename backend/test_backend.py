@@ -195,3 +195,24 @@ def test_perft_matches_published_xiangqi_counts():
         ms=moves(b,side)
         return len(ms) if d==1 else sum(perft(moved(b,f,t),'b' if side=='r' else 'r',d-1) for f,t in ms)
     assert [perft(initial(),'r',d) for d in (1,2,3)]==[44,1920,79666]
+
+
+def test_leaderboard_orders_by_points_then_elo():
+    from backend.rankings import PlayerRank
+    from sqlalchemy.orm import Session
+    a, b, c = client('lb_alpha'), client('lb_beta'), client('lb_gamma')
+    ids = {n: x.get('/api/auth/me').json()['id'] for n, x in (('a', a), ('b', b), ('c', c))}
+    with Session(main.engine) as s:
+        s.add_all([PlayerRank(user_id=ids['a'], points=90000, elo=1100, wins=1, draws=0, losses=0, avatar_id='classic'),
+                   PlayerRank(user_id=ids['b'], points=90000, elo=1300, wins=1, draws=0, losses=0, avatar_id='classic'),
+                   PlayerRank(user_id=ids['c'], points=89000, elo=2000, wins=1, draws=0, losses=0, avatar_id='classic')])
+        s.commit()
+    r = a.get('/api/progression/leaderboard?limit=3')
+    assert r.status_code == 200, r.text
+    data = r.json()
+    top = [x['user_id'] for x in data['items']]
+    assert top == [ids['b'], ids['a'], ids['c']]       # điểm trước, Elo phá hòa
+    assert data['me']['rank'] == 2 and data['me']['user_id'] == ids['a']
+    assert data['total'] >= 3
+    assert 'password' not in str(data)
+    assert Actor().get('/api/progression/leaderboard').status_code == 401   # cần đăng nhập

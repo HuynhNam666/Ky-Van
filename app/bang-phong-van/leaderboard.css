@@ -1,0 +1,29 @@
+/* Bảng Phong Vân — token từ public/kv-shared/kv-theme.css */
+.lb-page{padding:16px max(18px,calc((100vw - 1100px)/2)) 72px;font-size:17px}
+.lb-hero{text-align:center;padding:30px 12px 18px}
+.lb-hero h1{display:block;margin:0;font:700 clamp(38px,9vw,76px) var(--kv-font-display);color:var(--kv-gold-light);text-shadow:0 0 18px rgba(217,119,6,.45)}
+.lb-hero p{margin:6px 0 0;color:var(--kv-muted)}
+.lb-page .kv-card{margin:16px 0}
+.lb-list{list-style:none;margin:0;padding:0}
+.lb-row{display:grid;grid-template-columns:52px 56px minmax(0,1fr) auto auto auto;align-items:center;gap:16px;padding:14px 8px;border-top:1px solid var(--kv-line-soft)}
+.lb-list .lb-row:first-child{border-top:0}
+.lb-rank{text-align:center;font:700 24px var(--kv-font-serif);color:var(--kv-gold-light)}
+.lb-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--kv-plate-border);background:#152c29}
+.lb-name{font-size:19px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.lb-name em{font-style:normal;color:var(--kv-gold)}
+.lb-tier{color:var(--kv-gold-light);font-size:16px}
+.lb-points{font-size:16px;color:var(--kv-muted)}
+.lb-points b{color:var(--kv-text);font-size:19px}
+.lb-elo{font-size:16px;color:var(--kv-muted);min-width:70px;text-align:right}
+.lb-row.me{background:rgba(212,175,55,.1);border-radius:10px}
+.lb-row.top1 .lb-avatar{border-color:#f1d680;box-shadow:0 0 12px rgba(241,214,128,.5)}
+.lb-row.top2 .lb-avatar{border-color:#cfd5d9}
+.lb-row.top3 .lb-avatar{border-color:#c98a56}
+.lb-empty{color:var(--kv-muted);text-align:center;padding:18px 0}
+.lb-note{margin:8px 0 0;color:var(--kv-muted);font-size:13px}
+.lb-page button{font-family:inherit}
+@media(max-width:640px){
+  .lb-row{grid-template-columns:34px 40px minmax(0,1fr) auto;gap:8px}
+  .lb-avatar{width:44px;height:44px}
+  .lb-tier,.lb-points{display:none}
+}

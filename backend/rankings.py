@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 from fastapi import HTTPException
 from pydantic import BaseModel, Field
-from sqlalchemy import ForeignKey, Integer, String, JSON, select
+from sqlalchemy import ForeignKey, Integer, String, JSON, select, func
 from sqlalchemy.orm import Mapped, mapped_column
 from .main import Base, User, Room, engine, app, Current, DB
 
@@ -89,6 +89,27 @@ def rank_catalog(): return CATALOG
 
 @app.get('/api/progression/me')
 def rank_me(u: Current, s: DB): return profile(s, u.id)
+
+@app.get('/api/progression/leaderboard')
+def leaderboard(u: Current, s: DB, limit: int = 50):
+    """Bảng Phong Vân: xếp theo điểm cấp bậc, rồi Elo, rồi người tham gia sớm hơn. Chỉ lộ thông tin công khai của hồ sơ."""
+    limit = max(1, min(100, limit))
+    order = (PlayerRank.points.desc(), PlayerRank.elo.desc(), PlayerRank.user_id.asc())
+    rows = s.execute(select(PlayerRank, User.username).join(User, User.id == PlayerRank.user_id).order_by(*order).limit(limit)).all()
+    def entry(rank, p, name):
+        return dict(rank=rank, user_id=p.user_id, username=name, avatar_url=AVATARS[p.avatar_id]['url'] if p.avatar_id in AVATARS else AVATARS['classic']['url'],
+                    tier=tier_for(p.points), points=p.points, elo=p.elo)
+    items = [entry(i + 1, p, name) for i, (p, name) in enumerate(rows)]
+    mine = s.get(PlayerRank, u.id)
+    me = None
+    if mine is not None:
+        ahead = s.scalar(select(func.count()).select_from(PlayerRank).where(
+            (PlayerRank.points > mine.points)
+            | ((PlayerRank.points == mine.points) & (PlayerRank.elo > mine.elo))
+            | ((PlayerRank.points == mine.points) & (PlayerRank.elo == mine.elo) & (PlayerRank.user_id < mine.user_id))))
+        me = entry(ahead + 1, mine, u.username)
+    total = s.scalar(select(func.count()).select_from(PlayerRank))
+    return dict(items=items, me=me, total=total)
 
 class AvatarChoice(BaseModel):
     avatar_id: str = Field(min_length=1, max_length=32)

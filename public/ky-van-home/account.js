@@ -324,13 +324,13 @@
       event.stopImmediatePropagation();
       await loaded;
       if (!user) {
-        window.top.location.assign("/dang-nhap");
+        window.kyVanGo("/dang-nhap");
         return;
       }
-      if (title === "Tạo phòng") window.top.location.assign("/phong");
+      if (title === "Tạo phòng") window.kyVanGo("/phong");
       else if (title === "Bằng Hữu / Kết Giao")
-        window.top.location.assign("/ban-be");
-      else if (title === "Thiết Lập") window.top.location.assign("/cai-dat");
+        window.kyVanGo("/ban-be");
+      else if (title === "Thiết Lập") window.kyVanGo("/cai-dat");
       else window.dispatchEvent(new Event("kyvan-toggle-music"));
     },
     true,
@@ -339,10 +339,10 @@
   window.kyVanEnterGame = async (path) => {
     await loaded;
     if (!user) {
-      window.top.location.assign("/dang-nhap");
+      window.kyVanGo("/dang-nhap");
       return;
     }
-    window.top.location.assign(path);
+    window.kyVanGo(path);
   };
   document.querySelectorAll('a[href="/kydai"],a[href="/ky-dai"]').forEach((a) =>
     a.addEventListener(
@@ -362,7 +362,7 @@
       (e) => {
         e.preventDefault();
         e.stopImmediatePropagation();
-        if (!user) window.top.location.assign("/dang-nhap");
+        if (!user) window.kyVanGo("/dang-nhap");
         else status.textContent = "Bạn đang đăng nhập: " + user.username;
       },
       true,

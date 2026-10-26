@@ -65,29 +65,27 @@
 }
 
 :root {
-  --serif:
-    "Palatino Linotype", Palatino, "Book Antiqua", Cambria, "Times New Roman",
-    serif;
+  --serif: "Noto Serif", Georgia, serif;
 
   --popover-foreground: #e9e6d9;
 
-  --background: #1a1e1b;
+  --background: #0b1215;
 
-  --foreground: #e9e6d9;
+  --foreground: #e5edea;
 
-  --card: #222621;
+  --card: #121d1b;
 
-  --popover: #292d26;
+  --popover: #172622;
 
-  --primary: #b24e3d;
+  --primary: #a82020;
 
-  --muted-foreground: #a6aa9e;
+  --muted-foreground: #9fb0aa;
 
-  --border: #363a30;
+  --border: #2e3a33;
 
   --radius: 0.625rem;
 
-  --gold: #c8ad76;
+  --gold: #d4af37;
 
   --red: #b85040;
 
@@ -103,11 +101,11 @@
 body {
   margin: 0;
 
-  font-family: Arial, "Helvetica Neue", sans-serif;
+  font-family: var(--kv-font-sans, Arial), Arial, sans-serif;
 
   font-size: 14px;
 
-  background: var(--background);
+  background: var(--kv-page-bg, var(--background)) fixed, var(--background);
 
   color: var(--foreground);
 }
@@ -226,7 +224,7 @@ button:hover:not(:disabled) {
 .brand small {
   display: block;
 
-  font: 9px Arial;
+  font: 9px var(--kv-font-sans), Arial;
 
   letter-spacing: 2px;
 
@@ -1507,7 +1505,7 @@ h1 {
 }
 
 .quiet-note small {
-  font-family: Arial;
+  font-family: var(--kv-font-sans), Arial;
 
   font-style: normal;
 
@@ -3137,4 +3135,13 @@ input::placeholder {
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
   scroll-behavior: auto !important;
+}
+
+
+/* Phông thống nhất: ô nhập, nút và vùng chọn kế thừa phông trang */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }

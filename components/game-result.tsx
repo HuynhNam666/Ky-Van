@@ -653,7 +653,7 @@ export default function GameResult({
 
         .kv-premium .kv-result-title {
           margin: 0 !important;
-          font-family: Georgia, "Times New Roman", serif !important;
+          font-family: var(--kv-font-serif), serif !important;
           font-size: clamp(24px, 5.8vw, 34px) !important;
           font-weight: 700 !important;
           line-height: 1.2 !important;
@@ -745,7 +745,7 @@ export default function GameResult({
           display: block;
           color: var(--premium-bright);
           font:
-            20px Georgia,
+            20px var(--kv-font-serif),
             serif;
           line-height: 1.2;
           overflow-wrap: anywhere;

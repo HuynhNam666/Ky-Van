@@ -18,7 +18,8 @@
     "typecheck": "tsc --noEmit",
     "check:rules": "node --experimental-strip-types scripts/check-rules.mjs",
     "check:parity": "node --experimental-strip-types scripts/check-parity.mjs",
-    "check:ai": "node --experimental-strip-types scripts/check-ai.mjs"
+    "check:ai": "node --experimental-strip-types scripts/check-ai.mjs",
+    "check:puzzles": "node --experimental-strip-types scripts/check-puzzles.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
