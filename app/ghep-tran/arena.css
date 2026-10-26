@@ -251,7 +251,7 @@
 
   color: var(--ink);
 
-  font-family: Arial, sans-serif;
+  font-family:var(--kv-font-sans),Arial,sans-serif;
 
   padding: 0 28px 30px;
 
@@ -333,16 +333,14 @@
   gap: 12px;
 
   font:
-    39px Georgia,
-    serif;
+    39px var(--kv-font-serif);
 
   color: var(--gold);
 }
 
 .arena-brand span {
   font:
-    600 17px Georgia,
-    serif;
+    600 17px var(--kv-font-serif);
 
   letter-spacing: 3px;
 }
@@ -351,7 +349,7 @@
   display: block;
 
   font:
-    8px Arial,
+    8px var(--kv-font-sans), Arial,
     sans-serif;
 
   letter-spacing: 2.3px;
@@ -423,8 +421,7 @@
   color: #ead39e;
 
   font:
-    23px Georgia,
-    serif;
+    23px var(--kv-font-serif);
 
   box-shadow: 0 0 0 4px #d7b8790b;
 }
@@ -696,8 +693,7 @@
 
 .arena-ready-overlay h2 {
   font:
-    25px Georgia,
-    serif;
+    25px var(--kv-font-serif);
 
   margin: 12px 0;
 }
@@ -718,8 +714,7 @@
 
 .arena-countdown strong {
   font:
-    40px Georgia,
-    serif;
+    40px var(--kv-font-serif);
 
   font-variant-numeric: tabular-nums;
 }
@@ -978,8 +973,7 @@
   color: #e2d6b8;
 
   font:
-    18px Georgia,
-    serif;
+    18px var(--kv-font-serif);
 }
 
 .arena-social-title small {
@@ -1042,8 +1036,7 @@
 
 .arena-video-stage h3 {
   font:
-    17px Georgia,
-    serif;
+    17px var(--kv-font-serif);
 
   color: #d9d1b9;
 
@@ -1362,8 +1355,7 @@
 .arena-wait h1,
 .arena-login h1 {
   font:
-    31px Georgia,
-    serif;
+    700 40px var(--kv-font-display);
 
   color: #e6d6ae;
 
@@ -1521,8 +1513,7 @@
 
 .arena-prompt h2 {
   font:
-    25px Georgia,
-    serif;
+    25px var(--kv-font-serif);
 
   color: #edd8a7;
 
@@ -1786,7 +1777,7 @@
 
 .arena-brand,
 .arena-seal {
-  font-family: "Noto Serif SC", Georgia, serif;
+  font-family: "Noto Serif SC", var(--kv-font-serif);
 }
 
 .arena-grid text {
@@ -1817,8 +1808,7 @@
 
 .arena-captures h2 {
   font:
-    24px Georgia,
-    serif;
+    24px var(--kv-font-serif);
 
   color: #e5c993;
 
@@ -2250,4 +2240,40 @@
   white-space: nowrap;
   font-size: 10px;
   padding: 4px 6px;
+}
+
+/* ===== Đồng bộ khung đầu trang với thiết kế chung (public/kv-shared/kv-theme.css) ===== */
+.kv-arena {
+  background: var(--kv-page-bg) fixed, var(--kv-bg);
+  font-family: var(--kv-font-sans);
+}
+.arena-header {
+  height: auto;
+  min-height: 76px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--kv-line);
+}
+.arena-header > a {
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  color: var(--kv-gold-light);
+  background: var(--kv-plate);
+  border: 1px solid var(--kv-plate-border);
+  box-shadow: inset 0 1px 2px rgba(255, 235, 160, 0.3), 0 3px 8px rgba(0, 0, 0, 0.5);
+}
+.arena-brand span {
+  font: 400 24px var(--kv-font-brush);
+  letter-spacing: 0.1em;
+  color: var(--kv-gold-light);
+  text-shadow: 0 0 12px rgba(217, 119, 6, 0.45);
+}
+.arena-brand small {
+  font: 600 9px var(--kv-font-serif);
+  color: #c79a3c;
+}
+.arena-header-right {
+  font: 600 11px var(--kv-font-serif);
+  letter-spacing: 0.22em;
+  color: #d9b971;
 }

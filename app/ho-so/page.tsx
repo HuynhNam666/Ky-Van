@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { api, ApiError } from "@/lib/api";
+import KvTopbar from "@/components/kv-topbar";
 import {
   RankAvatar,
   RankLabel,
@@ -64,13 +65,8 @@ export default function RankPage() {
     }
   }
   return (
-    <main className="kv-profile-page">
-      <header className="kv-profile-nav">
-        <a href="/ky-thu">Hồ sơ · Lịch sử · Ván đã lưu</a>
-        <a href="/">← Kỳ Viện</a>
-        <span>HỒ SƠ KỲ THỦ</span>
-        <a href="/ghep-tran">Vào kỳ đài →</a>
-      </header>
+    <main className="kv-profile-page kv-page">
+      <KvTopbar title="Cấp bậc · Chân dung" current="/ky-thu" />
       {error && (
         <div className="kv-profile-error" role="alert">
           {error} <button onClick={() => void load()}>Thử lại</button>
@@ -88,12 +84,7 @@ export default function RankPage() {
               <RankLabel profile={profile} />
             </div>
             <div>
-              <p className="kv-eyebrow">MỖI VÁN CỜ · MỘT BƯỚC TIẾN</p>
               <h1>Hành trình kỳ thủ</h1>
-              <p>
-                Gom chiến thắng, chinh phục danh hiệu và mở khóa những chân dung
-                dành riêng cho bạn.
-              </p>
               <div className="kv-profile-progress">
                 <label htmlFor="rank-progress">
                   {profile.next_tier
@@ -124,11 +115,6 @@ export default function RankPage() {
               </div>
             </div>
           </section>
-          <p className="kv-profile-rules">
-            Thắng +40 · Hòa +10 · Thua không trừ điểm cấp bậc. Mỗi bên phải đi
-            ít nhất 3 nước. Elo tính riêng theo đối thủ; thua có thể giảm Elo.
-            Áp dụng trận online, không cộng khi đánh máy hoặc hủy ván.
-          </p>
           <div className="kv-profile-tabs" aria-label="Nội dung hồ sơ">
             <button
               aria-pressed={tab === "avatars"}

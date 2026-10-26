@@ -2,6 +2,8 @@
 // KYVIEN_JOURNEY_V1
 
 import { useEffect, useState, type CSSProperties } from "react";
+import KvTopbar from "@/components/kv-topbar";
+import { go } from "@/lib/go";
 import { API, api, type Room } from "@/lib/api";
 import {
   RankAvatar,
@@ -51,12 +53,12 @@ function Player({
         tabIndex={profile ? 0 : undefined}
         aria-label="Xem hồ sơ kỳ thủ"
         onClick={() => {
-          if (profile) location.assign("/ky-thu?uid=" + profile.user_id);
+          if (profile) go("/ky-thu?uid=" + profile.user_id);
         }}
         onKeyDown={(e) => {
           if (profile && (e.key === "Enter" || e.key === " ")) {
             e.preventDefault();
-            location.assign("/ky-thu?uid=" + profile.user_id);
+            go("/ky-thu?uid=" + profile.user_id);
           }
         }}
       >
@@ -366,27 +368,19 @@ export default function LiveWatch() {
       sort === "moves" ? b.move_count - a.move_count : b.viewers - a.viewers,
     );
   return (
-    <main className={`lw-page ${motion ? "" : "lw-still"}`}>
+    <main className={`kv-page lw-page ${motion ? "" : "lw-still"}`}>
       <div className="lw-leaves" aria-hidden="true">
         {Array.from({ length: 14 }, (_, i) => (
           <i key={i} style={{ "--i": i } as CSSProperties} />
         ))}
       </div>
       <div className="lw-wrap">
-        <header className="lw-header">
-          <a href="/" className="lw-brand">
-            <span>棋</span>
-            <div>
-              KỲ VIỆN<small>TRÚC HIÊN · QUÁN CỜ</small>
-            </div>
-          </a>
-          <div>
-            <button onClick={() => setMotion(!motion)} aria-pressed={motion}>
-              {motion ? "Tắt" : "Bật"} lá bay
-            </button>
-            <a href="/">Về trang chủ ↗</a>
-          </div>
-        </header>
+        <KvTopbar title="Khán đài trực tuyến" current="/xem-co" />
+        <div className="lw-tools">
+          <button onClick={() => setMotion(!motion)} aria-pressed={motion}>
+            {motion ? "Tắt" : "Bật"} lá bay
+          </button>
+        </div>
         {code ? (
           <>
             <button className="lw-back" onClick={() => open(null)}>
@@ -469,11 +463,6 @@ export default function LiveWatch() {
                     <button onClick={() => setFlipped(!flipped)}>
                       ⇄ Đảo chiều bàn cờ
                     </button>
-                    <p className="lw-note">
-                      Bạn đang xem trực tiếp, không tham gia điều khiển ván đấu.
-                      {game.variant === "coup" &&
-                        " Quân úp chưa lật và quân bị bắt khi còn úp được giữ kín với khán giả."}
-                    </p>
                     <h3>Nước đi gần đây</h3>
                     <ol className="lw-moves">
                       {game.history?.slice(-12).map((m, i) => (
@@ -501,16 +490,12 @@ export default function LiveWatch() {
         ) : (
           <>
             <section className="lw-hero">
-              <span className="lw-kicker">MỘT TÁCH TRÀ · MỘT VÁN HAY</span>
+              
               <h1>
                 Ngồi dưới hiên trúc,
                 <br />
                 <em>thưởng một ván cờ.</em>
               </h1>
-              <p>
-                Cờ tướng hay cờ úp, cao thủ hay bằng hữu — mọi ván đang đấu đều
-                có chỗ cho người thưởng cờ.
-              </p>
               <div className="lw-stats">
                 <span>
                   <b>{rooms.length}</b> bàn đang đấu
@@ -528,7 +513,7 @@ export default function LiveWatch() {
             <section className="lw-hall">
               <div className="lw-hall-heading">
                 <div>
-                  <small>KHÁN ĐÀI TRỰC TUYẾN</small>
+                  
                   <h2>Những ván cờ đang đấu</h2>
                 </div>
                 <span>{filtered.length} bàn</span>
@@ -647,10 +632,7 @@ export default function LiveWatch() {
                 </div>
               )}
             </section>
-            <footer className="lw-footer">
-              Gió qua hiên trúc · Cờ kể chuyện người{" "}
-              <span>Chỉ hiển thị ván đang thi đấu</span>
-            </footer>
+            
           </>
         )}
       </div>

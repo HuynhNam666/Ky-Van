@@ -5,7 +5,7 @@
   link.href='/xem-co'; link.target='_top';
   link.addEventListener('click', event => {
    event.preventDefault();event.stopImmediatePropagation();
-   window.top.location.assign('/xem-co');
+   window.kyVanGo('/xem-co');
   }, true);
  });
 })();

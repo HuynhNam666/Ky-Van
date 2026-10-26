@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import GlobalYouTubeMusic from "@/components/global-youtube-music";
 import "./globals.css";
 import LobbyNotifications from "@/components/lobby-notifications";
+import SoftNav from "@/components/soft-nav";
 import PresenceHeartbeat from "@/components/presence-heartbeat";
 const title = "Kỳ Viện · Cờ tướng",
   description =
@@ -45,8 +46,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi">
+      <head>
+        <link rel="stylesheet" href="/kv-shared/kv-theme.css" />
+      </head>
       <body>
         <GlobalYouTubeMusic />
+        <SoftNav />
         <PresenceHeartbeat />
         <LobbyNotifications />
         {children}

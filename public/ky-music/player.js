@@ -99,7 +99,7 @@
     render();
     status.textContent = "Đã tắt nhạc.";
   }
-  async function start() {
+  async function start(auto) {
     const request = ++generation;
     wanted = true;
     preference(true);
@@ -114,7 +114,8 @@
     } catch (e) {
       if (request !== generation) return;
       wanted = false;
-      preference(false);
+      // Tự phát lại bị trình duyệt chặn: giữ nguyên lựa chọn bật nhạc, chờ thao tác đầu tiên.
+      if (!(auto && e.name === "NotAllowedError")) preference(false);
       render();
       status.textContent =
         e.name === "NotAllowedError"
@@ -233,7 +234,20 @@
   }, 5000);
   render();
   if (read(PREF).music === true) {
-    status.textContent = "Bấm Phát nhạc để tiếp tục bài đã lưu.";
+    status.textContent = "Bấm vào trang để tiếp tục bài đã lưu.";
+    // Sau khi tải lại trang: thử phát ngay, nếu bị chặn thì phát ở thao tác đầu tiên.
+    void start(true);
+    const resume = () => {
+      if (read(PREF).music === true && !wanted) void start(true);
+      else if (wanted) cleanup();
+    };
+    const cleanup = () => {
+      document.removeEventListener("pointerdown", resume, true);
+      document.removeEventListener("keydown", resume, true);
+    };
+    document.addEventListener("pointerdown", resume, true);
+    document.addEventListener("keydown", resume, true);
+    audio.addEventListener("playing", cleanup, { once: true });
   }
 })();
 

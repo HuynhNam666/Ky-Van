@@ -1,6 +1,6 @@
 /* Capture only the existing Cờ Úp card. Keep all its artwork and old handlers. */
 (()=>{
- function activate(e){e.preventDefault();e.stopImmediatePropagation();if(window.kyVanEnterGame)void window.kyVanEnterGame('/ghep-tran?variant=coup');else window.top.location.assign('/co-up')}
+ function activate(e){e.preventDefault();e.stopImmediatePropagation();if(window.kyVanEnterGame)void window.kyVanEnterGame('/ghep-tran?variant=coup');else window.kyVanGo('/co-up')}
  document.querySelectorAll('h3').forEach(title=>{
   if(title.textContent.trim().toLocaleLowerCase('vi-VN')!=='cờ úp')return;
   const card=title.closest('.group');if(!card)return;

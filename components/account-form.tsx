@@ -40,7 +40,7 @@ export default function AccountForm({ register }: { register: boolean }) {
     }
   }
   return (
-    <main className="kv-account">
+    <main className="kv-account kv-page">
       <a className="kv-account-back" href="/">
         <ArrowLeft size={17} /> Về trang chủ
       </a>
@@ -48,7 +48,7 @@ export default function AccountForm({ register }: { register: boolean }) {
         <aside className="kv-account-art">
           <span className="kv-account-brand">KỲ VÂN CÁC</span>
           <div className="kv-account-emblem">帥</div>
-          <span className="kv-account-caption">GẶP TRI KỶ · ĐẤU TRÍ CỜ</span>
+          
           <h1>
             Một nước cờ.
             <br />
@@ -64,9 +64,7 @@ export default function AccountForm({ register }: { register: boolean }) {
           </div>
         </aside>
         <div className="kv-account-form">
-          <span className="kv-account-kicker">
-            {register ? "BẮT ĐẦU HÀNH TRÌNH" : "CHÀO MỪNG TRỞ LẠI"}
-          </span>
+          
           <h2>{register ? "Đăng ký kỳ thủ" : "Đăng nhập"}</h2>
           <p>
             {register

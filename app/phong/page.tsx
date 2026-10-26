@@ -5,6 +5,7 @@ import { roomVariantApi, type VariantRoom } from "@/lib/coup-client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api, ApiError, Room } from "@/lib/api";
+import KvTopbar from "@/components/kv-topbar";
 import "../ban-be/features.css";
 
 export default function PrivateRoomPage() {
@@ -87,23 +88,10 @@ export default function PrivateRoomPage() {
     }
   }
   return (
-    <main className="feature-page">
-      <header className="feature-header">
-        <a href="/" className="feature-back">
-          ← Kỳ Viện
-        </a>
-        <span>PHÒNG GIAO HỮU</span>
-        <a href="/ban-be" className="feature-link">
-          Bằng hữu
-        </a>
-      </header>
+    <main className="feature-page kv-page">
+      <KvTopbar title="Phòng giao hữu" current="/phong" />
       <section className="feature-hero">
-        <small>KỲ ĐÀI RIÊNG · MỜI BẰNG HỮU</small>
         <h1>Tạo hoặc tìm phòng</h1>
-        <p>
-          Tạo mã phòng riêng hoặc nhập mã bạn bè gửi. Mỗi trận giữ nguyên chat,
-          video call, cảm xúc và các chức năng bàn cờ hiện có.
-        </p>
       </section>
       <div className="room-tabs">
         <button

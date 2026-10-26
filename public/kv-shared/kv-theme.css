@@ -1,0 +1,399 @@
+@import url("https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Noto+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
+
+/* Kỳ Vân Các — thiết kế chung cho mọi trang phụ.
+   Lấy từ trang chủ: nền mực xanh đen, vàng đồng, ngọc bích, son đỏ. */
+:root {
+  --kv-ink: #070c0e;
+  --kv-bg: #0b1215;
+  --kv-panel: #121d1b;
+  --kv-panel-2: #172622;
+  --kv-line: rgba(163, 127, 55, 0.35);
+  --kv-line-soft: rgba(255, 255, 255, 0.08);
+  --kv-gold: #d4af37;
+  --kv-gold-light: #fae392;
+  --kv-gold-dark: #8b6508;
+  --kv-jade: #175249;
+  --kv-jade-dark: #0a2622;
+  --kv-crimson: #a82020;
+  --kv-text: #e5edea;
+  --kv-muted: #9fb0aa;
+  --kv-ok: #75d69c;
+  --kv-danger: #f0a28f;
+  --kv-font-serif: "Noto Serif", Georgia, serif;
+  --kv-font-sans: "Noto Serif", Georgia, serif;
+  --kv-font-display: "Charm", "Noto Serif", Georgia, serif;
+  --kv-font-brush: "Charm", "Noto Serif", Georgia, serif;
+  --kv-plate: linear-gradient(180deg, #44321f 0%, #291c10 50%, #170f07 100%);
+  --kv-plate-border: #a37f37;
+  --kv-page-bg:
+    radial-gradient(circle at 50% 8%, rgba(212, 175, 55, 0.12), transparent 50%),
+    radial-gradient(circle at 85% 40%, rgba(26, 77, 68, 0.22), transparent 45%),
+    linear-gradient(180deg, #070d0f 0%, #0d1a18 40%, #152220 75%, #080d0e 100%);
+}
+
+/* Nền & chữ cho mọi trang phụ */
+.kv-page {
+  min-height: 100dvh;
+  background: var(--kv-page-bg) fixed, var(--kv-bg);
+  color: var(--kv-text);
+  font-family: var(--kv-font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.kv-page *,
+.kv-page *::before,
+.kv-page *::after {
+  box-sizing: border-box;
+}
+.kv-page a {
+  color: inherit;
+  text-decoration: none;
+}
+.kv-page :focus-visible {
+  outline: 2px solid var(--kv-gold-light);
+  outline-offset: 3px;
+}
+
+/* ===== Thanh trên cùng thống nhất: Trang chủ | tên trang | điều hướng nhanh ===== */
+.kv-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0 16px;
+  border-bottom: 1px solid var(--kv-line);
+  flex-wrap: wrap;
+}
+.kv-topbar-home {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 6px;
+}
+.kv-topbar-seal {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font: 700 20px var(--kv-font-serif);
+  color: var(--kv-gold-light);
+  background: var(--kv-plate);
+  border: 2px solid var(--kv-plate-border);
+  box-shadow: inset 0 1px 2px rgba(255, 235, 160, 0.4), 0 3px 8px rgba(0, 0, 0, 0.6);
+}
+.kv-topbar-brand {
+  display: grid;
+  line-height: 1.15;
+}
+.kv-topbar-brand b {
+  font: 700 26px var(--kv-font-brush);
+  color: var(--kv-gold-light);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 12px rgba(217, 119, 6, 0.45);
+}
+.kv-topbar-brand small {
+  font: 600 9px var(--kv-font-serif);
+  letter-spacing: 0.25em;
+  color: #c79a3c;
+  text-transform: uppercase;
+}
+.kv-topbar-title {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  font: 600 11px var(--kv-font-serif);
+  letter-spacing: 0.22em;
+  color: #d9b971;
+  text-transform: uppercase;
+}
+.kv-topbar-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+/* Nhóm "vào ván cờ" nằm hàng riêng, tách khỏi nhóm tài khoản */
+.kv-topbar-nav + .kv-topbar-nav {
+  flex-basis: 100%;
+  justify-content: flex-start;
+  padding-top: 12px;
+  border-top: 1px dashed var(--kv-line-soft);
+}
+.kv-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font: 600 12px var(--kv-font-sans);
+  color: var(--kv-gold-light);
+  background: var(--kv-plate);
+  border: 1px solid var(--kv-plate-border);
+  box-shadow: inset 0 1px 2px rgba(255, 235, 160, 0.3), 0 3px 8px rgba(0, 0, 0, 0.5);
+  transition: transform 0.15s, color 0.15s, border-color 0.15s;
+}
+.kv-nav-link:hover {
+  transform: translateY(-1px);
+  color: #fff;
+  border-color: var(--kv-gold-light);
+}
+.kv-nav-link[aria-current="page"] {
+  background: linear-gradient(180deg, #e8c75f, #a97b22);
+  color: #20160a;
+  border-color: #f1d680;
+}
+
+/* ===== Tiêu đề trang ===== */
+.kv-hero {
+  text-align: center;
+  padding: 38px 12px 22px;
+}
+.kv-hero small {
+  font: 600 10px var(--kv-font-serif);
+  letter-spacing: 0.3em;
+  color: #c79a3c;
+}
+.kv-hero h1 {
+  display: block;
+  margin: 8px 0;
+  font:700 clamp(45px, 6vw, 68px) var(--kv-font-display);
+  color: var(--kv-gold-light);
+  letter-spacing: 0.06em;
+  text-shadow: 0 0 18px rgba(217, 119, 6, 0.45);
+}
+.kv-hero p {
+  margin: auto;
+  max-width: 560px;
+  color: var(--kv-muted);
+}
+
+/* ===== Thẻ nội dung ===== */
+.kv-card {
+  border: 1px solid var(--kv-line);
+  border-radius: 14px;
+  padding: 20px 22px;
+  background: linear-gradient(160deg, rgba(23, 38, 34, 0.92), rgba(12, 20, 19, 0.94));
+  box-shadow: inset 0 1px 0 rgba(250, 227, 146, 0.08), 0 14px 36px rgba(0, 0, 0, 0.35);
+}
+.kv-card h2 {
+  margin: 0 0 14px;
+  font: 700 20px var(--kv-font-serif);
+  color: var(--kv-gold-light);
+}
+
+/* ===== Nút: chính (vàng) / phụ (đồng tối) / nguy hiểm ===== */
+.kv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font: 600 13px var(--kv-font-sans);
+  color: var(--kv-gold-light);
+  background: var(--kv-plate);
+  border: 1px solid var(--kv-plate-border);
+  box-shadow: inset 0 1px 2px rgba(255, 235, 160, 0.3), 0 3px 8px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  transition: transform 0.15s, filter 0.15s;
+}
+.kv-btn:hover:not(:disabled) {
+  filter: brightness(1.18);
+}
+.kv-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.kv-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.kv-btn-primary {
+  background: linear-gradient(180deg, #ecca62, #b08023);
+  color: #20160a;
+  border-color: #f1d680;
+}
+.kv-btn-danger {
+  background: linear-gradient(180deg, #5c1a1a, #3a0e0e);
+  color: #ffd9cf;
+  border-color: #a85050;
+}
+
+/* ===== Ô nhập liệu ===== */
+.kv-input {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 9px;
+  color: var(--kv-text);
+  background: rgba(5, 10, 11, 0.7);
+  border: 1px solid var(--kv-line);
+  font: 14px var(--kv-font-sans);
+}
+.kv-input::placeholder {
+  color: #6f807a;
+}
+.kv-input:focus {
+  outline: none;
+  border-color: var(--kv-gold-light);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18);
+}
+
+/* ===== Thông báo ===== */
+.kv-notice {
+  padding: 10px 14px;
+  border-radius: 9px;
+  border: 1px solid var(--kv-line);
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--kv-gold-light);
+}
+.kv-notice.kv-error {
+  border-color: rgba(240, 162, 143, 0.5);
+  background: rgba(168, 32, 32, 0.18);
+  color: var(--kv-danger);
+}
+
+@media (max-width: 640px) {
+  .kv-topbar {
+    gap: 10px;
+  }
+  .kv-topbar-title {
+    order: 3;
+    flex-basis: 100%;
+  }
+  .kv-topbar-nav {
+    order: 2;
+    margin-left: auto;
+  }
+  .kv-topbar-nav + .kv-topbar-nav {
+    order: 4;
+    margin-left: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .kv-nav-link {
+    padding: 6px 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kv-nav-link,
+  .kv-btn {
+    transition: none;
+  }
+}
+
+/* ===== Tiêu đề: kiểu thư pháp Charm. Phần còn lại: Noto Serif ===== */
+h1,
+.kv-account-form h2,
+.kv-arena h1,
+.kv-topbar-brand b,
+.arena-brand span {
+  font-family: var(--kv-font-display);
+  font-style: normal !important;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+/* ===== Thanh đầu trang gọn một hàng: Trang chủ · tên trang · menu Chức năng ===== */
+.kv-topbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--kv-line);
+}
+.kv-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  padding: 5px 18px 5px 6px;
+  border-radius: 999px;
+  font: 700 15px var(--kv-font-sans);
+  color: var(--kv-gold-light);
+  background: var(--kv-plate);
+  border: 1px solid var(--kv-plate-border);
+  box-shadow: inset 0 1px 2px rgba(255, 235, 160, 0.3), 0 3px 8px rgba(0, 0, 0, 0.5);
+  transition: filter 0.15s;
+}
+.kv-home-btn:hover {
+  filter: brightness(1.2);
+}
+.kv-topbar-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font: 700 14px var(--kv-font-serif);
+  letter-spacing: 0.18em;
+  color: #d9b971;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.kv-menu {
+  position: relative;
+  flex: none;
+}
+.kv-menu > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font: 700 15px var(--kv-font-sans);
+  color: #20160a;
+  background: linear-gradient(180deg, #ecca62, #b08023);
+  border: 1px solid #f1d680;
+  user-select: none;
+}
+.kv-menu > summary::-webkit-details-marker {
+  display: none;
+}
+.kv-menu[open] > summary {
+  filter: brightness(1.1);
+}
+.kv-menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 60;
+  width: min(360px, calc(100vw - 32px));
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(160deg, #172622, #0c1413);
+  border: 1px solid var(--kv-line);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+  display: grid;
+  gap: 14px;
+}
+.kv-menu-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.kv-menu-label {
+  grid-column: 1 / -1;
+  font: 700 12px var(--kv-font-serif);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #c79a3c;
+}
+.kv-menu-panel .kv-nav-link {
+  justify-content: center;
+  padding: 11px 10px;
+  border-radius: 10px;
+  font-size: 15px;
+  text-align: center;
+}
+@media (max-width: 520px) {
+  .kv-home-btn span:last-child {
+    font-size: 14px;
+  }
+  .kv-topbar-title {
+    display: none;
+  }
+  .kv-menu {
+    margin-left: auto;
+  }
+}

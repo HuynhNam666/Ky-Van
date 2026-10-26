@@ -3,6 +3,7 @@
 <html class="dark" lang="vi" style="">
   <head>
     <base target="_top" />
+    <script src="/kv-shared/kv-go.js"></script>
 
     <meta charset="utf-8" />
 
@@ -17,7 +18,7 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
 
     <link
-      href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&amp;family=Cinzel:wght@600;800;900&amp;family=Ma+Shan+Zheng&amp;family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400;1,600&amp;family=Playfair+Display:ital,wght@0,700;1,700&amp;display=swap"
+      href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&amp;family=Noto+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&amp;family=Playfair+Display:ital,wght@0,700;1,700&amp;display=swap"
       rel="stylesheet"
     />
 
@@ -57,13 +58,13 @@
             },
 
             fontFamily: {
-              calligraphy: ["'Ma Shan Zheng'", "cursive"],
+              calligraphy: ["'Charm'", "'Noto Serif'", "serif"],
 
               serif: ["'Noto Serif'", "serif"],
 
-              sans: ["'Be Vietnam Pro'", "sans-serif"],
+              sans: ["'Noto Serif'", "serif"],
 
-              classic: ["'Cinzel'", "serif"],
+              classic: ["'Noto Serif'", "serif"],
             },
           },
         },
@@ -481,7 +482,7 @@
 
         box-shadow: 0 25px 80px #0009;
 
-        font-family: "Be Vietnam Pro", sans-serif;
+        font-family: "Noto Serif", serif;
       }
 
       #home-info::backdrop {
@@ -574,7 +575,11 @@
         background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB71yQu6BqVIIl82xTuotJ3Z8KXiyEbJ4CntcvriBMJrjPgreTvR2KqfTmzrqzANacPcmHdIL6XNZAM5CMbX4188etA0SXBiCThtQ-DAt5dN1IF2W3OcLf1QtUHX53ifxwwbbPRSt50U3aTcNbG7KVlj904CTblxiUjaT2NR3QQRS3EhX_jHzLOES7qG_wYPLpueDHcvTkvW-4jYvGuwZUOvKZZJOAwSp0MejTOvS6Yu9qLUgXmgRa8") !important;
       }
     </style>
-  </head>
+  <style>
+.font-calligraphy{font-style:normal;line-height:1.35!important;padding-bottom:.18em;overflow:visible}
+.golden-stamp-text{padding:.08em .12em .2em;display:inline-block}
+.relative.z-20.flex.flex-col.items-center.mb-1{margin-bottom:1.25rem}
+</style></head>
 
   <body
     class="min-h-screen relative font-sans antialiased selection:bg-amber-600/30 selection:text-amber-200"
@@ -800,7 +805,7 @@
 
           <button
             class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
-            title="Tạo phòng"
+            title="Tạo phòng" aria-label="Tạo phòng"
           >
             <span
               class="material-symbols-outlined text-[20px] group-hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
@@ -808,7 +813,7 @@
             ></button
           ><button
             class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
-            title="Bằng Hữu / Kết Giao"
+            title="Bằng Hữu / Kết Giao" aria-label="Bằng Hữu / Kết Giao"
           >
             <span
               class="material-symbols-outlined text-[20px] group-hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
@@ -816,11 +821,13 @@
             >
           </button>
 
+          <!-- Vạch ngăn: nhóm vào ván (trái) | nhóm tiện ích (phải) -->
+          <span class="w-px h-6 bg-amber-700/50 mx-0.5" aria-hidden="true"></span>
           <!-- Nút Âm Luật / Chuông Nhạc Cổ -->
 
           <button
             class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
-            title="Âm Luật Kỳ Các"
+            title="Âm Luật Kỳ Các" aria-label="Âm Luật Kỳ Các"
           >
             <span
               class="material-symbols-outlined text-[20px] group-hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
@@ -832,7 +839,7 @@
 
           <button
             class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
-            title="Chia sẻ phong vân"
+            title="Chia sẻ phong vân" aria-label="Chia sẻ phong vân"
           >
             <span
               class="material-symbols-outlined text-[20px] group-hover:drop-shadow-[0_0_8px_rgba(251,191,36,0.8)]"
@@ -844,7 +851,7 @@
 
           <button
             class="w-10 h-10 rounded-full golden-bronze-plate flex items-center justify-center text-amber-200 hover:text-amber-100 hover:scale-105 active:scale-95 transition-all group"
-            title="Thiết Lập"
+            title="Thiết Lập" aria-label="Thiết Lập"
           >
             <span
               class="material-symbols-outlined text-[20px] group-hover:rotate-45 transition-transform duration-300"
@@ -1725,7 +1732,7 @@
 
           taskLabel.style.cursor = "pointer";
 
-          const enterTasks = () => window.top.location.assign("/nhiem-vu");
+          const enterTasks = () => window.kyVanGo("/nhiem-vu");
 
           taskLabel.addEventListener("click", enterTasks);
 
@@ -1764,5 +1771,6 @@
     <!-- KYVIEN_JOURNEY_V1 -->
     <script src="/ky-profile/home.js" defer></script>
     <script src="/ky-training/home.js" defer></script>
+    <script src="/ky-van-home/features.js" defer></script>
   </body>
 </html>

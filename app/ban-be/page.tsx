@@ -3,6 +3,7 @@
 import {useCallback, useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import {api, ApiError} from "@/lib/api";
+import KvTopbar from "@/components/kv-topbar";
 import "./features.css";
 
 type Friend={id:number;username:string;online:boolean};
@@ -33,8 +34,8 @@ export default function FriendsPage(){
   async function send(username:string){setBusy(true);try{await api("/friends/requests","POST",{username});await reload();if(query)await search(new Event("submit") as unknown as React.FormEvent)}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
   async function decide(id:number,action:"accept"|"reject"){setBusy(true);try{await api("/friends/requests/"+action,"POST",{request_id:id});await reload()}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
   async function invite(friend:Friend){let code:string|undefined=roomCodes[friend.id]?.trim().toUpperCase();setBusy(true);try{if(!code){const mine=await api<Array<{code:string;status:string;red_id:number}>>("/rooms/mine");const me=await api<{id:number}>("/auth/me");code=mine.find(r=>r.status==="waiting"&&r.red_id===me.id)?.code;if(!code)code=(await api<{code:string}>("/rooms","POST",{name:"Giao hữu · "+friend.username,stake:100,total_seconds:900,move_seconds:60})).code;setRoomCodes(v=>({...v,[friend.id]:code!}));}await api("/rooms/"+encodeURIComponent(code)+"/invite","POST",{username:friend.username});router.push("/ghep-tran?room="+code)}catch(e){setError((e as Error).message)}finally{setBusy(false)}}
-  return <main className="feature-page"><header className="feature-header"><a href="/" className="feature-back">← Kỳ Viện</a><span>BẰNG HỮU · KẾT GIAO</span><a href="/phong" className="feature-link">Tạo / tìm phòng</a></header>
-    <section className="feature-hero"><small>KỲ HỮU CÙNG KỲ ĐẠO</small><h1>Bằng hữu</h1><p>Tìm kỳ thủ, quản lý lời mời kết bạn và mời bạn đang trực tuyến vào phòng cờ.</p></section>
+  return <main className="feature-page kv-page"><KvTopbar title="Bằng hữu · Kết giao" current="/ban-be"/>
+    <section className="feature-hero"><h1>Bằng hữu</h1></section>
     <form className="feature-search" onSubmit={search}><input value={query} onChange={e=>setQuery(e.target.value)} minLength={3} placeholder="Tìm bằng tên đăng nhập, ví dụ quangtinh" /><button disabled={busy||query.trim().length<3}>Tìm kỳ thủ</button></form>
     {error&&<p className="feature-message" role="status">{error}</p>}
     {results.length>0&&<section className="feature-card"><h2>Kết quả tìm kiếm</h2>{results.map(x=><div className="feature-row" key={x.id}><div className="feature-avatar">{x.username[0]?.toUpperCase()}<i className={x.online?"online":""}/></div><div className="feature-grow"><b>{x.username}</b><small>{x.online?"Đang trực tuyến":"Ngoại tuyến"}</small></div>{x.status==="none"?<button onClick={()=>void send(x.username)} disabled={busy}>＋ Kết bạn</button>:<span className="feature-muted">{x.status==="friend"?"Đã là bạn":x.status==="sent"?"Đã gửi yêu cầu":"Đã gửi yêu cầu cho bạn"}</span>}</div>)}</section>}
