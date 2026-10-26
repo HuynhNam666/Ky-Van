@@ -1,0 +1,2253 @@
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-33-600-normal.woff2") format("woff2");
+
+  unicode-range: U+8ECA;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-51-600-normal.woff2") format("woff2");
+
+  unicode-range: U+7832;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-58-600-normal.woff2") format("woff2");
+
+  unicode-range: U+6F22;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-72-600-normal.woff2") format("woff2");
+
+  unicode-range: U+5E25;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-73-600-normal.woff2") format("woff2");
+
+  unicode-range: U+5C07;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-100-600-normal.woff2") format("woff2");
+
+  unicode-range: U+5352, U+99AC;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-102-600-normal.woff2") format("woff2");
+
+  unicode-range: U+5F08;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-106-600-normal.woff2") format("woff2");
+
+  unicode-range: U+4ED5;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-110-600-normal.woff2") format("woff2");
+
+  unicode-range: U+70AE;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-111-600-normal.woff2") format("woff2");
+
+  unicode-range: U+695A;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-112-600-normal.woff2") format("woff2");
+
+  unicode-range: U+5175;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-114-600-normal.woff2") format("woff2");
+
+  unicode-range: U+6CB3;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-115-600-normal.woff2") format("woff2");
+
+  unicode-range: U+8C61;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-116-600-normal.woff2") format("woff2");
+
+  unicode-range: U+58EB, U+754C;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-sc-118-600-normal.woff2") format("woff2");
+
+  unicode-range: U+76F8;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-tc-86-600-normal.woff2") format("woff2");
+
+  unicode-range: U+508C;
+}
+
+@font-face {
+  font-family: "Noto Serif SC";
+
+  font-style: normal;
+
+  font-display: swap;
+
+  font-weight: 600;
+
+  src: url("/fonts/xiangqi/noto-serif-tc-87-600-normal.woff2") format("woff2");
+
+  unicode-range: U+4FE5;
+}
+
+.kv-arena {
+  --gold: #dfbd7d;
+
+  --ink: #e9e7dc;
+
+  --muted: #a4b4ae;
+
+  min-height: 100dvh;
+
+  background:
+    radial-gradient(ellipse at 35% 35%, #28463855, transparent 65%),
+    linear-gradient(125deg, #101d1b, #0b1517);
+
+  color: var(--ink);
+
+  font-family: Arial, sans-serif;
+
+  padding: 0 28px 30px;
+
+  color-scheme: dark;
+}
+
+.kv-arena \* {
+  box-sizing: border-box;
+}
+
+.kv-arena button,
+.kv-arena input {
+  font: inherit;
+}
+
+.kv-arena button {
+  cursor: pointer;
+}
+
+.kv-arena button:disabled {
+  cursor: default;
+
+  opacity: 0.48;
+}
+
+.kv-arena button:focus-visible,
+.kv-arena a:focus-visible,
+.kv-arena input:focus-visible {
+  outline: 2px solid var(--gold);
+
+  outline-offset: 4px;
+}
+
+.kv-arena a {
+  color: inherit;
+
+  text-decoration: none;
+}
+
+.kv-arena button {
+  border: 0;
+}
+
+.arena-header {
+  height: 92px;
+
+  max-width: 1250px;
+
+  margin: auto;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  border-bottom: 1px solid #c4d4c015;
+
+  gap: 16px;
+}
+
+.arena-header > a {
+  display: flex;
+
+  gap: 9px;
+
+  align-items: center;
+
+  font-size: 12px;
+
+  color: #b9c9bf;
+}
+
+.arena-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  font:
+    39px Georgia,
+    serif;
+
+  color: var(--gold);
+}
+
+.arena-brand span {
+  font:
+    600 17px Georgia,
+    serif;
+
+  letter-spacing: 3px;
+}
+
+.arena-brand small {
+  display: block;
+
+  font:
+    8px Arial,
+    sans-serif;
+
+  letter-spacing: 2.3px;
+
+  margin-top: 7px;
+
+  color: #9aafa2;
+}
+
+.arena-header-right {
+  font-size: 10px;
+
+  letter-spacing: 2px;
+
+  color: #9caf9f;
+}
+
+.arena-layout {
+  max-width: 1160px;
+
+  margin: 30px auto 0;
+
+  display: grid;
+
+  grid-template-columns: minmax(0, 700px) minmax(280px, 340px);
+
+  gap: 36px;
+
+  align-items: start;
+
+  justify-content: center;
+}
+
+.arena-game {
+  min-width: 0;
+}
+
+.arena-player {
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 0 8px 16px;
+
+  min-height: 56px;
+}
+
+.arena-avatar {
+  display: grid;
+
+  place-items: center;
+
+  width: 49px;
+
+  height: 49px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  border: 1px solid #c9a468;
+
+  background: radial-gradient(circle at 30% 20%, #5b6350, #1c2d27);
+
+  color: #ead39e;
+
+  font:
+    23px Georgia,
+    serif;
+
+  box-shadow: 0 0 0 4px #d7b8790b;
+}
+
+.arena-player strong {
+  display: block;
+
+  font-size: 14px;
+
+  font-weight: 500;
+}
+
+.arena-player strong small {
+  color: #9daf9e;
+
+  font-size: 11px;
+}
+
+.arena-player span {
+  display: block;
+
+  color: #91a99a;
+
+  font-size: 11px;
+
+  margin-top: 6px;
+}
+
+.arena-player > b {
+  margin-left: auto;
+
+  font-size: 10px;
+
+  font-weight: 400;
+
+  color: #aaa894;
+
+  border: 1px solid #bdb68128;
+
+  padding: 7px 12px;
+
+  border-radius: 30px;
+}
+
+.arena-player > b.arena-ready-label {
+  color: #a9ddab;
+
+  border-color: #7ec48555;
+}
+
+.arena-player.self {
+  margin-top: 18px;
+
+  margin-bottom: 12px;
+}
+
+.arena-board-frame {
+  padding: 14px;
+
+  border-radius: 11px;
+
+  background:
+    repeating-linear-gradient(3deg, #72452c1a 0 2px, transparent 2px 8px),
+    linear-gradient(115deg, #bc8a54, #6f4329 25%, #a16f3f 60%, #6d452b);
+
+  box-shadow:
+    0 18px 55px #0006,
+    inset 0 1px 2px #f8d8a0a0,
+    inset 0 -3px 6px #241107a0;
+
+  border: 1px solid #ae8354;
+}
+
+.arena-board {
+  position: relative;
+
+  isolation: isolate;
+
+  display: grid;
+
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+
+  grid-template-rows: repeat(10, minmax(0, 1fr));
+
+  aspect-ratio: 9/10;
+
+  background:
+    repeating-linear-gradient(87deg, #ad6d2711 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(4deg, #ac6f2310 0 2px, transparent 2px 22px),
+    radial-gradient(ellipse at 40% 30%, #f7dfae, #dfb77b 80%);
+
+  border: 2px solid #482e1c;
+
+  box-shadow: inset 0 0 25px #89532460;
+
+  color: #764622;
+}
+
+.arena-grid {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  pointer-events: none;
+
+  z-index: -1;
+}
+
+.arena-square {
+  position: relative;
+
+  display: grid;
+
+  place-items: center;
+
+  width: 100%;
+
+  height: 100%;
+
+  padding: 5%;
+
+  background: transparent !important;
+
+  border-radius: 0 !important;
+
+  opacity: 1 !important;
+
+  touch-action: manipulation;
+}
+
+.arena-piece {
+  display: grid;
+
+  place-items: center;
+
+  width: 94%;
+
+  aspect-ratio: 1;
+
+  border-radius: 50%;
+
+  font-family: "Noto Serif SC", "SimSun", "Songti SC", serif;
+
+  font-weight: 700;
+
+  font-size: clamp(20px, 3.9vw, 42px);
+
+  line-height: 1;
+
+  background: radial-gradient(circle at 35% 22%, #fff4d4, #e9cb8d 72%, #c39756);
+
+  border: 2px solid #b08348;
+
+  box-shadow:
+    0 4px 0 #8c613a,
+    0 6px 6px #42280880,
+    inset 0 0 0 3px #f6dfad,
+    inset 0 0 0 4px #b69163,
+    inset 0 -5px 7px #9f6d2840;
+
+  transition:
+    transform 0.18s,
+    filter 0.18s;
+
+  color: #2c322c;
+
+  text-shadow: 0 1px #fff2d0;
+}
+
+.arena-piece.red {
+  color: #ab3029;
+}
+
+.arena-square.selected .arena-piece {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 6px 0 #8c613a,
+    0 0 0 3px #f8f3bb,
+    0 0 22px #fff1a3;
+}
+
+.arena-square.last:after {
+  content: "";
+
+  position: absolute;
+
+  inset: 6%;
+
+  border: 2px solid #395b3d99;
+
+  border-radius: 50%;
+
+  pointer-events: none;
+}
+
+.arena-square.target i {
+  width: 20%;
+
+  aspect-ratio: 1;
+
+  border-radius: 50%;
+
+  background: #476a4599;
+
+  box-shadow: 0 0 0 5px #49704b18;
+}
+
+.arena-square.target .arena-piece {
+  outline: 3px solid #668152;
+
+  outline-offset: 1px;
+}
+
+.arena-square.checked .arena-piece,
+.arena-square.exposed .arena-piece {
+  outline: 3px solid #b23027;
+
+  animation: arena-alert 1s ease-in-out 3;
+}
+
+.arena-ready-overlay {
+  position: absolute;
+
+  inset: 0;
+
+  display: grid;
+
+  place-items: center;
+
+  background: #17261d48;
+
+  z-index: 4;
+
+  padding: 15px;
+}
+
+.arena-ready-overlay > div {
+  width: min(100%, 340px);
+
+  padding: 26px 22px 20px;
+
+  text-align: center;
+
+  border: 1px solid #d1ac70;
+
+  border-radius: 13px;
+
+  background: linear-gradient(140deg, #1b332eef, #142721f5);
+
+  color: #eee5d1;
+
+  box-shadow: 0 14px 50px #14231b80;
+
+  backdrop-filter: blur(10px);
+}
+
+.arena-kicker {
+  font-size: 9px;
+
+  letter-spacing: 2.5px;
+
+  color: var(--gold);
+}
+
+.arena-ready-overlay h2 {
+  font:
+    25px Georgia,
+    serif;
+
+  margin: 12px 0;
+}
+
+.arena-countdown {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  color: var(--gold);
+
+  margin: 14px;
+}
+
+.arena-countdown strong {
+  font:
+    40px Georgia,
+    serif;
+
+  font-variant-numeric: tabular-nums;
+}
+
+.arena-countdown span {
+  font-size: 12px;
+}
+
+.arena-ready-overlay p {
+  font-size: 11px;
+
+  line-height: 1.8;
+
+  color: #b5c4b6;
+
+  margin: 14px 0 0;
+}
+
+.kv-arena .arena-gold {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  background: linear-gradient(115deg, #edcf93, #bd965b);
+
+  color: #24352b;
+
+  padding: 13px 20px;
+
+  border: 1px solid #d7b77d;
+
+  border-radius: 7px;
+
+  font-weight: 600;
+
+  font-size: 13px;
+
+  min-height: 44px;
+}
+
+.arena-ready-overlay .arena-gold {
+  width: 100%;
+}
+
+.arena-tools {
+  display: flex;
+
+  gap: 8px;
+
+  margin-left: auto;
+}
+
+.arena-tools > button {
+  width: 39px;
+
+  height: 39px;
+
+  display: grid;
+
+  place-items: center;
+
+  border: 1px solid #8da18a30;
+
+  border-radius: 50%;
+
+  background: #263a32;
+
+  color: #dfd4b9;
+}
+
+.arena-menu,
+.arena-emotes {
+  position: absolute;
+
+  bottom: 65px;
+
+  right: 0;
+
+  background: #172d27;
+
+  border: 1px solid #ad915c80;
+
+  border-radius: 11px;
+
+  padding: 8px;
+
+  z-index: 12;
+
+  box-shadow: 0 10px 30px #0006;
+}
+
+.arena-menu {
+  width: 222px;
+}
+
+.arena-menu button {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  text-align: left;
+
+  background: transparent;
+
+  color: #e0ddca;
+
+  font-size: 12px;
+
+  padding: 12px;
+
+  border-radius: 6px;
+}
+
+.arena-menu button:hover {
+  background: #dfbd7d10;
+}
+
+.arena-menu svg {
+  width: 17px;
+
+  height: 17px;
+
+  color: var(--gold);
+}
+
+.arena-emotes {
+  display: grid;
+
+  grid-template-columns: repeat(5, 1fr);
+
+  gap: 2px;
+}
+
+.arena-emotes button {
+  background: none;
+
+  font-size: 25px;
+
+  padding: 7px;
+}
+
+.arena-reaction {
+  position: absolute;
+
+  right: 100px;
+
+  top: -40px;
+
+  font-size: 43px;
+
+  z-index: 15;
+
+  filter: drop-shadow(0 5px 4px #0005);
+
+  animation: arena-pop 0.35s ease-out;
+}
+
+.arena-status {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 12px;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  font-size: 10px;
+
+  color: #879e91;
+
+  padding: 0 9px;
+}
+
+.arena-status span,
+.arena-status b {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+.arena-status b {
+  color: #f0bc85;
+
+  font-weight: 500;
+}
+
+.arena-draw {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 10px;
+
+  background: #294435;
+
+  border: 1px solid #bb9d63;
+
+  border-radius: 9px;
+
+  margin-top: 18px;
+
+  padding: 13px;
+
+  font-size: 12px;
+}
+
+.arena-draw button {
+  background: #e1c485;
+
+  color: #23372a;
+
+  border-radius: 5px;
+
+  padding: 8px;
+}
+
+.arena-social {
+  border: 1px solid #a5bfa025;
+
+  border-radius: 13px;
+
+  background: #172a24aa;
+
+  overflow: hidden;
+
+  box-shadow: 0 10px 35px #0002;
+}
+
+.arena-social-title {
+  padding: 22px 19px;
+
+  border-bottom: 1px solid #afc4a81a;
+}
+
+.arena-social-title > span {
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  color: #e2d6b8;
+
+  font:
+    18px Georgia,
+    serif;
+}
+
+.arena-social-title small {
+  display: block;
+
+  color: #7f9b88;
+
+  font-size: 8px;
+
+  letter-spacing: 2px;
+
+  margin: 9px 0 0 29px;
+}
+
+.arena-video {
+  padding: 18px;
+
+  border-bottom: 1px solid #afc4a81a;
+}
+
+.arena-video-stage {
+  aspect-ratio: 16/10;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 8px;
+
+  background: radial-gradient(ellipse at 50% 20%, #37524555, #101e1a);
+
+  border: 1px solid #8da68620;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+}
+
+.arena-camera-icon {
+  width: 47px;
+
+  height: 47px;
+
+  border: 1px solid #ccb27b50;
+
+  border-radius: 50%;
+
+  display: grid;
+
+  place-items: center;
+
+  color: #c6ac7f;
+
+  margin-bottom: 11px;
+}
+
+.arena-video-stage h3 {
+  font:
+    17px Georgia,
+    serif;
+
+  color: #d9d1b9;
+
+  margin: 0 0 9px;
+}
+
+.arena-video-stage p {
+  font-size: 10px;
+
+  color: #8ea894;
+
+  margin: 0;
+}
+
+.arena-video-stage > video {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.arena-video-stage > video.arena-local-video {
+  width: 28%;
+
+  height: 32%;
+
+  inset: auto 8px 8px auto;
+
+  border: 1px solid #baa575;
+
+  border-radius: 6px;
+
+  z-index: 2;
+
+  transform: scaleX(-1);
+}
+
+.arena-video-stage > span {
+  position: relative;
+
+  font-size: 11px;
+
+  color: #b9c7b4;
+}
+
+.arena-call-button {
+  margin-top: 12px;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  gap: 9px;
+
+  border-radius: 6px;
+
+  width: 100%;
+
+  padding: 10px;
+
+  background: #2c4537;
+
+  color: #d9ceaa;
+
+  font-size: 11px !important;
+}
+
+.arena-call-controls {
+  display: flex;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  margin-top: 12px;
+}
+
+.arena-call-controls button {
+  border-radius: 50%;
+
+  width: 35px;
+
+  height: 35px;
+
+  background: #314b3e;
+
+  color: #dadfce;
+
+  display: grid;
+
+  place-items: center;
+}
+
+.arena-call-controls svg {
+  width: 16px;
+}
+
+.arena-call-controls .hangup {
+  background: #97493b;
+}
+
+.arena-chat {
+  height: 270px;
+
+  overflow-y: auto;
+
+  padding: 18px;
+
+  scrollbar-width: thin;
+
+  scrollbar-color: #637c62 transparent;
+}
+
+.arena-chat-empty {
+  height: 100%;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #748c7d;
+
+  text-align: center;
+
+  gap: 12px;
+}
+
+.arena-chat-empty p {
+  max-width: 170px;
+
+  font-size: 11px;
+
+  line-height: 1.8;
+
+  margin: 0;
+}
+
+.arena-message {
+  margin: 0 30px 15px 0;
+}
+
+.arena-message small {
+  font-size: 9px;
+
+  color: #98b09d;
+
+  display: block;
+
+  margin-bottom: 5px;
+}
+
+.arena-message p {
+  display: inline-block;
+
+  margin: 0;
+
+  padding: 10px 12px;
+
+  background: #304437;
+
+  color: #e0e5d5;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+  border-radius: 0 9px 9px 9px;
+
+  overflow-wrap: anywhere;
+
+  white-space: pre-wrap;
+
+  text-align: left;
+}
+
+.arena-message.mine {
+  margin: 0 0 15px 30px;
+
+  text-align: right;
+}
+
+.arena-message.mine p {
+  background: #586346;
+
+  color: #fff0cb;
+
+  border-radius: 9px 0 9px 9px;
+}
+
+.arena-chat-form {
+  margin: 0 15px 12px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  background: #101e19;
+
+  border: 1px solid #8ba48235;
+
+  border-radius: 7px;
+
+  padding: 8px 10px;
+
+  color: #7f9a87;
+}
+
+.arena-chat-form input {
+  min-width: 0;
+
+  width: 100%;
+
+  background: transparent;
+
+  border: 0;
+
+  color: #e4e5d2;
+
+  padding: 6px 0;
+
+  font-size: 11px;
+}
+
+.arena-chat-form button {
+  display: grid;
+
+  place-items: center;
+
+  flex-shrink: 0;
+
+  background: #bea471;
+
+  color: #213827;
+
+  width: 31px;
+
+  height: 31px;
+
+  border-radius: 5px;
+}
+
+.arena-etiquette {
+  font-size: 7px;
+
+  letter-spacing: 1.2px;
+
+  text-align: center;
+
+  color: #7e927d;
+
+  margin: 15px 8px 18px;
+}
+
+.arena-error {
+  display: flex;
+
+  justify-content: space-between;
+
+  gap: 10px;
+
+  max-width: 1100px;
+
+  margin: 15px auto;
+
+  padding: 13px 16px;
+
+  border: 1px solid #b8785660;
+
+  border-radius: 7px;
+
+  background: #442d23;
+
+  color: #f1d6b5;
+
+  font-size: 12px;
+
+  line-height: 1.6;
+}
+
+.arena-error button {
+  background: none;
+
+  color: inherit;
+}
+
+.arena-wait,
+.arena-login {
+  max-width: 480px;
+
+  margin: 65px auto 30px;
+
+  text-align: center;
+
+  padding: 35px 28px;
+
+  border: 1px solid #a8b79025;
+
+  border-radius: 18px;
+
+  background: #1b302966;
+}
+
+.arena-wait h1,
+.arena-login h1 {
+  font:
+    31px Georgia,
+    serif;
+
+  color: #e6d6ae;
+
+  margin: 20px 0 16px;
+}
+
+.arena-wait p,
+.arena-login p {
+  font-size: 13px;
+
+  line-height: 1.8;
+
+  color: #a9bba8;
+}
+
+.arena-wait small {
+  display: block;
+
+  color: #91a792;
+
+  font-size: 11px;
+
+  margin-bottom: 24px;
+}
+
+.arena-seal {
+  position: relative;
+
+  display: grid;
+
+  place-items: center;
+
+  width: 115px;
+
+  height: 115px;
+
+  border-radius: 50%;
+
+  margin: 35px auto;
+
+  border: 1px solid #b49b66;
+
+  color: #e8cb8a;
+
+  background: radial-gradient(circle, #61744455, transparent);
+
+  font: 60px serif;
+
+  box-shadow: 0 0 45px #ae925320;
+}
+
+.arena-seal.searching:after {
+  content: "";
+
+  position: absolute;
+
+  inset: -10px;
+
+  border: 1px solid transparent;
+
+  border-top-color: #dabe80;
+
+  border-right-color: #dabe8033;
+
+  border-radius: 50%;
+
+  animation: arena-orbit 2s linear infinite;
+}
+
+.arena-wait .arena-gold {
+  margin: 20px auto;
+}
+
+.kv-arena .arena-link {
+  display: block;
+
+  font-size: 12px;
+
+  color: #c8bc9c;
+
+  background: none;
+
+  margin: 20px auto 0;
+}
+
+.arena-login label {
+  display: block;
+
+  text-align: left;
+
+  font-size: 12px;
+
+  color: #bac7b6;
+
+  margin: 20px 0;
+}
+
+.arena-login input {
+  display: block;
+
+  margin-top: 8px;
+
+  width: 100%;
+
+  padding: 12px;
+
+  background: #14231e;
+
+  border: 1px solid #94a38650;
+
+  border-radius: 6px;
+
+  color: #e4e5d4;
+}
+
+.arena-login .arena-gold {
+  width: 100%;
+
+  margin-top: 25px;
+}
+
+.arena-modal-shade {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 60;
+
+  background: #050e0bba;
+
+  backdrop-filter: blur(5px);
+
+  display: grid;
+
+  place-items: center;
+
+  padding: 20px;
+}
+
+.arena-prompt {
+  max-width: 420px;
+
+  width: 100%;
+
+  background: #20392f;
+
+  border: 1px solid #c9ac72;
+
+  border-radius: 14px;
+
+  padding: 28px;
+
+  box-shadow: 0 30px 70px #0006;
+}
+
+.arena-prompt h2 {
+  font:
+    25px Georgia,
+    serif;
+
+  color: #edd8a7;
+
+  margin: 0 0 17px;
+}
+
+.arena-prompt p {
+  font-size: 13px;
+
+  line-height: 1.8;
+
+  color: #bdccbb;
+
+  margin: 0 0 24px;
+}
+
+.arena-prompt > div {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+}
+
+.arena-prompt button {
+  padding: 11px 17px;
+
+  border-radius: 7px;
+
+  background: #354e40;
+
+  color: #e3e5d1;
+}
+
+.arena-social button:hover:not(:disabled),
+.arena-tools button:hover {
+  filter: brightness(1.15);
+}
+
+@keyframes arena-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes arena-pop {
+  from {
+    opacity: 0;
+
+    transform: translateY(15px) scale(0.6);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: none;
+  }
+}
+
+@keyframes arena-alert {
+  50% {
+    filter: brightness(1.2);
+
+    box-shadow: 0 0 20px #b62d21;
+  }
+}
+
+@media (min-width: 1200px) {
+  .arena-layout {
+    grid-template-columns: 590px 330px;
+
+    gap: 42px;
+  }
+
+  .arena-piece {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 850px) {
+  .kv-arena {
+    padding: 0 16px 25px;
+  }
+
+  .arena-header {
+    height: 76px;
+  }
+
+  .arena-header-right {
+    display: none;
+  }
+
+  .arena-layout {
+    grid-template-columns: minmax(0, 590px);
+
+    gap: 26px;
+
+    margin-top: 23px;
+  }
+
+  .arena-piece {
+    font-size: clamp(25px, 6vw, 39px);
+  }
+
+  .arena-social {
+    width: 100%;
+  }
+
+  .arena-video-stage {
+    max-height: 235px;
+  }
+
+  .arena-chat {
+    height: 260px;
+  }
+
+  .arena-brand span {
+    font-size: 14px;
+  }
+
+  .arena-brand {
+    font-size: 30px;
+  }
+
+  .arena-status {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .kv-arena {
+    padding: 0 10px 22px;
+  }
+
+  .arena-header {
+    gap: 8px;
+
+    height: 68px;
+  }
+
+  .arena-header > a {
+    font-size: 10px;
+  }
+
+  .arena-brand span {
+    letter-spacing: 1.7px;
+
+    font-size: 12px;
+  }
+
+  .arena-brand small {
+    letter-spacing: 1.2px;
+
+    font-size: 7px;
+  }
+
+  .arena-brand {
+    gap: 7px;
+
+    font-size: 27px;
+  }
+
+  .arena-board-frame {
+    padding: 7px;
+
+    border-radius: 7px;
+  }
+
+  .arena-piece {
+    font-size: clamp(22px, 7vw, 32px);
+
+    border-width: 1px;
+
+    box-shadow:
+      0 3px 0 #8c613a,
+      0 4px 4px #42280880,
+      inset 0 0 0 2px #f6dfad,
+      inset 0 0 0 3px #b69163;
+  }
+
+  .arena-player {
+    gap: 9px;
+
+    margin-left: 3px;
+
+    margin-right: 3px;
+  }
+
+  .arena-avatar {
+    width: 40px;
+
+    height: 40px;
+
+    font-size: 20px;
+  }
+
+  .arena-player strong {
+    font-size: 12px;
+  }
+
+  .arena-player span {
+    font-size: 10px;
+  }
+
+  .arena-player > b {
+    font-size: 9px;
+
+    padding: 6px 8px;
+  }
+
+  .arena-ready-overlay > div {
+    max-width: 280px;
+
+    padding: 18px;
+  }
+
+  .arena-ready-overlay h2 {
+    font-size: 22px;
+  }
+
+  .arena-countdown {
+    margin: 10px;
+  }
+
+  .arena-countdown strong {
+    font-size: 32px;
+  }
+
+  .arena-ready-overlay .arena-kicker {
+    font-size: 8px;
+  }
+
+  .arena-wait,
+  .arena-login {
+    margin: 35px auto;
+
+    padding: 25px 20px;
+  }
+
+  .arena-player.self {
+    margin-top: 14px;
+  }
+
+  .arena-tools > button {
+    width: 35px;
+
+    height: 35px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kv-arena \*,
+  .kv-arena \*:after {
+    animation: none !important;
+
+    transition: none !important;
+
+    scroll-behavior: auto !important;
+  }
+}
+
+.arena-brand,
+.arena-seal {
+  font-family: "Noto Serif SC", Georgia, serif;
+}
+
+.arena-grid text {
+  font-family: "Noto Serif SC", serif;
+}
+
+/* Match clocks and captured pieces: additive styling for random matches. */
+
+.arena-layout.arena-layout--timed {
+  max-width: 1390px;
+
+  grid-template-columns: 180px minmax(0, 640px) minmax(270px, 320px);
+
+  gap: 24px;
+}
+
+.arena-captures {
+  padding: 22px 15px;
+
+  border: 1px solid #c5a46938;
+
+  border-radius: 18px;
+
+  background: linear-gradient(145deg, #25382b, #15261f);
+
+  box-shadow: 0 12px 35px #0002;
+}
+
+.arena-captures h2 {
+  font:
+    24px Georgia,
+    serif;
+
+  color: #e5c993;
+
+  margin: 12px 0 24px;
+}
+
+.arena-captures section + section {
+  margin-top: 24px;
+
+  padding-top: 20px;
+
+  border-top: 1px solid #d4b97925;
+}
+
+.arena-captures h3 {
+  color: #e9dfc6;
+
+  font-size: 13px;
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  gap: 8px;
+}
+
+.arena-captures h3 small {
+  font-size: 10px;
+
+  color: #9cad9d;
+
+  font-weight: 400;
+}
+
+.arena-captured-list {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 7px;
+
+  margin-top: 14px;
+}
+
+.arena-captured-list p {
+  font-size: 11px;
+
+  color: #8eaa98;
+
+  padding: 10px 0;
+}
+
+.arena-captured-piece {
+  width: 36px;
+
+  height: 36px;
+
+  display: grid;
+
+  place-items: center;
+
+  border-radius: 50%;
+
+  flex-shrink: 0;
+
+  font:
+    600 23px "Noto Serif TC",
+    "Noto Serif SC",
+    serif;
+
+  background: radial-gradient(circle at 32% 24%, #fff2ce, #dec08b 68%, #a67539);
+
+  border: 2px solid #b28a4c;
+
+  box-shadow:
+    0 3px 0 #725027,
+    0 5px 8px #0005,
+    inset 0 0 0 2px #f8dfa6;
+}
+
+.arena-captured-piece.red {
+  color: #9b2920;
+}
+
+.arena-captured-piece.black {
+  color: #252d27;
+}
+
+.arena-clock-rules {
+  color: #9caf9f;
+
+  font-size: 11px;
+
+  line-height: 1.8;
+
+  margin: 24px 0 0;
+}
+
+.arena-clock-avatar {
+  position: relative;
+
+  width: 62px;
+
+  height: 62px;
+
+  flex: 0 0 62px;
+
+  display: grid;
+
+  place-items: center;
+
+  margin-bottom: 8px;
+}
+
+.arena-clock-avatar > svg {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  transform: rotate(-90deg);
+
+  pointer-events: none;
+
+  fill: none;
+
+  stroke-width: 3;
+}
+
+.clock-track {
+  stroke: #c4b08228;
+}
+
+.clock-progress {
+  stroke: #edc675;
+
+  stroke-linecap: round;
+
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+.arena-clock-avatar.running {
+  filter: drop-shadow(0 0 5px #e9c77933);
+}
+
+.arena-clock-avatar.urgent .clock-progress {
+  stroke: #ff7366;
+}
+
+.arena-player .arena-move-count {
+  position: absolute;
+
+  bottom: -6px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  min-width: 33px;
+
+  padding: 2px 5px;
+
+  margin: 0;
+
+  text-align: center;
+
+  background: #edcb82;
+
+  border: 1px solid #f4dda5;
+
+  border-radius: 8px;
+
+  font:
+    700 11px ui-monospace,
+    monospace;
+
+  color: #203028;
+}
+
+.arena-player .urgent .arena-move-count {
+  background: #be352d;
+
+  color: #fff5e8;
+
+  border-color: #ff9387;
+}
+
+.arena-player .arena-player-name {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  align-items: center;
+
+  gap: 7px;
+
+  overflow-wrap: anywhere;
+}
+
+.arena-player > div:nth-child(2) {
+  min-width: 0;
+}
+
+.arena-bank {
+  font:
+    600 18px ui-monospace,
+    monospace;
+
+  font-variant-numeric: tabular-nums;
+
+  color: #afbbaa;
+
+  border: 1px solid #b6b58e30;
+
+  background: #091c1870;
+
+  padding: 4px 7px;
+
+  border-radius: 7px;
+
+  white-space: nowrap;
+}
+
+.arena-bank.active {
+  color: #f2d89e;
+
+  border-color: #d6b76c80;
+
+  box-shadow: 0 0 16px #e0b85d12;
+}
+
+.arena-time-warning {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 10px 14px;
+
+  border: 1px solid #e2675955;
+
+  border-radius: 10px;
+
+  background: #582b26;
+
+  color: #ffdac9;
+
+  margin: 0 0 12px;
+
+  font-size: 12px;
+}
+
+.arena-time-warning strong {
+  font:
+    700 21px ui-monospace,
+    monospace;
+
+  min-width: 3ch;
+}
+
+@media (max-width: 1150px) {
+  .arena-layout.arena-layout--timed {
+    grid-template-columns: 145px minmax(0, 590px);
+
+    gap: 20px;
+
+    max-width: 780px;
+  }
+
+  .arena-layout--timed > .arena-social {
+    grid-column: 2;
+  }
+}
+
+@media (max-width: 700px) {
+  .arena-layout.arena-layout--timed {
+    grid-template-columns: minmax(0, 1fr);
+
+    gap: 20px;
+  }
+
+  .arena-layout--timed > .arena-social {
+    grid-column: auto;
+  }
+
+  .arena-captures {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+    padding: 15px;
+  }
+
+  .arena-captures > .arena-kicker,
+  .arena-captures > h2,
+  .arena-clock-rules {
+    grid-column: 1 / -1;
+
+    margin: 0;
+  }
+
+  .arena-captures h2 {
+    font-size: 20px;
+  }
+
+  .arena-captures section + section {
+    margin: 0;
+
+    padding: 0 0 0 12px;
+
+    border-top: 0;
+
+    border-left: 1px solid #d4b97925;
+  }
+
+  .arena-clock-avatar {
+    width: 54px;
+
+    height: 54px;
+
+    flex-basis: 54px;
+  }
+
+  .arena-clock-avatar .arena-avatar {
+    width: 42px;
+
+    height: 42px;
+  }
+
+  .arena-bank {
+    font-size: 15px;
+
+    padding: 3px 5px;
+  }
+
+  .arena-player {
+    gap: 9px;
+  }
+
+  .arena-captured-piece {
+    width: 31px;
+
+    height: 31px;
+
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clock-progress {
+    transition: none;
+  }
+}
+
+.arena-coin-pot {
+  display: grid;
+
+  gap: 8px;
+
+  padding: 14px 10px;
+
+  background: #091b14;
+
+  border: 1px solid #ccab6560;
+
+  border-radius: 10px;
+
+  margin-bottom: 20px;
+
+  color: #edcb80;
+}
+
+.arena-coin-pot span {
+  font-size: 12px;
+}
+
+.arena-coin-pot small {
+  color: #a8bbab;
+
+  font-size: 10px;
+
+  line-height: 1.6;
+}
+
+@media (max-width: 700px) {
+  .arena-coin-pot {
+    grid-column: 1/-1;
+
+    margin-bottom: 0;
+  }
+}
+
+/* BỔ SUNG: kết bạn trong trận và nút dưới avatar đối thủ. */
+
+.arena-add-friend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 4px 9px;
+  border: 1px solid #c9a65288;
+  border-radius: 99px;
+  background: #263329;
+  color: #efd48b;
+  font-size: 11px;
+  cursor: pointer;
+}
+.arena-add-friend:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+.arena-opponent-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.arena-opponent-avatar .arena-add-friend {
+  margin-top: 0;
+  white-space: nowrap;
+  font-size: 10px;
+  padding: 4px 6px;
+}

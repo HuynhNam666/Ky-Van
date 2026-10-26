@@ -54,3 +54,13 @@ __pycache__/
 /e2e/node_modules/
 /e2e/shots/
 .venv/
+
+# Local database and editor settings
+/dev.db
+/dev.db-*
+/.vscode/
+
+# Local notes and backup packages
+/app/NHAP/
+/CACHTEST.TXT
+/backup-*/
