@@ -97,7 +97,9 @@ import {
   Side,
 } from "@/lib/chess";
 
-import { api, Chat, Invite, Room, Saved, User } from "@/lib/api";
+import GoogleMark from "@/components/google-mark";
+
+import { api, Chat, googleSignInUrl, Invite, Room, Saved, User } from "@/lib/api";
 
 import { useRoomSocket } from "@/hooks/use-room-socket";
 
@@ -2143,6 +2145,19 @@ export default function Home() {
                   )}
                 </button>
               </form>
+              {online && (
+                <a
+                  className="kv-google-button"
+                  href={googleSignInUrl(
+                    next === "join" && code ? `/?room=${code}` : "/kydai",
+                  )}
+                >
+                  <GoogleMark />
+                  {authTab === "login"
+                    ? "Đăng nhập bằng Gmail"
+                    : "Đăng ký bằng Gmail"}
+                </a>
+              )}
             </>
           )}
 

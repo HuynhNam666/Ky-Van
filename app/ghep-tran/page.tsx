@@ -73,9 +73,12 @@ import { Toaster } from "sonner";
 // --- CODE CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
 // ORIGINAL | import { api, ApiError, type Chat, type Room, type User } from "@/lib/api";
 // --- PHAN CAP NHAT DANG SU DUNG ---
+import GoogleMark from "@/components/google-mark";
+
 import {
   api,
   ApiError,
+  googleSignInUrl,
   sessionToken,
   type Chat,
   type Room,
@@ -973,6 +976,14 @@ export default function Arena() {
               <ArrowRight size={18} />
             </button>
           </form>
+
+          <a
+            className="kv-google-button"
+            href={googleSignInUrl(isCoup ? "/ghep-tran?coup=1" : "/ghep-tran")}
+          >
+            <GoogleMark />
+            {register ? "Đăng ký bằng Gmail" : "Đăng nhập bằng Gmail"}
+          </a>
 
           <button className="arena-link" onClick={() => setRegister(!register)}>
             {register

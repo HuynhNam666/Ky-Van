@@ -66,6 +66,21 @@ export function sessionToken() {
     ? null
     : sessionStorage.getItem(SESSION_KEY);
 }
+// Full-page navigation: the backend starts Google's authorization-code flow.
+export function googleSignInUrl(next = "/") {
+  return API + "/auth/google/start?next=" + encodeURIComponent(next);
+}
+// Only same-site paths are accepted, matching the server-side check.
+export function safeNextPath(value: string | null | undefined) {
+  if (
+    !value ||
+    !value.startsWith("/") ||
+    value.startsWith("//") ||
+    value.includes("\\")
+  )
+    return "/";
+  return value;
+}
 // --- HAM API CU GIU NGUYEN DE DOI CHIEU; KHONG THUC THI ---
 // ORIGINAL | export async function api<T = unknown>(
 // ORIGINAL |   path: string,
@@ -247,14 +262,21 @@ async function request<T>(
   if (typeof window !== "undefined") {
     let currentToken = token;
     if (
-      (path === "/auth/login" || path === "/auth/register") &&
+      (path === "/auth/login" ||
+        path === "/auth/register" ||
+        path === "/auth/google/exchange") &&
       data.access_token
     ) {
       sessionStorage.setItem(SESSION_KEY, data.access_token);
       currentToken = data.access_token;
     }
     if (
-      ["/auth/me", "/auth/login", "/auth/register"].includes(path) &&
+      [
+        "/auth/me",
+        "/auth/login",
+        "/auth/register",
+        "/auth/google/exchange",
+      ].includes(path) &&
       currentToken &&
       currentToken === sessionToken() &&
       typeof data.id === "number" &&

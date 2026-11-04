@@ -3145,3 +3145,61 @@ select,
 textarea {
   font-family: inherit;
 }
+
+/* Đăng nhập bằng Google (Gmail) — trang tài khoản, hộp thoại Kỳ Viện và Ghép trận */
+.kv-google-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid #c9b06f80;
+  border-radius: 8px;
+  background: #f7f4ea;
+  color: #1f2a24;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.kv-google-button:hover {
+  filter: brightness(0.96);
+  text-decoration: none;
+}
+.kv-google-button:active {
+  transform: translateY(1px);
+}
+.kv-google-button svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.kv-google-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 0 0;
+  color: #8da384;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.kv-google-divider::before,
+.kv-google-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #c9b06f33;
+}
+.kv-arena .kv-google-button {
+  margin-top: 18px;
+}
+.ky-dialog .kv-google-button {
+  margin-top: 2px;
+}

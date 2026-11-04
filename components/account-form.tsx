@@ -1,5 +1,12 @@
 "use client";
-import { useEffect, useState, type FormEvent } from "react";
+import Link from "next/link";
+import {
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+} from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -10,14 +17,69 @@ import {
   ShieldCheck,
   Swords,
 } from "lucide-react";
-import { api, type User } from "@/lib/api";
+import GoogleMark from "@/components/google-mark";
+import { api, googleSignInUrl, safeNextPath, type User } from "@/lib/api";
 import "./account-form.css";
+const GOOGLE_ERRORS: Record<string, string> = {
+  unconfigured:
+    "Đăng nhập bằng Gmail chưa được bật trên máy chủ. Quản trị viên cần đặt GOOGLE_CLIENT_ID và GOOGLE_CLIENT_SECRET.",
+  denied: "Bạn đã hủy đăng nhập bằng Google.",
+  state: "Phiên xác thực Google đã hết hạn. Vui lòng bấm đăng nhập lại.",
+  missing_code: "Google không trả về mã xác thực. Vui lòng thử lại.",
+  exchange: "Chưa xác minh được tài khoản Google. Vui lòng thử lại.",
+  account:
+    "Không đăng nhập được bằng tài khoản Google này. Vui lòng thử tài khoản khác.",
+};
+const noSubscribe = () => () => {};
 export default function AccountForm({ register }: { register: boolean }) {
-  const [hydrated,setHydrated]=useState(false);
-  useEffect(()=>setHydrated(true),[]);
+  // False during server rendering, true once the browser takes over.
+  const hydrated = useSyncExternalStore(
+    noSubscribe,
+    () => true,
+    () => false,
+  );
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
-    [show, setShow] = useState(false);
+    [show, setShow] = useState(false),
+    googleOnce = useRef("");
+  // The Google callback sends a one-time ticket back to this page.
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const ticket = params.get("google_ticket");
+    const failure = params.get("google_error");
+    const nextPath = safeNextPath(params.get("next"));
+    if (!ticket && !failure) return;
+    // StrictMode runs the effect twice; only the first run may spend the ticket.
+    const marker = ticket || "error:" + failure;
+    if (googleOnce.current === marker) return;
+    googleOnce.current = marker;
+    params.delete("google_ticket");
+    params.delete("google_error");
+    const query = params.toString();
+    history.replaceState(
+      null,
+      "",
+      location.pathname + (query ? "?" + query : ""),
+    );
+    if (failure) {
+      const message =
+        GOOGLE_ERRORS[failure] || "Đăng nhập bằng Google chưa hoàn tất.";
+      queueMicrotask(() => setError(message));
+      return;
+    }
+    void (async () => {
+      // Yield first so these updates aren't treated as synchronous effect state.
+      await Promise.resolve();
+      setBusy(true);
+      try {
+        await api<User>("/auth/google/exchange", "POST", { ticket });
+        location.replace(nextPath);
+      } catch (e) {
+        setError((e as Error).message);
+        setBusy(false);
+      }
+    })();
+  }, []);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
@@ -41,9 +103,9 @@ export default function AccountForm({ register }: { register: boolean }) {
   }
   return (
     <main className="kv-account kv-page">
-      <a className="kv-account-back" href="/">
+      <Link className="kv-account-back" href="/">
         <ArrowLeft size={17} /> Về trang chủ
-      </a>
+      </Link>
       <section className="kv-account-shell">
         <aside className="kv-account-art">
           <span className="kv-account-brand">KỲ VÂN CÁC</span>
@@ -71,6 +133,11 @@ export default function AccountForm({ register }: { register: boolean }) {
               ? "Tạo tài khoản để lưu danh tính và giao hữu cùng người chơi khác."
               : "Đăng nhập để gặp đối thủ đang chờ bạn trên kỳ đài."}
           </p>
+          <a className="kv-google-button" href={googleSignInUrl("/")}>
+            <GoogleMark />
+            {register ? "Đăng ký bằng Gmail" : "Đăng nhập bằng Gmail"}
+          </a>
+          <div className="kv-google-divider">hoặc dùng tên kỳ thủ</div>
           <form method="post" onSubmit={submit}>
             <label htmlFor="account-name">Tên đăng nhập</label>
             <div className="kv-account-input">
