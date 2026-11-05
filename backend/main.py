@@ -3,7 +3,8 @@
 # --- MA CU GIU DE DOI CHIEU 01 (khong thuc thi; dong 3-3 ban cu) ---
 # ORIGINAL | import asyncio, hashlib, hmac, json, os, re, secrets, time
 # --- HET MA CU; PHAN CAP NHAT THUC THI TIEP THEO ---
-import asyncio, hashlib, hmac, json, os, re, secrets, time, threading
+import asyncio, hashlib, hmac, json, os, re, secrets, time, threading, urllib.request
+from urllib.parse import urlencode
 from starlette.concurrency import run_in_threadpool
 from .db_runtime import db_action, notify
 from . import db_runtime
@@ -19,7 +20,7 @@ import jwt
 from fastapi import FastAPI, Depends, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
 
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 
@@ -45,6 +46,11 @@ ORIGINS = [value.strip().rstrip('/') for value in os.getenv('ALLOWED_ORIGINS','h
 COOKIE_SECURE = os.getenv('COOKIE_SECURE','true').lower() == 'true'
 
 COOKIE_SAMESITE = os.getenv('COOKIE_SAMESITE','lax')
+
+# Google OAuth. Empty values disable the "Đăng nhập bằng Gmail" button's server flow.
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID','').strip()
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET','').strip()
+GOOGLE_REDIRECT_URI = os.getenv('GOOGLE_REDIRECT_URI','').strip()
 
 # How many reverse proxies in front of this API append to X-Forwarded-For (0 = ignore the header).
 
@@ -80,6 +86,11 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(24), unique=True, index=True)
 
     password: Mapped[str] = mapped_column(Text)
+
+    # Google accounts are matched by its stable subject id; email is a fallback link for older rows.
+    email: Mapped[str | None] = mapped_column(String(254), unique=True, index=True, nullable=True)
+
+    google_sub: Mapped[str | None] = mapped_column(String(64), unique=True, index=True, nullable=True)
 
 class Room(Base):
 
@@ -252,6 +263,20 @@ def migrate(eng=engine):
         for name,sql in (('total_seconds','INTEGER NOT NULL DEFAULT 900'),('move_seconds','INTEGER NOT NULL DEFAULT 60'),('stake','INTEGER NOT NULL DEFAULT 100')):
 
             if name not in cols:c.execute(text(f'ALTER TABLE rooms ADD COLUMN {name} {sql}'))
+
+        # Accounts created before Google login existed keep working; new columns start empty.
+        if inspect(c).has_table('users'):
+
+            user_cols={x['name'] for x in inspect(c).get_columns('users')}
+
+            for name,sql in (('email','VARCHAR(254)'),('google_sub','VARCHAR(64)')):
+
+                if name not in user_cols:c.execute(text(f'ALTER TABLE users ADD COLUMN {name} {sql}'))
+
+            # A unique index allows many NULLs, so password-only accounts are unaffected.
+            c.execute(text('CREATE UNIQUE INDEX IF NOT EXISTS ix_users_email ON users (email)'))
+
+            c.execute(text('CREATE UNIQUE INDEX IF NOT EXISTS ix_users_google_sub ON users (google_sub)'))
 
 migrate()
 
@@ -488,6 +513,193 @@ async def logout(response:Response,u:Current):
             if uid==u.id: await ws.close(code=1000)
 
     return {'ok':True}
+
+# --- Google (Gmail) sign-in -------------------------------------------------
+# Authorization-code flow completed on the server. The browser never receives the
+# client secret; it only gets a short-lived, single-use ticket to exchange for a
+# normal Kỳ Viện session. Works with both the shared cookie and per-tab tokens.
+
+GOOGLE_AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth'
+
+GOOGLE_TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token'
+
+GOOGLE_USERINFO_ENDPOINT = 'https://openidconnect.googleapis.com/v1/userinfo'
+
+GOOGLE_TICKET_SECONDS = 180
+
+google_tickets: dict[str,tuple[int,float]] = {}
+
+google_tickets_lock = threading.Lock()
+
+def google_enabled(): return bool(GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET)
+
+def web_origin(request):
+    # ALLOWED_ORIGINS is the public address of the web app; the API is proxied under /api.
+    if ORIGINS: return ORIGINS[0].rstrip('/')
+    return str(request.base_url).rstrip('/')
+
+def google_redirect_uri(request):
+    return GOOGLE_REDIRECT_URI or web_origin(request)+'/api/auth/google/callback'
+
+def safe_next(value):
+    # Only same-site paths: no "//evil", no backslashes, no control characters, no absolute URLs.
+    value=str(value or '')
+    if not value.startswith('/') or value.startswith('//') or '\\' in value:
+        return '/'
+    if any(ord(char)<32 or ord(char)==127 for char in value):
+        return '/'
+    return value[:500]
+
+def google_error_redirect(request,code,next_path='/'):
+    params={'google_error':code}
+    if next_path and next_path!='/':params['next']=next_path
+    return RedirectResponse(web_origin(request)+'/dang-nhap?'+urlencode(params),status_code=302)
+
+def google_json_request(url,data=None,token=None):
+    headers={'Accept':'application/json'}
+    body=None
+    if data is not None:
+        body=urlencode(data).encode('utf-8')
+        headers['Content-Type']='application/x-www-form-urlencoded'
+    if token: headers['Authorization']='Bearer '+token
+    req=urllib.request.Request(url,data=body,headers=headers,method='POST' if data is not None else 'GET')
+    with urllib.request.urlopen(req,timeout=12) as response:
+        payload=response.read(65537)
+    if len(payload)>65536: raise ValueError('Google response is too large')
+    result=json.loads(payload.decode('utf-8'))
+    if not isinstance(result,dict): raise ValueError('Google response must be an object')
+    return result
+
+def exchange_google_code(code,redirect_uri):
+    return google_json_request(GOOGLE_TOKEN_ENDPOINT,{
+        'code':code,
+        'client_id':GOOGLE_CLIENT_ID,
+        'client_secret':GOOGLE_CLIENT_SECRET,
+        'redirect_uri':redirect_uri,
+        'grant_type':'authorization_code',
+    })
+
+def google_profile(access_token):
+    return google_json_request(GOOGLE_USERINFO_ENDPOINT,token=access_token)
+
+def google_username(s,email):
+    base=re.sub(r'[^a-z0-9_]','',email.partition('@')[0].lower())[:20]
+    if len(base)<3: base=(base+'ky_thu')[:20]
+    name=base
+    suffix=2
+    while s.scalar(select(User.id).where(User.username==name)):
+        tail=str(suffix);suffix+=1
+        name=base[:24-len(tail)]+tail
+    return name
+
+def google_user(s,profile):
+    sub=str(profile.get('sub') or '').strip()
+    email=str(profile.get('email') or '').strip().lower()
+    if not sub or '@' not in email:
+        raise HTTPException(502,'Google không trả về đủ thông tin tài khoản.')
+    if profile.get('email_verified') is False:
+        raise HTTPException(403,'Email Google chưa được xác minh.')
+    for _ in range(5):
+        u=s.scalar(select(User).where(User.google_sub==sub))
+        if u: return u
+        # Link a row that already carries this verified email (for example, an imported account).
+        u=s.scalar(select(User).where(User.email==email))
+        if u:
+            if u.google_sub and u.google_sub!=sub:
+                raise HTTPException(409,'Email này đã được liên kết với một tài khoản Google khác.')
+            u.google_sub=sub
+            try:
+                s.commit();return u
+            except Exception:
+                s.rollback();continue
+        u=User(username=google_username(s,email),password=digest(secrets.token_urlsafe(32)),email=email,google_sub=sub)
+        s.add(u)
+        try:
+            s.commit();return u
+        except Exception:
+            # Another request created the same Google account/username first; retry and reuse it.
+            s.rollback()
+    raise HTTPException(503,'Chưa tạo được tài khoản từ Google. Vui lòng thử lại.')
+
+def new_google_ticket(uid):
+    ticket=secrets.token_urlsafe(32)
+    now=time.time()
+    with google_tickets_lock:
+        for key,(_,expires) in list(google_tickets.items()):
+            if expires<now: del google_tickets[key]
+        google_tickets[ticket]=(uid,now+GOOGLE_TICKET_SECONDS)
+    return ticket
+
+@app.get('/api/auth/google/start')
+
+def google_start(request:Request,next:str='/'):
+    limit(('google-start',client_ip(request)),30,60)
+    next_path=safe_next(next)
+    if not google_enabled():
+        return google_error_redirect(request,'unconfigured',next_path)
+    state=jwt.encode({
+        'purpose':'google-oauth',
+        'next':next_path,
+        'nonce':secrets.token_urlsafe(16),
+        'exp':datetime.now(timezone.utc)+timedelta(minutes=10),
+    },SECRET,algorithm='HS256')
+    return RedirectResponse(GOOGLE_AUTH_ENDPOINT+'?'+urlencode({
+        'client_id':GOOGLE_CLIENT_ID,
+        'redirect_uri':google_redirect_uri(request),
+        'response_type':'code',
+        'scope':'openid email profile',
+        'state':state,
+        'prompt':'select_account',
+    }),status_code=302)
+
+@app.get('/api/auth/google/callback')
+
+def google_callback(s:DB,request:Request,code:str='',state:str='',error:str=''):
+    next_path='/'
+    if state:
+        try:
+            payload=jwt.decode(state,SECRET,algorithms=['HS256'])
+            if payload.get('purpose')!='google-oauth': raise ValueError()
+            next_path=safe_next(payload.get('next'))
+        except (jwt.InvalidTokenError,ValueError,TypeError):
+            return google_error_redirect(request,'state')
+    if error:
+        return google_error_redirect(request,'denied',next_path)
+    if not code:
+        return google_error_redirect(request,'missing_code',next_path)
+    try:
+        tokens=exchange_google_code(code,google_redirect_uri(request))
+        access_token=str(tokens.get('access_token') or '')
+        if not access_token: raise ValueError('missing access_token')
+        profile=google_profile(access_token)
+    except Exception:
+        logging.getLogger(__name__).warning('Google OAuth exchange failed')
+        return google_error_redirect(request,'exchange',next_path)
+    try:
+        u=google_user(s,profile)
+    except HTTPException as failure:
+        logging.getLogger(__name__).warning('Google OAuth account rejected: %s',failure.detail)
+        return google_error_redirect(request,'account',next_path)
+    return RedirectResponse(web_origin(request)+'/dang-nhap?'+urlencode({
+        'google_ticket':new_google_ticket(u.id),
+        'next':next_path,
+    }),status_code=302)
+
+class GoogleTicketInput(BaseModel):
+
+    ticket: str = Field(min_length=16,max_length=200)
+
+@app.post('/api/auth/google/exchange')
+
+def google_exchange(data:GoogleTicketInput,response:Response,request:Request,s:DB):
+    limit(('google-exchange',client_ip(request)),60,60)
+    with google_tickets_lock:
+        item=google_tickets.pop(data.ticket,None)
+    if not item or item[1]<time.time():
+        raise HTTPException(401,'Phiên đăng nhập Google đã hết hạn. Vui lòng thử lại.')
+    u=s.get(User,item[0])
+    if not u: raise HTTPException(401,'Vui lòng đăng nhập.')
+    return login_result(response,request,u)
 
 class RoomInput(BaseModel): name:str=Field(default='Giao hữu',min_length=1,max_length=60); total_seconds:int=Field(default=900,ge=300,le=3600); move_seconds:int=Field(default=60,ge=10,le=60); stake:int=Field(default=100,ge=100,le=1000)
 

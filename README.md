@@ -6,7 +6,7 @@ Giao diện cổ trang hiện đại: nền mực, son đỏ, vàng đồng, bà
 
 | # | Yêu cầu | Đã làm | Kiểm tra bằng |
 |---|---|---|---|
-| 1 | Giao diện đăng ký / đăng nhập | Hộp thoại Đăng nhập/Đăng ký; mật khẩu băm scrypt, cookie HttpOnly; chống dò mật khẩu **theo từng tài khoản** (một người gõ sai không khóa cả trang) | E2E `01-basics`, `05-resilience`; pytest |
+| 1 | Giao diện đăng ký / đăng nhập | Hộp thoại Đăng nhập/Đăng ký; **đăng nhập bằng Google (Gmail)** qua OAuth 2.0; mật khẩu băm scrypt, cookie HttpOnly; chống dò mật khẩu **theo từng tài khoản** (một người gõ sai không khóa cả trang) | E2E `01-basics`, `05-resilience`; pytest |
 | 2 | Tạo room chơi game | "Tạo phòng mới" → mã 6 ký tự; danh sách phòng đang chờ (chỉ phòng mà chủ phòng còn online, mới nhất trước); mục **Phòng của bạn**; nút **Rời phòng** | E2E `01`, `02`; pytest |
 | 3 | Mời bạn vào room — **trong game, MXH, mã phòng** | *Trong game*: mời theo tên tài khoản, người nhận thấy thông báo (toast có nút **Tham gia** + huy hiệu trên menu) dù đang ở màn hình nào. *MXH*: hộp chia sẻ của thiết bị (Zalo, Messenger… trên điện thoại), nút Facebook / Telegram / X / Email, **Sao chép lời mời** để dán vào Zalo/Messenger; liên kết có ảnh xem trước. *Mã phòng / liên kết* `?room=MÃ`: người chưa có tài khoản mở liên kết → đăng ký → **vào thẳng phòng** | E2E `02-invite-resume` |
 | 4 | Load bàn cờ + lưu bàn cờ | Lưu vào tài khoản (PostgreSQL), lưu trên trình duyệt (khách), xuất/nạp JSON, xóa ván đã lưu; khi nạp chọn **chơi tiếp với máy** hoặc **hai người**. Tải lại trang (F5): ván với máy được **tự khôi phục**, phòng online được **nạp lại từ PostgreSQL** (bàn cờ, lượt, lịch sử, chat) | E2E `03-saves-ai`, `02-invite-resume` |
@@ -77,6 +77,27 @@ Trong phòng, bấm **Mời bằng hữu**:
 
 Liên kết chia sẻ có ảnh xem trước (Open Graph) khi đặt `NEXT_PUBLIC_SITE_URL` là địa chỉ công khai của trang. Liên kết trỏ tới `localhost`/mạng nội bộ chỉ mở được với người cùng mạng; hộp thoại có cảnh báo khi đó.
 
+## Đăng nhập bằng Google (Gmail)
+
+Nút **Đăng nhập bằng Gmail** có ở trang Đăng nhập/Đăng ký, hộp thoại tài khoản ở Kỳ Viện và trang Ghép trận. Luồng dùng authorization code, xử lý trên máy chủ; trình duyệt không nhận `GOOGLE_CLIENT_SECRET`. Sau khi Google xác minh, máy chủ tạo hoặc dùng lại tài khoản, rồi cấp phiên Kỳ Viện bình thường (cookie hoặc token riêng từng tab).
+
+Bật tính năng:
+
+1. Trong [Google Cloud Console](https://console.cloud.google.com/apis/credentials), tạo **OAuth client ID** loại *Web application*.
+2. Thêm **Authorized redirect URI** đúng từng ký tự, ví dụ:
+   - `http://localhost:3000/api/auth/google/callback` khi chạy local;
+   - `https://co-tuong.example.com/api/auth/google/callback` khi triển khai.
+3. Điền vào `.env` rồi khởi động lại backend:
+
+```dotenv
+GOOGLE_CLIENT_ID=...apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=...
+# Không bắt buộc: mặc định là ALLOWED_ORIGINS đầu tiên + /api/auth/google/callback
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+```
+
+Bỏ trống hai biến `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` thì nút vẫn hiện nhưng bấm vào sẽ báo chưa cấu hình (không lộ chi tiết kỹ thuật). Tài khoản tạo bằng Google dùng tên kỳ thủ suy ra từ phần trước `@` của email (bỏ dấu chấm, thêm số nếu trùng); có thể đăng nhập lại bằng Google nhưng **chưa đặt được mật khẩu** để đăng nhập bằng tên kỳ thủ. Tài khoản cũ không có email sẽ không tự liên kết — hãy tiếp tục đăng nhập bằng mật khẩu.
+
 ## Chơi từ hai máy khác mạng
 
 Triển khai Docker trên một máy chủ có tên miền và HTTPS, reverse proxy đến cổng 3000 (Caddy tự xử lý WebSocket và `X-Forwarded-For`; với nginx cần thêm `Upgrade`/`Connection`). Đặt trong `.env`:
@@ -135,6 +156,8 @@ Không có ghi âm/ghi hình hoặc lưu video vào database.
 | `ALLOWED_ORIGINS` | backend | `http://localhost:3000` | origin của trang web (CSRF và WebSocket); nhiều giá trị cách nhau bằng dấu phẩy |
 | `COOKIE_SECURE`, `COOKIE_SAMESITE` | backend | `true` (compose: `false`), `lax` | thuộc tính cookie phiên |
 | `TRUSTED_PROXY_HOPS` | backend | `0` | xem ở trên |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | backend | trống | OAuth client để đăng nhập bằng Gmail; trống = tắt |
+| `GOOGLE_REDIRECT_URI` | backend | `ALLOWED_ORIGINS[0]` + `/api/auth/google/callback` | phải trùng redirect URI đã khai báo với Google |
 | `TURN_URL`, `TURN_USERNAME`, `TURN_PASSWORD` | backend | trống | máy chủ TURN cho video call |
 | `BACKEND_URL` | web, lúc build | `http://backend:8000` | đích của `/api/*` |
 | `NEXT_PUBLIC_API_URL` | web, lúc build | trống | API ở tên miền khác |
@@ -217,8 +240,9 @@ Mã nguồn đã bao gồm backend thật và cấu hình Docker chạy **Next.j
 - Phòng online chạy **một process Uvicorn**. Vé WebSocket, giới hạn tốc độ và danh sách kết nối nằm trong RAM. Cần Redis pub/sub + kho vé dùng chung trước khi mở rộng nhiều worker/replica.
 - Chưa áp dụng luật thi đấu chuyên sâu về chiếu đuổi; online hòa khi lặp cùng thế cờ/lượt 3 lần. Không tính giờ, không xếp hạng, không cờ bạc, chưa có ván tái đấu trong cùng phòng (rời phòng rồi tạo phòng mới).
 - AI là thuật toán tìm kiếm cơ bản (ba nước), không phải engine cấp kiện tướng; tên mức Cao thủ chỉ biểu thị mức cao nhất của ứng dụng.
-- Chưa có email xác minh hoặc quên mật khẩu.
-- Schema được tạo qua SQLAlchemy khi khởi động; chỉ có bước thêm cột tự động cho `rooms.created_at`. Khi phát triển schema tiếp cần migration có phiên bản (Alembic) và backup database.
+- Chưa có xác minh email riêng hoặc quên mật khẩu. Đăng nhập Google cần Internet và cấu hình OAuth client; tài khoản tạo bằng Google chưa đặt được mật khẩu.
+- Google OAuth dùng vé đăng nhập một lần lưu trong RAM (giống vé WebSocket): chạy một process Uvicorn. Cần kho dùng chung nếu mở rộng nhiều worker/replica.
+- Schema được tạo qua SQLAlchemy khi khởi động; bước thêm cột tự động hiện xử lý `rooms.created_at`, `rooms.total_seconds`, `rooms.move_seconds`, `rooms.stake`, `users.email` và `users.google_sub`. Khi phát triển schema tiếp cần migration có phiên bản (Alembic) và backup database.
 - Đăng xuất xóa cookie và đóng socket hiện tại; JWT còn hạn bị đánh cắp chưa có cơ chế revoke theo session.
 - Danh sách phòng đang chờ chỉ gồm phòng mà chủ phòng đang online (theo kết nối trong RAM), nên sau khi API khởi động lại phòng hiện lại khi chủ phòng tự kết nối lại (vài giây).
 - Không có máy chủ production Python/PostgreSQL hoặc TURN được cấp sẵn trong bản xem Sites.
